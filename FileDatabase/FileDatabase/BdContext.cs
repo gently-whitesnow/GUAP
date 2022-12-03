@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 
 namespace FileDatabase;
 
 public class BdContext
 {
-    string path = "trains.dat";
+    string path = "trains.json";
 
-    private int _id = 11111;
+    private int _id = 1;
     private List<Train> staticData = new();
 
     public BdContext()
@@ -19,7 +20,10 @@ public class BdContext
         if (loadedData == null || loadedData.Count == 0)
             FillMockValues();
         else
+        {
             staticData = loadedData;
+            _id = staticData.Count;
+        }
     }
 
     public List<Train> Select(Func<IEnumerable<Train>, IEnumerable<Train>> filter,
@@ -50,6 +54,8 @@ public class BdContext
         var bytes = JsonSerializer.SerializeToUtf8Bytes(staticData);
         using var writer = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate));
         writer.Write(bytes);
+        Printer.Success("Success");
+        Thread.Sleep(1000);
     }
 
 

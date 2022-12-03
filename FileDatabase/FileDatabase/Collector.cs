@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace FileDatabase;
@@ -41,6 +42,21 @@ public static class Collector
         var departureTime = DepartureTimeFilter == null ? "" : $"DepartureTime = {DepartureTimeFilter}";
         return $"{id} {trainNumber} {pointName} {departureTime}";
     }
+    
+    public static void AddTrain(BdContext _bdContext)
+    {
+        var valueTrainNumber =  GetTrainNumber("value");
+        if(string.IsNullOrEmpty(valueTrainNumber))
+            return;
+        var valuePointName =  GetPointName("value");
+        if(string.IsNullOrEmpty(valuePointName))
+            return;
+        var valueDepartureTime =  GetDepartureTime("value");
+        if(valueDepartureTime ==null)
+            return;
+        if (GetApproval($"add {valueTrainNumber} {valuePointName} {valueDepartureTime.Value.ToString("g",CultureInfo.GetCultureInfo("de-DE"))}"))
+            _bdContext.Insert(new Train(valueTrainNumber,valuePointName,valueDepartureTime.Value));
+    }
 
     public static int? GetId(string whatDo)
     {
@@ -75,9 +91,9 @@ public static class Collector
     public static DateTime? GetDepartureTime(string whatDo)
     {
         return Cage<DateTime?>($"Type {whatDo} for DepartureTime",
-            "X:datetime and X.Length < 20 and format: mm/dd/yyyy hh:mm:ss", (s) =>
+            "X:datetime and X.Length < 20 and format: dd.MM.yyyy hh:mm:ss", (s) =>
             {
-                if (s.Length <= 19 && DateTime.TryParse(s, out var value))
+                if (s.Length <= 19 && DateTime.TryParseExact(s, "g", CultureInfo.GetCultureInfo("de-DE"), DateTimeStyles.None, out var value))
                     return value;
                 return null;
             });
