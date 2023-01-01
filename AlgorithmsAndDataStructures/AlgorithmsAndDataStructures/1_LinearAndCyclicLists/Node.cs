@@ -1,4 +1,4 @@
-namespace AlgorithmsAndDataStructures.LinearAndCyclicLists;
+namespace AlgorithmsAndDataStructures._1_LinearAndCyclicLists;
 
 public class Node<TValue>
 {

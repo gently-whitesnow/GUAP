@@ -1,9 +1,19 @@
-namespace AlgorithmsAndDataStructures.LinearAndCyclicLists;
+namespace AlgorithmsAndDataStructures._1_LinearAndCyclicLists;
 
 public class LinearList<TValue>
 {
     public Node<TValue>? First;
     public Node<TValue>? Last;
+
+    public LinearList()
+    {
+        
+    }
+    public LinearList(LinearList<TValue> list)
+    {
+        First = list.First;
+        Last = list.Last;
+    }
 
     /// <summary>
     /// Проверка наличия узлов в списке
@@ -25,7 +35,9 @@ public class LinearList<TValue>
             return;
         }
 
+		// предыдущий элемент
         Last.Next = node;
+		// последний элемент
         Last = node;
     }
 
@@ -41,9 +53,10 @@ public class LinearList<TValue>
             cursor = cursor.Next;
         }
 
-        return str;
+        return str.TrimEnd();
     }
 
+	// Находит первый элемент соответствующий значению или default при его отсутствии
     public Node<TValue>? FindFirstOrDefault(TValue value)
     {
         if (IsEmpty())
@@ -56,7 +69,22 @@ public class LinearList<TValue>
             cursor = cursor.Next;
         }
 
-        return null;
+        return default;
+    }
+    
+    public bool Contains(TValue value)
+    {
+        if (IsEmpty())
+            return false;
+        var cursor = First;
+        while (cursor != null)
+        {
+            if (cursor.Value != null && cursor.Value.Equals(value) || cursor.Value == null && value == null)
+                return true;
+            cursor = cursor.Next;
+        }
+
+        return false;
     }
 
     public void RemoveFirst()
@@ -88,11 +116,11 @@ public class LinearList<TValue>
         }
     }
 
+	// Удаляет первый элемент соответствующий значению или ничего не делает
     public void RemoveOrDefault(TValue value)
     {
         if(IsEmpty())
             return;
-        
         
         if (First.Value != null && First.Value.Equals(value) || First.Value == null && value == null)
         {
@@ -119,5 +147,21 @@ public class LinearList<TValue>
             cursorFast = cursorFast.Next;
             cursorSlow = cursorSlow.Next;
         }
+    }
+
+    public LinearList<TValue> Distinct()
+    {
+        var distinctedList = new LinearList<TValue>();
+        if(IsEmpty())
+            return distinctedList;
+        
+        var cursorParent = First;
+        while (cursorParent!=null)
+        {
+            if(!distinctedList.Contains(cursorParent.Value))
+                distinctedList.Add(cursorParent.Value);
+            cursorParent = cursorParent.Next;
+        }
+        return distinctedList;
     }
 }
