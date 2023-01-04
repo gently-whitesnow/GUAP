@@ -2,66 +2,159 @@ using System;
 
 namespace AlgorithmsAndDataStructures._3_Sorting;
 
-public class SortedArray<TValue> where TValue : struct
+public class SortedArray
 {
-    private int _capacity { get; set; } = 8;
+    private const int DefaultCapacity = 8;
+    private int Capacity { get; set; } = DefaultCapacity;
     public int Length { get; set; } = 0;
 
-    private TValue[] array;
+    private int[] _array;
 
-    public SortedArray(int capacity)
+    // Направление сортировки
+    private readonly bool _descending = false;
+
+    public SortedArray(int capacity, bool descending = false)
     {
-        _capacity = capacity;
-        array = new TValue[_capacity];
+        Capacity = capacity < 0 ? 0 : capacity;
+        _array = new int[Capacity];
+        _descending = descending;
     }
 
-    public SortedArray()
+    public SortedArray(bool descending = false)
     {
-        array = new TValue[_capacity];
+        _array = new int[Capacity];
+        _descending = descending;
     }
 
-    public void Add(TValue value)
+    public void Add(int value)
     {
-        array[Length] = value;
+        if (Length + 1 >= Capacity)
+            Resize();
+        _array[Length] = value;
         Length++;
+        CountingSort();
     }
 
-    public void Remove(TValue value)
+
+    public bool Remove(int value)
     {
+        var index = FindIndex(value);
+        if (index == -1)
+            return false;
+        RemoveIndex(index);
+        return true;
+    }
+
+    public void RemoveIndex(int index)
+    {
+        var oldArray = (int[]) _array.Clone();
+        var di = 0;
         for (int i = 0; i < Length; i++)
         {
-            // array[Length] = null;
+            if (i == index)
+            {
+                di++;
+                continue;
+            }
+
+            _array[i - di] = oldArray[i];
         }
+
+        Length--;
     }
 
-    public int FindIndex(TValue value)
+    public int FindIndex(int value)
     {
         for (int i = 0; i < Length; i++)
         {
-            if (array[i].Equals(value))
+            if (_array[i].Equals(value))
                 return i;
         }
 
         return -1;
     }
 
-    public TValue Find(Predicate<TValue> condition)
+    public int Find(Predicate<int> condition)
     {
         for (int i = 0; i < Length; i++)
         {
-            if (condition(array[i]))
-                return array[i];
+            if (condition(_array[i]))
+                return _array[i];
         }
 
         return default;
     }
-    
-    // Индексатор
-    public TValue this[int index]
+
+    // descending = true по нисходящей, от большего к меньшему
+    private void CountingSort()
     {
-        get => array[index];
-        set => array[index] = value;
+        if (Length < 1)
+            return;
+
+        var newArray = new int[Capacity];
+        var equals = 0;
+
+        for (int i = 0; i < Length; i++)
+        {
+            var k = 0;
+            for (int j = 0; j < Length; j++)
+            {
+                if (_array[i] > _array[j] || _array[i] == _array[j] && i < j)
+                    k++;
+                equals++;
+            }
+
+            var index = _descending ? Length - k - 1 : k;
+            newArray[index] = _array[i];
+        }
+        Console.WriteLine($"Сортировка - перестановок {Length}, cравнений {equals}");
+
+        _array = newArray;
     }
-    
-    
+
+    // Индексатор
+    public int this[int index]
+    {
+        get
+        {
+            if (index >= Length || index < 0)
+                throw new ArgumentOutOfRangeException();
+            return _array[index];
+        }
+        set
+        {
+            if (index >= Length || index < 0)
+                throw new ArgumentOutOfRangeException();
+            _array[index] = value;
+        }
+    }
+
+    public void Print()
+    {
+        for (int i = 0; i < Length; i++)
+        {
+            Console.Write(_array[i] + " ");
+        }
+
+        Console.WriteLine();
+    }
+
+    private void Resize()
+    {
+        var newcapacity = Capacity == 0 ? DefaultCapacity : 2 * Capacity;
+
+        if ((uint) newcapacity > int.MaxValue) newcapacity = int.MaxValue;
+
+        if (newcapacity < Capacity) newcapacity = Capacity;
+
+        Capacity = newcapacity;
+
+        var newArray = new int[Capacity];
+        for (int i = 0; i < Length; i++)
+        {
+            newArray[i] = _array[i];
+        }
+
+        _array = newArray;
+    }
 }
