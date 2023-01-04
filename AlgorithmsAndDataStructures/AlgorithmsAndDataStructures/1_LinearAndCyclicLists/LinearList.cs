@@ -2,28 +2,18 @@ namespace AlgorithmsAndDataStructures._1_LinearAndCyclicLists;
 
 public class LinearList<TValue>
 {
+    // Ссылка на первый элемент списка
     public Node<TValue>? First;
+    // Ссылка на последний элемент списка
     public Node<TValue>? Last;
-
-    public LinearList()
-    {
-        
-    }
-    public LinearList(LinearList<TValue> list)
-    {
-        First = list.First;
-        Last = list.Last;
-    }
-
-    /// <summary>
+    
     /// Проверка наличия узлов в списке
-    /// </summary>
-    /// <returns></returns>
     public bool IsEmpty()
     {
         return First == null;
     }
 
+    // Добавление элемента в список
     public void Add(TValue value)
     {
         var node = new Node<TValue>(value);
@@ -41,22 +31,7 @@ public class LinearList<TValue>
         Last = node;
     }
 
-    public override string ToString()
-    {
-        var str = "";
-        if (IsEmpty())
-            return str;
-        var cursor = First;
-        while (cursor != null)
-        {
-            str += $"{cursor.Value?.ToString() ?? "null"} ";
-            cursor = cursor.Next;
-        }
-
-        return str.TrimEnd();
-    }
-
-	// Находит первый элемент соответствующий значению или default при его отсутствии
+    // Находит первый элемент соответствующий значению или default при его отсутствии
     public Node<TValue>? FindFirstOrDefault(TValue value)
     {
         if (IsEmpty())
@@ -72,6 +47,7 @@ public class LinearList<TValue>
         return default;
     }
     
+    // Проверяет находится ли элемент в списке
     public bool Contains(TValue value)
     {
         if (IsEmpty())
@@ -87,6 +63,7 @@ public class LinearList<TValue>
         return false;
     }
 
+    // Удаляет первый элемент
     public void RemoveFirst()
     {
         if(IsEmpty())
@@ -94,6 +71,7 @@ public class LinearList<TValue>
         First = First.Next;
     }
     
+    // Удаляет последний элемент
     public void RemoveLast()
     {
         if(IsEmpty())
@@ -149,6 +127,7 @@ public class LinearList<TValue>
         }
     }
 
+    // Оставляет только уникальные значения
     public LinearList<TValue> Distinct()
     {
         var distinctedList = new LinearList<TValue>();
@@ -163,5 +142,21 @@ public class LinearList<TValue>
             cursorParent = cursorParent.Next;
         }
         return distinctedList;
+    }
+    
+    // Метод для вывода на экран содержимого списка
+    public override string ToString()
+    {
+        var str = "";
+        if (IsEmpty())
+            return str;
+        var cursor = First;
+        while (cursor != null)
+        {
+            str += $"{cursor.Value?.ToString() ?? "null"} ";
+            cursor = cursor.Next;
+        }
+
+        return str.TrimEnd();
     }
 }

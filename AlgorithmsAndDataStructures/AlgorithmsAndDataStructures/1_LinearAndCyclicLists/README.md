@@ -99,7 +99,6 @@ Tmin (n),
 https://habr.com/ru/post/188010/
 https://learn.microsoft.com/ru-ru/dotnet/standard/collections/
 
-#### стр 37
 
 
 

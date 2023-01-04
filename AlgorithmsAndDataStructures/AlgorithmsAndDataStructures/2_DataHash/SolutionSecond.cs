@@ -8,9 +8,8 @@ public class SolutionSecond
     private Random rand = new Random();
     public void Run()
     {
-
         var hashTable = new HashTable(10);
-
+    
         var listToRemove = new List<string>();
         for (int i = 0; i < 20; i++)
         {
@@ -21,15 +20,15 @@ public class SolutionSecond
         }
         Console.WriteLine("Исходная таблица");
         hashTable.Print();
-
+    
         foreach (var hash in listToRemove)
         {
             hashTable.Remove(hash);
         }
-
+    
         Console.WriteLine($"Таблица после удаления {listToRemove.Count} элементов");
         hashTable.Print();
-
+    
         Console.WriteLine($"Количество элементов в таблице после удаления - {hashTable.Count}");
         hashTable.Rehash();
         Console.WriteLine($"Количество элементов в таблице после рехеша - {hashTable.Count}");

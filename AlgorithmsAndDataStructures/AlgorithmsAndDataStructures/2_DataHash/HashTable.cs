@@ -10,20 +10,17 @@ public class HashTable
     // 00AA00 - 10*10*26*26*10*10 = 6_760_000 комбинаций
     private const long Combinations = 6_760_000;
 
+    // Дефолтный размер таблицы
     private readonly long _defaultTableSize = 8;
 
     // n - размер таблицы
     private long _tableSize;
 
-    // количество заполненных индексов
+    // количество заполненных ячеек в таблице
     public long Count;
 
-    // коэффициент заполнения
+    // коэффициент заполнения, после которого таблица расширяется
     private const double FilledCoefficient = 0.7;
-
-    // Количество коллизий (экспериментальный параметр)
-    public long Collisions = 0;
-
 
     private Node?[] _table;
 
@@ -44,7 +41,6 @@ public class HashTable
         var oldTable = (Node?[]) _table.Clone();
         _tableSize *= 2;
         Count = 0;
-        Collisions = 0;
         _table = new Node[_tableSize];
         foreach (var n in oldTable)
         {
@@ -54,12 +50,11 @@ public class HashTable
         }
     }
 
-    // Используется в качестве демонтрации, так как rehash происходит при resize
+    // Используется в качестве демонстрации, так как rehash происходит в функции resize
     public void Rehash()
     {
         var oldTable = (Node?[]) _table.Clone();
         Count = 0;
-        Collisions = 0;
         _table = new Node[_tableSize];
         foreach (var n in oldTable)
         {
@@ -90,7 +85,7 @@ public class HashTable
         if (IsNotValid(hashKey))
             return null;
 
-        var i1 = GetIndexByDivision(hashKey);
+        var i1 = GetIndexInCombinations(hashKey);
         var i2 = GetIndexByFibo(hashKey);
         for (int i = 0; i < _tableSize; i++)
         {
@@ -121,7 +116,7 @@ public class HashTable
         if (Count > _tableSize * FilledCoefficient)
             Resize();
 
-        var i1 = GetIndexByDivision(hashKey);
+        var i1 = GetIndexInCombinations(hashKey);
         var i2 = GetIndexByFibo(hashKey);
         for (int i = 0; i < _tableSize; i++)
         {
@@ -131,8 +126,7 @@ public class HashTable
                 Count++;
                 return;
             }
-
-            Collisions++;
+            
             i1 = (i * i1 + i2) % _tableSize;
         }
 
@@ -141,8 +135,9 @@ public class HashTable
         Add(hashKey);
     }
 
-    public long GetIndexByDivision(string key)
+    public long GetIndexInCombinations(string key)
     {
+        // Проверка на валидность ключа
         if (IsNotValid(key))
             return -1;
 
@@ -154,6 +149,7 @@ public class HashTable
 
         return normalizeNumber;
 
+        // Вычисление какая это по счету комбинация
         long ConvertToNumber(string hash)
         {
             var num = 0;
@@ -167,8 +163,7 @@ public class HashTable
             return num;
         }
     }
-
-    //https://kvodo.ru/hesh-funktsii.html
+    
     public long GetIndexByFibo(string key)
     {
         if (IsNotValid(key))
@@ -186,13 +181,11 @@ public class HashTable
         var part = A * number - (int) (A * number);
 
         // количество комбинаций на полученную дробную часть
-        var index = (long) (Combinations * part);
+        var index = (long) (_tableSize * part);
+        
+        return index;
 
-        // нормализация числа согласно размеру таблицы
-        var normalizeNumber = (long) (index * ((double) _tableSize / Combinations));
-
-        return normalizeNumber;
-
+        // Вычисление какая это по счету комбинация
         long ConvertToNumber(string hash)
         {
             var num = 0;

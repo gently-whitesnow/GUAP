@@ -4,15 +4,20 @@ namespace AlgorithmsAndDataStructures._3_Sorting;
 
 public class SortedArray
 {
+    // Дефолтный размер массива
     private const int DefaultCapacity = 8;
+    
+    // Размер массива
     private int Capacity { get; set; } = DefaultCapacity;
+    // Количество элементов в массиве
     public int Length { get; set; } = 0;
-
+    // Массив с данными
     private int[] _array;
 
-    // Направление сортировки
+    // Направление сортировки (по умолчанию - сортировка по возрастанию)
     private readonly bool _descending = false;
-
+    
+    // Конструктор при задании размера массива
     public SortedArray(int capacity, bool descending = false)
     {
         Capacity = capacity < 0 ? 0 : capacity;
@@ -20,22 +25,25 @@ public class SortedArray
         _descending = descending;
     }
 
+    // Дефолтный конструктор
     public SortedArray(bool descending = false)
     {
         _array = new int[Capacity];
         _descending = descending;
     }
 
+    // Добавление значения
     public void Add(int value)
     {
         if (Length + 1 >= Capacity)
             Resize();
         _array[Length] = value;
         Length++;
+        // Сортировка после добавления
         CountingSort();
     }
 
-
+    // Удаление значения
     public bool Remove(int value)
     {
         var index = FindIndex(value);
@@ -44,10 +52,12 @@ public class SortedArray
         RemoveIndex(index);
         return true;
     }
-
+    
+    // Удаление значение по его индексу
+    // При удалении значения, все элементы после текущего индекса
+    // смещаются на один индекс к началу
     public void RemoveIndex(int index)
     {
-        var oldArray = (int[]) _array.Clone();
         var di = 0;
         for (int i = 0; i < Length; i++)
         {
@@ -57,12 +67,13 @@ public class SortedArray
                 continue;
             }
 
-            _array[i - di] = oldArray[i];
+            _array[i - di] = _array[i];
         }
 
         Length--;
     }
 
+    // Получение элемента по индексу
     public int FindIndex(int value)
     {
         for (int i = 0; i < Length; i++)
@@ -74,6 +85,7 @@ public class SortedArray
         return -1;
     }
 
+    // Получение первого элемента соответствующего условию
     public int Find(Predicate<int> condition)
     {
         for (int i = 0; i < Length; i++)
@@ -84,8 +96,8 @@ public class SortedArray
 
         return default;
     }
-
-    // descending = true по нисходящей, от большего к меньшему
+    
+    // Сортировка подсчетом
     private void CountingSort()
     {
         if (Length < 1)
@@ -103,7 +115,7 @@ public class SortedArray
                     k++;
                 equals++;
             }
-
+            // Базово - сортировка по возрастанию
             var index = _descending ? Length - k - 1 : k;
             newArray[index] = _array[i];
         }
@@ -112,7 +124,7 @@ public class SortedArray
         _array = newArray;
     }
 
-    // Индексатор
+    // Индексатор, для обращения к массиву через текущий класс
     public int this[int index]
     {
         get
@@ -129,6 +141,7 @@ public class SortedArray
         }
     }
 
+    // Вывод элементов находящихся в массиве
     public void Print()
     {
         for (int i = 0; i < Length; i++)
@@ -139,6 +152,7 @@ public class SortedArray
         Console.WriteLine();
     }
 
+    // Увеличение размера массива при достижении его максимального размера
     private void Resize()
     {
         var newcapacity = Capacity == 0 ? DefaultCapacity : 2 * Capacity;

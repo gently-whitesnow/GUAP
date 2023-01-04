@@ -7,22 +7,22 @@ public static class Research
 {
     public static void Run()
     {
-        var hashTableByDivision = new HashTable(1500);
-        var hashTableByFibo = new HashTable(1500);
+        var hashTableInCombinations = new HashTable(2500);
+        var hashTableByFibo = new HashTable(2500);
         
-        var listDivision = new List<long>();
+        var listCombinations = new List<long>();
         var listFibo = new List<long>();
         
         var rand = new Random();
         
-        for (int i = 0; i < 4500; i++)
+        for (int i = 0; i < 7500; i++)
         {
             var hash = GetRandomHash();
-            listDivision.Add(hashTableByDivision.GetIndexByDivision(hash));
+            listCombinations.Add(hashTableInCombinations.GetIndexInCombinations(hash));
             listFibo.Add(hashTableByFibo.GetIndexByFibo(hash));
         }
         
-        Helpers.SaveToCsv(listDivision, "research_division.csv");
+        Helpers.SaveToCsv(listCombinations, "research_combinations.csv");
         Helpers.SaveToCsv(listFibo, "research_fibo.csv");
         
         string GetRandomHash()
