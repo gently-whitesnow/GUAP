@@ -158,4 +158,33 @@ public class HashTableTest
         Assert.AreEqual(true,hashTable.Contains("00AA03"));
         Assert.AreEqual(4,hashTable.Count);
     }
+    
+    
+    [Test]
+    public void Reheash()
+    {
+        var hashTable = new HashTable(10);
+
+        var removeList = new List<string>();
+        for (int i = 0; i < 10000; i++)
+        {
+            var h = GetRandomHash();
+            hashTable.Add(h);
+            if (i % 2 == 0)
+                removeList.Add(h);
+        }
+
+        var count = hashTable.Count;
+        hashTable.Rehash();
+        Assert.AreEqual(count,hashTable.Count);
+        
+        count = hashTable.Count;
+        foreach (var data in removeList)
+        {
+            hashTable.Remove(data);
+        }
+        Assert.AreEqual(count,hashTable.Count);
+        hashTable.Rehash();
+        Assert.AreEqual(count-removeList.Count,hashTable.Count);
+    }
 }

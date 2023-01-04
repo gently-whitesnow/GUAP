@@ -10,38 +10,57 @@ public class HashTable
     // 00AA00 - 10*10*26*26*10*10 = 6_760_000 комбинаций
     private const long Combinations = 6_760_000;
 
-    private readonly long _defaultTableSize = 3;
+    private readonly long _defaultTableSize = 8;
 
     // n - размер таблицы
-    private long TableSize;
+    private long _tableSize;
 
     // количество заполненных индексов
     public long Count;
 
     // коэффициент заполнения
-    private readonly double FilledCoefficient = 0.7;
+    private const double FilledCoefficient = 0.7;
+
+    // Количество коллизий (экспериментальный параметр)
+    public long Collisions = 0;
 
 
     private Node?[] _table;
 
     public HashTable(long tableSize)
     {
-        TableSize = tableSize;
+        _tableSize = tableSize;
         _table = new Node[tableSize];
     }
 
     public HashTable()
     {
-        TableSize = _defaultTableSize;
+        _tableSize = _defaultTableSize;
         _table = new Node[_defaultTableSize];
     }
 
     private void Resize()
     {
         var oldTable = (Node?[]) _table.Clone();
-        TableSize *= 2;
+        _tableSize *= 2;
         Count = 0;
-        _table = new Node[TableSize];
+        Collisions = 0;
+        _table = new Node[_tableSize];
+        foreach (var n in oldTable)
+        {
+            if (n == null || n.Deleted)
+                continue;
+            Add(n.Value);
+        }
+    }
+
+    // Используется в качестве демонтрации, так как rehash происходит при resize
+    public void Rehash()
+    {
+        var oldTable = (Node?[]) _table.Clone();
+        Count = 0;
+        Collisions = 0;
+        _table = new Node[_tableSize];
         foreach (var n in oldTable)
         {
             if (n == null || n.Deleted)
@@ -68,41 +87,43 @@ public class HashTable
 
     public Node? Find(string hashKey)
     {
-        Validate(hashKey);
+        if (IsNotValid(hashKey))
+            return null;
 
         var i1 = GetIndexByDivision(hashKey);
         var i2 = GetIndexByFibo(hashKey);
-        for (int i = 0; i < TableSize; i++)
+        for (int i = 0; i < _tableSize; i++)
         {
             if (_table[i1]?.Value == hashKey && !_table[i1].Deleted)
             {
                 return _table[i1];
             }
 
-            i1 = (i*i1 + i2) % TableSize;
+            i1 = (i * i1 + i2) % _tableSize;
         }
 
         return null;
     }
-    
+
     public Node? FindByIndex(long index)
     {
-        if (index >= TableSize || index < 0)
+        if (index >= _tableSize || index < 0)
             throw new ArgumentOutOfRangeException();
-        
+
         return _table[index];
     }
 
     public void Add(string hashKey)
     {
-        Validate(hashKey);
+        if (IsNotValid(hashKey))
+            return;
 
-        if (Count > TableSize * FilledCoefficient)
+        if (Count > _tableSize * FilledCoefficient)
             Resize();
 
         var i1 = GetIndexByDivision(hashKey);
         var i2 = GetIndexByFibo(hashKey);
-        for (int i = 0; i < TableSize; i++)
+        for (int i = 0; i < _tableSize; i++)
         {
             if (_table[i1] == null)
             {
@@ -111,8 +132,10 @@ public class HashTable
                 return;
             }
 
-            i1 = (i*i1 + i2) % TableSize;
+            Collisions++;
+            i1 = (i * i1 + i2) % _tableSize;
         }
+
         // Если не получилось добавить
         Resize();
         Add(hashKey);
@@ -120,13 +143,14 @@ public class HashTable
 
     public long GetIndexByDivision(string key)
     {
-        Validate(key);
+        if (IsNotValid(key))
+            return -1;
 
         // преобразование ключа в число
         var number = ConvertToNumber(key);
 
         // нормализация числа согласно размеру таблицы
-        var normalizeNumber = (long) (number * ((double) TableSize / Combinations));
+        var normalizeNumber = (long) (number * ((double) _tableSize / Combinations));
 
         return normalizeNumber;
 
@@ -147,7 +171,8 @@ public class HashTable
     //https://kvodo.ru/hesh-funktsii.html
     public long GetIndexByFibo(string key)
     {
-        Validate(key);
+        if (IsNotValid(key))
+            return 01;
 
         // преобразование ключа в число
         var number = ConvertToNumber(key);
@@ -164,7 +189,7 @@ public class HashTable
         var index = (long) (Combinations * part);
 
         // нормализация числа согласно размеру таблицы
-        var normalizeNumber = (long) (index * ((double) TableSize / Combinations));
+        var normalizeNumber = (long) (index * ((double) _tableSize / Combinations));
 
         return normalizeNumber;
 
@@ -182,22 +207,55 @@ public class HashTable
         }
     }
 
-    void Validate(string inputKey)
+    bool IsNotValid(string inputKey)
     {
         if (inputKey.Length != _format.Length)
-            throw new FormatException("Неверный размер хеш ключа");
+        {
+            Console.WriteLine("Неверный размер хеш ключа");
+            return true;
+        }
 
         if (!char.IsDigit(inputKey[0]))
-            throw new FormatException($"Неверный формат {0} символа {inputKey}");
+        {
+            Console.WriteLine($"Неверный формат {0} символа {inputKey}");
+            return true;
+        }
         if (!char.IsDigit(inputKey[1]))
-            throw new FormatException($"Неверный формат {1} символа {inputKey}");
+        {
+            Console.WriteLine($"Неверный формат {1} символа {inputKey}");
+            return true;
+        }
         if (!char.IsUpper(inputKey[2]))
-            throw new FormatException($"Неверный формат {2} символа {inputKey}");
+        {
+            Console.WriteLine($"Неверный формат {2} символа {inputKey}");
+            return true;
+        }
         if (!char.IsUpper(inputKey[3]))
-            throw new FormatException($"Неверный формат {3} символа {inputKey}");
+        {
+            Console.WriteLine($"Неверный формат {3} символа {inputKey}");
+            return true;
+        }
         if (!char.IsDigit(inputKey[4]))
-            throw new FormatException($"Неверный формат {4} символа {inputKey}");
+        {
+            Console.WriteLine($"Неверный формат {4} символа {inputKey}");
+            return true;
+        }
         if (!char.IsDigit(inputKey[5]))
-            throw new FormatException($"Неверный формат {5} символа {inputKey}");
+        {
+            Console.WriteLine($"Неверный формат {5} символа {inputKey}");
+            return true;
+        }
+
+        return false;
+    }
+
+    public void Print()
+    {
+        for (int i = 0; i < _tableSize; i++)
+        {
+            var node = _table[i];
+            var value = node != null && !node.Deleted ? node.Value : "";
+            Console.WriteLine($"{i} - {value}");
+        }
     }
 }
