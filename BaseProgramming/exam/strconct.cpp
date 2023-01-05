@@ -15,7 +15,7 @@ bool isUIntNumber(const string &s)
     return b;
 }
 
-unsigned int getPositiveUIntValue(const string &what)
+unsigned int getUIntValue(const string &what)
 {
     string a;
     unsigned int b;
@@ -101,8 +101,8 @@ int length(const char* array){
 
 // int main()
 // {
-//     unsigned int n1 = getPositiveUIntValue("first");
-//     unsigned int n2 = getPositiveUIntValue("second");
+//     unsigned int n1 = getUIntValue("first");
+//     unsigned int n2 = getUIntValue("second");
 
 //     char* a = new char[n1+n2];
 //     char* b = new char[n2];

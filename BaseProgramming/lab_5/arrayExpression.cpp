@@ -14,7 +14,7 @@ bool isUIntNumber(const string &s)
     return b;
 }
 
-unsigned int getPositiveUIntValue()
+unsigned int getUIntValue()
 {
     string a;
     unsigned int b;
@@ -135,7 +135,7 @@ void sortABS(double *&array, unsigned int n)
 
 int main()
 {
-    unsigned int n = getPositiveUIntValue();
+    unsigned int n = getUIntValue();
 
     double *array = new double[n];
 

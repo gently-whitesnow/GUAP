@@ -94,4 +94,5 @@ SHA-3-256  -256 бит, 1 символ - 4 бит => 64 символа
 
 Неплохая статья по реализации хеш таблицы
 https://habr.com/ru/post/509220/
+https://kvodo.ru/hesh-funktsii.html
 
