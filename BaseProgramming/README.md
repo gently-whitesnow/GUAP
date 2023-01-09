@@ -59,3 +59,5 @@ b 96 -- ставим брейкпоинт
 r -- раним
 c -- континью
 p {element} - печать любого выражения (элемента)
+
+https://github.com/LouisBrunner/valgrind-macos
