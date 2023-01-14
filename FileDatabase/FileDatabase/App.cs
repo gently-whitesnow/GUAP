@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 
@@ -8,14 +7,10 @@ namespace FileDatabase;
 
 public class App
 {
+    // контекст для работы с базой данных 
     private readonly BdContext _bdContext;
-    private Func<IEnumerable<Train>, IEnumerable<Train>> filter = list => list;
 
-    private bool IsFiltering;
-
-    private bool IsChanging;
-
-    private List<Train> tempData;
+    private List<Train> _tempData;
 
     public App(BdContext bdContext)
     {
@@ -29,9 +24,8 @@ public class App
     {
         while (_running)
         {
-            filter = Collector.GetFilter();
-            tempData = _bdContext.Select(filter, Sorter.OrderCondition);
-            Cursor.Init(tempData.Count - 1);
+            _tempData = _bdContext.Select(Filter.FilterCondition, Sorter.OrderCondition);
+            Cursor.Init(_tempData.Count - 1);
 
             Display();
         }
@@ -41,9 +35,9 @@ public class App
     {
         Console.Clear();
 
-        PrintHeader();
-        PrintData();
-        PrintFooter();
+        Printer.PrintHeader();
+        Printer.PrintData(_tempData);
+        Printer.PrintFooter();
 
         Listen();
     }
@@ -65,8 +59,8 @@ public class App
             }
             case ConsoleKey.A:
             {
-                IsChanging = false;
-                IsFiltering = false;
+                Collector.IsChanging = false;
+                Filter.IsFiltering = false;
                 Sorter.IsSorting = false;
                 Collector.AddTrain(_bdContext);
                 return;
@@ -79,7 +73,7 @@ public class App
                     return;
                 }
                 if(Collector.GetApproval("to delete"))
-                    _bdContext.Delete(tempData.ElementAt(Cursor.Position));
+                    _bdContext.Delete(_tempData.ElementAt(Cursor.Position));
 
                 return;
             }
@@ -90,9 +84,9 @@ public class App
                     Sorter.SortBy("Id", train => train.Id);
                 }
 
-                if (IsFiltering)
+                if (Filter.IsFiltering)
                 {
-                    Collector.IdFilter = Collector.GetId("filter");
+                    Filter.IdFilter = Collector.GetId("filter");
                 }
 
                 return;
@@ -104,18 +98,18 @@ public class App
                     Sorter.SortBy("TrainNumber", train => train.TrainNumber);
                 }
 
-                if (IsFiltering)
+                if (Filter.IsFiltering)
                 {
-                    Collector.TrainNumberFilter = Collector.GetTrainNumber("filter");
+                    Filter.TrainNumberFilter = Collector.GetTrainNumber("filter");
                 }
                 
-                if (IsChanging)
+                if (Collector.IsChanging)
                 {
                     var value =  Collector.GetTrainNumber("change");
                     if(string.IsNullOrEmpty(value))
                         return;
                     if (Collector.GetApproval($"to change on {value}"))
-                        _bdContext.Update(tempData.ElementAt(Cursor.Position).Id, (train) => train.TrainNumber = value);
+                        _bdContext.Update(_tempData.ElementAt(Cursor.Position).Id, (train) => train.TrainNumber = value);
                 }
 
                 return;
@@ -127,18 +121,18 @@ public class App
                     Sorter.SortBy("PointName", train => train.PointName);
                 }
 
-                if (IsFiltering)
+                if (Filter.IsFiltering)
                 {
-                    Collector.PointNameFilter = Collector.GetPointName("filter");
+                    Filter.PointNameFilter = Collector.GetPointName("filter");
                 }
                 
-                if (IsChanging)
+                if (Collector.IsChanging)
                 {
                     var value =  Collector.GetPointName("change");
                     if(string.IsNullOrEmpty(value))
                         return;
                     if (Collector.GetApproval($"change on {value}"))
-                        _bdContext.Update(tempData.ElementAt(Cursor.Position).Id, (train) => train.PointName = value);
+                        _bdContext.Update(_tempData.ElementAt(Cursor.Position).Id, (train) => train.PointName = value);
                 }
 
                 return;
@@ -150,50 +144,49 @@ public class App
                     Sorter.SortBy("DepartureTime", train => train.DepartureTime);
                 }
 
-                if (IsFiltering)
+                if (Filter.IsFiltering)
                 {
-                    Collector.DepartureTimeFilter = Collector.GetDepartureTime("filter");
+                    Filter.DepartureTimeFilter = Collector.GetDepartureTime("filter");
                 }
                 
-                if (IsChanging)
+                if (Collector.IsChanging)
                 {
                     var value =  Collector.GetDepartureTime("change");
                     if(value == null)
                         return;
                     if (Collector.GetApproval($"change on {value}"))
-                        _bdContext.Update(tempData.ElementAt(Cursor.Position).Id, (train) => train.DepartureTime = value.Value);
+                        _bdContext.Update(_tempData.ElementAt(Cursor.Position).Id, (train) => train.DepartureTime = value.Value);
                 }
 
                 return;
             }
             case ConsoleKey.R:
             {
-                filter = list => list;
                 Sorter.Reset();
-                IsFiltering = false;
-                IsChanging = false;
-                Collector.Clear();
+                Filter.IsFiltering = false;
+                Collector.IsChanging = false;
+                Filter.Clear();
                 return;
             }
             case ConsoleKey.O:
             {
                 Sorter.IsSorting = !Sorter.IsSorting;
-                IsFiltering = false;
-                IsChanging = false;
+                Filter.IsFiltering = false;
+                Collector.IsChanging = false;
                 break;
             }
             case ConsoleKey.F:
             {
-                IsFiltering = !IsFiltering;
-                IsChanging = false;
+                Filter.IsFiltering = !Filter.IsFiltering;
+                Collector.IsChanging = false;
                 Sorter.IsSorting = false;
                 break;
             }
             case ConsoleKey.C:
             {
-                IsChanging = !IsChanging;
+                Collector.IsChanging = !Collector.IsChanging;
                 Sorter.IsSorting = false;
-                IsFiltering = false;
+                Filter.IsFiltering = false;
                 break;
             }
             case ConsoleKey.UpArrow:
@@ -215,79 +208,5 @@ public class App
         }
 
         Display();
-    }
-
-    private void PrintHeader()
-    {
-        var formattedId = "| " + "Id".PadRight(5);
-        var formattedTrainNumber = " | " + "TrainNumber".PadRight(15);
-        var formattedPointName = " | " + "PointName".PadRight(20);
-        var formattedDepartureTime = " | " + "DepartureTime".PadRight(20) + " |";
-        var additionalInfo = " 🔼 - Up, 🔽 - Down";
-
-        Printer.Speech(
-            $"{formattedId}{formattedTrainNumber}{formattedPointName}{formattedDepartureTime}{additionalInfo}");
-        if (Cursor.ViewRange.Min != 0)
-            Printer.Prompt(".........................................................................");
-    }
-
-    private void PrintData()
-    {
-        for (int i = Cursor.ViewRange.Min; i <= Cursor.ViewRange.Max; i++)
-        {
-            var formattedId = "| " + tempData[i].Id.ToString().PadRight(5);
-            var formattedTrainNumber = " | " + tempData[i].TrainNumber.PadRight(15);
-            var formattedPointName = " | " + tempData[i].PointName.PadRight(20);
-            var formattedDepartureTime = " | " + tempData[i].DepartureTime.ToString("g",CultureInfo.GetCultureInfo("de-DE")).PadRight(20) + " |";
-
-            if (i == Cursor.Position)
-                Printer.Step($"{formattedId}{formattedTrainNumber}{formattedPointName}{formattedDepartureTime}");
-            else
-                Printer.Data($"{formattedId}{formattedTrainNumber}{formattedPointName}{formattedDepartureTime}");
-        }
-    }
-
-    private void PrintFooter()
-    {
-        if (Cursor.ViewRange.Max != Cursor.MaxBorder)
-            Printer.Prompt(".........................................................................");
-        Console.WriteLine();
-
-        Printer.Step("For SORT press: 'O'");
-        if (Sorter.IsSorting)
-        {
-            Printer.Step("'1' - Id\t '2' - TrainNumber\t '3' - PointName\t '4' - DepartureTime \t 'D' - Descending");
-        }
-        else
-        {
-            Printer.Step("For DELETE press: 'D'");
-        }
-
-        if (!string.IsNullOrEmpty(Sorter.SortingInfo))
-        {
-            var orderingInfo = Sorter.Descending ? "Descending" : "Ascending";
-            Printer.Warning(orderingInfo + $" {Sorter.SortingInfo}");
-        }
-
-        Printer.Step("For FILTER press: 'F'");
-        if (IsFiltering)
-        {
-            Printer.Step("'1' - Id\t '2' - TrainNumber\t '3' - PointName\t '4' - DepartureTime");
-        }
-
-        if (Collector.NotEmpty())
-            Printer.Warning($"Active filter {Collector.ActiveFilters()}");
-        
-        Printer.Step("For CHANGE press: 'C'");
-        if (IsChanging)
-        {
-            Printer.Step("'2' - TrainNumber\t '3' - PointName\t '4' - DepartureTime");
-        }
-        Printer.Step("For ADD press: 'A'");
-        Printer.Step("For SAVE press: 'S'");
-        
-        Console.WriteLine();
-        Console.WriteLine("Press 'R' to reset");
-        Console.WriteLine("Press 'Q' to leave");
     }
 }
