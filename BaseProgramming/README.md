@@ -61,3 +61,7 @@ c -- континью
 p {element} - печать любого выражения (элемента)
 
 https://github.com/LouisBrunner/valgrind-macos
+
+
+#### особождение памяти
+leaks --atExit -- ./lab_7

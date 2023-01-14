@@ -78,6 +78,7 @@ void evaluateCharacters(int **matrix, int h, int w)
         }
     }
 }
+
 int partition(int **matrix, int h, int first, int last)
 {
     int average = matrix[h][(first + last) / 2];
@@ -181,3 +182,9 @@ int main()
 
     return 0;
 }
+
+// 2 3
+//  -2 -1 -5 -3 2 1 
+
+// 2 2
+// -1 3 -2 4

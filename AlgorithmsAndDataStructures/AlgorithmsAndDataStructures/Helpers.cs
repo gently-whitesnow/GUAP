@@ -30,9 +30,9 @@ public static class Helpers
 
     public static void SaveToCsv(List<long> result, string path)
     {
-        var str = "";
         var dict = result.GroupBy(d => d)
             .ToDictionary(v=>v.Key,l=>l.Count()).OrderBy(d=>d.Key).ToArray();
+        var str = "";
         foreach (var (key,value) in dict)
         {
             str += $"{key};{value}\n";

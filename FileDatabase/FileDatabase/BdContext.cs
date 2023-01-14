@@ -61,21 +61,29 @@ public class BdContext
 
     public List<Train>? Load()
     {
-        if (!File.Exists(path))
+        try
+        {
+            if (!File.Exists(path))
+                return null;
+            using BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open));
+            const int bufferSize = 4096;
+            using var ms = new MemoryStream();
+            var buffer = new byte[bufferSize];
+            int count;
+            while ((count = reader.Read(buffer, 0, buffer.Length)) != 0)
+                ms.Write(buffer, 0, count);
+            return JsonSerializer.Deserialize<List<Train>>(ms.ToArray());
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
             return null;
-        using BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open));
-        const int bufferSize = 4096;
-        using var ms = new MemoryStream();
-        var buffer = new byte[bufferSize];
-        int count;
-        while ((count = reader.Read(buffer, 0, buffer.Length)) != 0)
-            ms.Write(buffer, 0, count);
-        return JsonSerializer.Deserialize<List<Train>>(ms.ToArray());
+        }
     }
 
     public void FillMockValues()
     {
-        Insert(new Train("N322", "Moscowqqqqqqqqq", DateTime.ParseExact("14.12.1999", "dd.MM.yyyy", null)));
+        Insert(new Train("N322", "Moscow", DateTime.ParseExact("14.12.1999", "dd.MM.yyyy", null)));
         Insert(new Train("N321", "Peter", DateTime.ParseExact("14.12.2000", "dd.MM.yyyy", null)));
         Insert(new Train("N323", "Kaluga", DateTime.ParseExact("15.12.1999", "dd.MM.yyyy", null)));
         Insert(new Train("N324", "Tula", DateTime.ParseExact("14.11.1999", "dd.MM.yyyy", null)));

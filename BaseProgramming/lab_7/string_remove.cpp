@@ -21,6 +21,7 @@ void removeWithReallocate(char*& input, int &len, int start, int count)
     if (start + count > len)
     {
         cout << "Bad input" << endl;
+        return;
     }
     int newLen = len - count;
     char *newArray = new char[newLen];
@@ -34,6 +35,7 @@ void removeWithReallocate(char*& input, int &len, int start, int count)
         }
     }
     len = newLen;
+    newArray[len] = '\0';
     delete[] input;
     input = newArray;
 }
@@ -70,13 +72,13 @@ void print(const char* input, const int& len)
     cout << endl;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-    char *input = stringDuplicate("1234");
+    char *input = stringDuplicate(argv[1]);
     int len = length(input);
 
-    int start = 1;
-    int count = 2;
+    int start = stoi(argv[2]);
+    int count = stoi(argv[3]);
 
     len = remove(input, len, start, count);
 
@@ -85,5 +87,4 @@ int main()
     delete[] input;
 }
 
-// особождение памяти?
-// leaks --atExit -- ./lab_7
+

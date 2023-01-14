@@ -1,5 +1,4 @@
 using System;
-using AlgorithmsAndDataStructures._2_DataHash;
 
 namespace AlgorithmsAndDataStructures._3_Sorting;
 
