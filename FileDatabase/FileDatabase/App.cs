@@ -12,13 +12,12 @@ public class App
 
     private List<Train> _tempData;
 
+    private bool _running = true;
     public App(BdContext bdContext)
     {
         _bdContext = bdContext;
     }
-
-
-    private bool _running = true;
+    
 
     public void Run()
     {
@@ -48,12 +47,13 @@ public class App
         {
             case ConsoleKey.Q:
             {
-                _running = false;
+                if (Collector.GetApproval($"выхода"))
+                    _running = false;
                 return;
             }
             case ConsoleKey.S:
             {
-                if (Collector.GetApproval($"save"))
+                if (Collector.GetApproval($"сохранения"))
                     _bdContext.Save();
                 return;
             }
@@ -72,7 +72,7 @@ public class App
                     Sorter.Descending = !Sorter.Descending;
                     return;
                 }
-                if(Collector.GetApproval("to delete"))
+                if(Collector.GetApproval("удаления"))
                     _bdContext.Delete(_tempData.ElementAt(Cursor.Position));
 
                 return;
@@ -81,12 +81,12 @@ public class App
             {
                 if (Sorter.IsSorting)
                 {
-                    Sorter.SortBy("Id", train => train.Id);
+                    Sorter.SortBy("Ид", train => train.Id);
                 }
 
                 if (Filter.IsFiltering)
                 {
-                    Filter.IdFilter = Collector.GetId("filter");
+                    Filter.IdFilter = Collector.GetId("фильтр");
                 }
 
                 return;
@@ -95,20 +95,20 @@ public class App
             {
                 if (Sorter.IsSorting)
                 {
-                    Sorter.SortBy("TrainNumber", train => train.TrainNumber);
+                    Sorter.SortBy("Номер поезда", train => train.TrainNumber);
                 }
 
                 if (Filter.IsFiltering)
                 {
-                    Filter.TrainNumberFilter = Collector.GetTrainNumber("filter");
+                    Filter.TrainNumberFilter = Collector.GetTrainNumber("фильтр");
                 }
                 
                 if (Collector.IsChanging)
                 {
-                    var value =  Collector.GetTrainNumber("change");
+                    var value =  Collector.GetTrainNumber("значение изменения");
                     if(string.IsNullOrEmpty(value))
                         return;
-                    if (Collector.GetApproval($"to change on {value}"))
+                    if (Collector.GetApproval($"изменения на {value}"))
                         _bdContext.Update(_tempData.ElementAt(Cursor.Position).Id, (train) => train.TrainNumber = value);
                 }
 
@@ -118,20 +118,20 @@ public class App
             {
                 if (Sorter.IsSorting)
                 {
-                    Sorter.SortBy("PointName", train => train.PointName);
+                    Sorter.SortBy("Пункт назначения", train => train.PointName);
                 }
 
                 if (Filter.IsFiltering)
                 {
-                    Filter.PointNameFilter = Collector.GetPointName("filter");
+                    Filter.PointNameFilter = Collector.GetPointName("фильтр");
                 }
                 
                 if (Collector.IsChanging)
                 {
-                    var value =  Collector.GetPointName("change");
+                    var value =  Collector.GetPointName("значение изменения");
                     if(string.IsNullOrEmpty(value))
                         return;
-                    if (Collector.GetApproval($"change on {value}"))
+                    if (Collector.GetApproval($"изменения на {value}"))
                         _bdContext.Update(_tempData.ElementAt(Cursor.Position).Id, (train) => train.PointName = value);
                 }
 
@@ -141,20 +141,20 @@ public class App
             {
                 if (Sorter.IsSorting)
                 {
-                    Sorter.SortBy("DepartureTime", train => train.DepartureTime);
+                    Sorter.SortBy("Время отправления", train => train.DepartureTime);
                 }
 
                 if (Filter.IsFiltering)
                 {
-                    Filter.DepartureTimeFilter = Collector.GetDepartureTime("filter");
+                    Filter.DepartureTimeFilter = Collector.GetDepartureTime("фильтр");
                 }
                 
                 if (Collector.IsChanging)
                 {
-                    var value =  Collector.GetDepartureTime("change");
+                    var value =  Collector.GetDepartureTime("значения изменения");
                     if(value == null)
                         return;
-                    if (Collector.GetApproval($"change on {value}"))
+                    if (Collector.GetApproval($"изменения на {value}"))
                         _bdContext.Update(_tempData.ElementAt(Cursor.Position).Id, (train) => train.DepartureTime = value.Value);
                 }
 
@@ -165,7 +165,7 @@ public class App
                 Sorter.Reset();
                 Filter.IsFiltering = false;
                 Collector.IsChanging = false;
-                Filter.Clear();
+                Filter.Reset();
                 return;
             }
             case ConsoleKey.O:

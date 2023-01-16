@@ -14,7 +14,7 @@ public static class Sorter
 
     public static void SortBy<TField>(string sortByInfo, Func<Train, TField> fieldSorted)
     {
-        if (SortingInfo == $"sorting by {sortByInfo}")
+        if (SortingInfo == $"сортировка по {sortByInfo}")
         {
             OrderCondition = list => list;
             SortingInfo = "";
@@ -22,7 +22,7 @@ public static class Sorter
         }
 
         OrderCondition = list => Descending ? list.OrderByDescending(fieldSorted) : list.OrderBy(fieldSorted);
-        SortingInfo = $"sorting by {sortByInfo}";
+        SortingInfo = $"сортировка по {sortByInfo}";
     }
 
     public static void Reset()

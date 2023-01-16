@@ -20,7 +20,7 @@ public static class Filter
         (PointNameFilter == null || v.PointName == PointNameFilter) &&
         (DepartureTimeFilter == null || v.DepartureTime.Equals(DepartureTimeFilter)));
 
-    public static void Clear()
+    public static void Reset()
     {
         IdFilter = null;
         TrainNumberFilter = null;
@@ -35,10 +35,10 @@ public static class Filter
 
     public static string GetActiveFilters()
     {
-        var id = IdFilter == null ? "" : $"NumberFilter = {IdFilter.Value}";
-        var trainNumber = TrainNumberFilter == null ? "" : $"TrainNumber = {TrainNumberFilter}";
-        var pointName = PointNameFilter == null ? "" : $"PointName = {PointNameFilter}";
-        var departureTime = DepartureTimeFilter == null ? "" : $"DepartureTime = {DepartureTimeFilter}";
+        var id = IdFilter == null ? "" : $"Ид = {IdFilter.Value}";
+        var trainNumber = TrainNumberFilter == null ? "" : $"Номер поезда = {TrainNumberFilter}";
+        var pointName = PointNameFilter == null ? "" : $"Пункт назначение = {PointNameFilter}";
+        var departureTime = DepartureTimeFilter == null ? "" : $"Время отправления = {DepartureTimeFilter}";
         return $"{id} {trainNumber} {pointName} {departureTime}";
     }
 }

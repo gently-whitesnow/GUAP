@@ -57,18 +57,18 @@ public static class Printer
     
     public static void PrintHeader()
     {
-        var formattedId = "| " + "Id".PadRight(5);
-        var formattedTrainNumber = " | " + "TrainNumber".PadRight(15);
-        var formattedPointName = " | " + "PointName".PadRight(20);
-        var formattedDepartureTime = " | " + "DepartureTime".PadRight(20) + " |";
-        var additionalInfo = " 🔼 - Up, 🔽 - Down";
+        var formattedId = "| " + "Ид".PadRight(5);
+        var formattedTrainNumber = " | " + "Номер поезда".PadRight(15);
+        var formattedPointName = " | " + "Пункт назначения".PadRight(20);
+        var formattedDepartureTime = " | " + "Время отправления".PadRight(20) + " |";
+        var additionalInfo = " 🔼 - Вверх, 🔽 - Вниз";
 
         Speech($"{formattedId}{formattedTrainNumber}{formattedPointName}{formattedDepartureTime}{additionalInfo}");
         if (Cursor.ViewRange.Min != 0)
             Prompt(".........................................................................");
     }
 
-    public static  void PrintData(List<Train> data)
+    public static void PrintData(List<Train> data)
     {
         for (int i = Cursor.ViewRange.Min; i <= Cursor.ViewRange.Max; i++)
         {
@@ -90,41 +90,41 @@ public static class Printer
             Prompt(".........................................................................");
         Console.WriteLine();
 
-        Step("For SORT press: 'O'");
+        Step("Для СОРТИРОВКИ нажмите 'O'");
         if (Sorter.IsSorting)
         {
-            Step("'1' - Id\t '2' - TrainNumber\t '3' - PointName\t '4' - DepartureTime \t 'D' - Descending");
+            Step("'1' - Ид\t '2' - Номер поезда\t '3' - Пункт Назначения\t '4' - Время отправления \t 'D' - Направление сортировки");
         }
         else
         {
-            Step("For DELETE press: 'D'");
+            Step("Для УДАЛЕНИЯ нажмите 'D'");
         }
 
         if (!string.IsNullOrEmpty(Sorter.SortingInfo))
         {
-            var orderingInfo = Sorter.Descending ? "Descending" : "Ascending";
+            var orderingInfo = Sorter.Descending ? "Убывающая" : "Возрастающая";
             Warning(orderingInfo + $" {Sorter.SortingInfo}");
         }
 
-        Step("For FILTER press: 'F'");
+        Step("Для ПОИСКА нажмите 'F'");
         if (Filter.IsFiltering)
         {
-            Step("'1' - Id\t '2' - TrainNumber\t '3' - PointName\t '4' - DepartureTime");
+            Step("'1' - Ид\t '2' - Номер поезда\t '3' - Пункт Назначения\t '4' - Время отправления");
         }
 
         if (Filter.IsNotEmpty())
-            Warning($"Active filter {Filter.GetActiveFilters()}");
+            Warning($"Активные фильтры: {Filter.GetActiveFilters()}");
         
-        Step("For CHANGE press: 'C'");
+        Step("Для ИЗМЕНЕНИЯ нажмите 'C'");
         if (Collector.IsChanging)
         {
-            Step("'2' - TrainNumber\t '3' - PointName\t '4' - DepartureTime");
+            Step("'2' - Номер поезда\t '3' - Пункт Назначения\t '4' - Время отправления");
         }
-        Step("For ADD press: 'A'");
-        Step("For SAVE press: 'S'");
+        Step("Для ДОБАВЛЕНИЯ нажмите 'A'");
+        Step("Для СОХРАНЕНИЯ нажмите 'S'");
         
         Console.WriteLine();
-        Console.WriteLine("Press 'R' to reset");
-        Console.WriteLine("Press 'Q' to leave");
+        Console.WriteLine("Нажмите 'R' для сброса");
+        Console.WriteLine("Нажмите 'Q' для выхода");
     }
 }

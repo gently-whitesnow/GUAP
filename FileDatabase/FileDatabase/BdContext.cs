@@ -9,10 +9,10 @@ namespace FileDatabase;
 
 public class BdContext
 {
-    string path = "trains.json";
+    private const string Path = "trains.json";
 
     private int _id = 1;
-    private List<Train> staticData = new();
+    private readonly List<Train> _staticData = new();
 
     public BdContext()
     {
@@ -21,51 +21,76 @@ public class BdContext
             FillMockValues();
         else
         {
-            staticData = loadedData;
-            _id = staticData.Count;
+            _staticData = loadedData;
+            _id = _staticData.Max(d=>d.Id);
         }
     }
 
+    /// <summary>
+    /// Получение данных с применением фильтра и сортировки
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="order"></param>
+    /// <returns></returns>
     public List<Train> Select(Func<IEnumerable<Train>, IEnumerable<Train>> filter,
         Func<IEnumerable<Train>, IEnumerable<Train>> order)
     {
-        return order(filter(staticData)).ToList();
+        return order(filter(_staticData)).ToList();
     }
 
+    /// <summary>
+    /// Добавить новый объект
+    /// </summary>
+    /// <param name="train"></param>
     public void Insert(Train train)
     {
-        train.Id = _id++;
-        staticData.Add(train);
+        train.Id = ++_id;
+        _staticData.Add(train);
     }
 
+    /// <summary>
+    /// Изменить объект
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="updateFunc"></param>
     public void Update(int id, Action<Train> updateFunc)
     {
-        updateFunc(staticData.First(d => d.Id == id));
+        updateFunc(_staticData.First(d => d.Id == id));
     }
 
+    /// <summary>
+    /// Удалить объект
+    /// </summary>
+    /// <param name="train"></param>
     public void Delete(Train train)
     {
-        staticData.Remove(train);
+        _staticData.Remove(train);
     }
 
+    /// <summary>
+    /// Сохранить данные в файл
+    /// </summary>
     public void Save()
     {
-        File.WriteAllText(path, string.Empty);
-        var bytes = JsonSerializer.SerializeToUtf8Bytes(staticData);
-        using var writer = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate));
+        File.WriteAllText(Path, string.Empty);
+        var bytes = JsonSerializer.SerializeToUtf8Bytes(_staticData);
+        using var writer = new BinaryWriter(File.Open(Path, FileMode.OpenOrCreate));
         writer.Write(bytes);
         Printer.Success("Success");
         Thread.Sleep(1000);
     }
 
-
+    /// <summary>
+    /// Загрузить данные из файла
+    /// </summary>
+    /// <returns></returns>
     public List<Train>? Load()
     {
         try
         {
-            if (!File.Exists(path))
+            if (!File.Exists(Path))
                 return null;
-            using BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open));
+            using BinaryReader reader = new BinaryReader(File.Open(Path, FileMode.Open));
             const int bufferSize = 4096;
             using var ms = new MemoryStream();
             var buffer = new byte[bufferSize];
@@ -81,6 +106,9 @@ public class BdContext
         }
     }
 
+    /// <summary>
+    /// В случае отсутствия файла, загрузить тестовые данные
+    /// </summary>
     public void FillMockValues()
     {
         Insert(new Train("N322", "Moscow", DateTime.ParseExact("14.12.1999", "dd.MM.yyyy", null)));

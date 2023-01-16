@@ -2,14 +2,13 @@ using System;
 
 namespace FileDatabase;
 
-public struct Train
-{
+public class Train
+{ 
     public Train(string trainNumber, string pointName, DateTime departureTime)
     {
         TrainNumber = trainNumber;
         PointName = pointName;
         DepartureTime = departureTime;
-        Id = 0;
     }
 
     /// <summary>
