@@ -11,18 +11,18 @@ public class BdContext
 {
     private const string Path = "trains.json";
 
-    private int _id = 1;
+    private int _id = 0;
     private readonly List<Train> _staticData = new();
 
     public BdContext()
     {
         var loadedData = Load();
         if (loadedData == null || loadedData.Count == 0)
-            FillMockValues();
+            throw new Exception("Не удалось считать файл");
         else
         {
             _staticData = loadedData;
-            _id = _staticData.Max(d=>d.Id);
+            _id = _staticData.Max(d => d.Id);
         }
     }
 

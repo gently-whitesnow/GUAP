@@ -17,7 +17,7 @@ public static class Filter
     public static Func<IEnumerable<Train>, IEnumerable<Train>> FilterCondition = (list) => list.Where(v =>
         (IdFilter == null || v.Id == IdFilter.Value) &&
         (TrainNumberFilter == null || v.TrainNumber == TrainNumberFilter) &&
-        (PointNameFilter == null || v.PointName == PointNameFilter) &&
+        (PointNameFilter == null || v.PointName.ToLower().Contains(PointNameFilter.ToLower())) &&
         (DepartureTimeFilter == null || v.DepartureTime.Equals(DepartureTimeFilter)));
 
     public static void Reset()
