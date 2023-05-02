@@ -6,4 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\HowTo.DataAccess\HowTo.DataAccess.csproj" />
+    </ItemGroup>
 </Project>

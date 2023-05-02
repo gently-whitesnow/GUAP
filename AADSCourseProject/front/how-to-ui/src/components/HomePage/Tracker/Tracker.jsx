@@ -1,36 +1,43 @@
 import { observer } from "mobx-react-lite";
 import {
   TrackerWrapper,
-  StyledSquircle,
+  TrackerBody,
   LeftSide,
   RightSide,
   Description,
   Title,
-  ProgressBar,
-  ProgressBarWrapper,
-  ProgressBarTitle,
-  Bar,
   RightUpSide,
   RightBottomSide,
-  LeftSideStyledSquircle,
-} from "./Tracker.jsx.styles";
-import { Squircle } from "corner-smoothing";
+  LeftSideImage,
+  ContinueButton,
+} from "./Tracker.styles";
+
+
 import Image from "react-graceful-image";
+import theme from "../../../theme";
+import { useNavigate } from "react-router";
+import ProgressBar from "../ProgressBar/ProgressBar";
+import { useStore } from "../../../store";
 
 const Tracker = () => {
+  const { colorStore } = useStore();
+  const { getColorTheme } = colorStore;
+
+  const navigate = useNavigate();
+  const onClickHandler = () => {
+    navigate("/ast");
+  };
+
+ 
   return (
     <TrackerWrapper>
-      <Squircle cornerRadius={40} borderWidth={1} as={StyledSquircle}>
+      <TrackerBody onClick={onClickHandler}>
         <LeftSide>
-          <Squircle
-            cornerRadius={40}
-            borderWidth={1}
-            as={LeftSideStyledSquircle}
-          />
+          <LeftSideImage color={getColorTheme()}></LeftSideImage>
         </LeftSide>
         <RightSide>
           <RightUpSide>
-            <Title>C++ для сишарпников</Title>
+            <Title color={getColorTheme()}>C++ для сишарпников</Title>
             <Description>
               Перед вами учебник по основам языка C++. При его создании мы
               вдохновлялись специализацией «Искусство разработки на современном
@@ -40,17 +47,11 @@ const Tracker = () => {
             </Description>
           </RightUpSide>
           <RightBottomSide>
-            <ProgressBarWrapper>
-              <ProgressBarTitle>2/5</ProgressBarTitle>
-              <ProgressBar>
-                <Bar className="active first">&nbsp;</Bar>
-                <Bar className="active">&nbsp;</Bar>
-                <Bar className="last">&nbsp;</Bar>
-              </ProgressBar>
-            </ProgressBarWrapper>
+            <ContinueButton color={getColorTheme()} className="continue-button">Продолжить</ContinueButton>
+            <ProgressBar percents={Math.round(2/3*100)} color={getColorTheme()}/>
           </RightBottomSide>
         </RightSide>
-      </Squircle>
+      </TrackerBody>
     </TrackerWrapper>
   );
 };

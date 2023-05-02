@@ -9,15 +9,16 @@ const GlobalStyles = createGlobalStyle`
 }
 
   #page {
-
+    
    
 
   }
   html, body {
     margin:0;
     padding:0;
-    height:100%; 
+    height:100vh; 
     font-family: 'Raleway', sans-serif;
+    background-color: whitesmoke;
 }
 
 
@@ -28,3 +29,4 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 export default GlobalStyles;
+

@@ -1,11 +1,12 @@
 import { observer } from "mobx-react-lite";
 import { HomePageWrapper } from "./HomePage.styles";
-import { Squircle } from 'corner-smoothing'
 import Tracker from "./Tracker/Tracker";
+import CourseHolder from "./CourseHolder/CourseHolder";
 
 const HomePage = () => {
   return <HomePageWrapper>
     <Tracker/>
+    <CourseHolder/>
   </HomePageWrapper>;
 };
 

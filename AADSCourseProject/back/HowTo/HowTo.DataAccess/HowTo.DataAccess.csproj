@@ -6,4 +6,13 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Helpers" />
+      <Folder Include="Repositories" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\HowTo.Entities\HowTo.Entities.csproj" />
+    </ItemGroup>
+    
 </Project>
