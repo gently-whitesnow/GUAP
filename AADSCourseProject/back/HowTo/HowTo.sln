@@ -6,8 +6,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HowTo.DataAccess", "HowTo.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HowTo.Entities", "HowTo.Entities\HowTo.Entities.csproj", "{7DCB33E0-5D5C-4914-97B1-E7C4F1117C04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{CD4BF3F9-2E08-4868-AD32-0598BBDA487E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,9 +24,5 @@ Global
 		{7DCB33E0-5D5C-4914-97B1-E7C4F1117C04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DCB33E0-5D5C-4914-97B1-E7C4F1117C04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DCB33E0-5D5C-4914-97B1-E7C4F1117C04}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD4BF3F9-2E08-4868-AD32-0598BBDA487E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD4BF3F9-2E08-4868-AD32-0598BBDA487E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD4BF3F9-2E08-4868-AD32-0598BBDA487E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD4BF3F9-2E08-4868-AD32-0598BBDA487E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
