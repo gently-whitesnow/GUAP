@@ -1,4 +1,4 @@
-namespace HowTo.Entities;
+namespace HowTo.Entities.Options;
 
 public class DbSettings
 {

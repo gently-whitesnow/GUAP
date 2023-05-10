@@ -1,14 +1,25 @@
+using System;
+using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors;
 using ATI.Services.Common.Extensions;
 using ATI.Services.Common.Initializers;
 using ATI.Services.Common.Metrics;
+using HowTo.DataAccess.Helpers;
 using HowTo.DataAccess.Managers;
 using HowTo.DataAccess.Repositories;
 using HowTo.Entities;
+using HowTo.Entities.Options;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using ConfigurationManager = ATI.Services.Common.Behaviors.ConfigurationManager;
 
 namespace HowTo;
@@ -59,6 +70,7 @@ public static class Startup
     public static IServiceCollection WithOptions(this IServiceCollection services)
     {
         services.ConfigureByName<DbSettings>();
+        services.ConfigureByName<FileSystemOptions>();
         return services;
     }
     public static IServiceCollection WithServices(this IServiceCollection services)
@@ -79,19 +91,28 @@ public static class Startup
         return services;
     }
     
+    public static IServiceCollection WithHelpers(this IServiceCollection services)
+    {
+        services.AddSingleton<FileSystemHelper>();
+        return services;
+    }
+    
     public static IServiceCollection WithMangers(this IServiceCollection services)
     {
         services.AddSingleton<ArticleManager>();
         services.AddSingleton<CourseManager>();
         services.AddSingleton<SummaryManager>();
         services.AddSingleton<ViewManager>();
+        services.AddSingleton<UserInfoManager>();
         return services;
     }
     public static IServiceCollection WithRepositories(this IServiceCollection services)
     {
+        services.AddSingleton<ApplicationContext>();
         services.AddSingleton<ArticleRepository>();
         services.AddSingleton<CourseRepository>();
         services.AddSingleton<ViewRepository>();
+        services.AddSingleton<UserInfoRepository>();
         return services;
     }
 

@@ -2,13 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-
-    <ItemGroup>
-      <Folder Include="Helpers" />
-    </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\HowTo.Entities\HowTo.Entities.csproj" />

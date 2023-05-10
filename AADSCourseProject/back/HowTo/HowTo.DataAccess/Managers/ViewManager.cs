@@ -1,20 +1,22 @@
+using System;
+using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors;
-using Microsoft.AspNetCore.Mvc;
+using HowTo.DataAccess.Repositories;
+using HowTo.Entities;
+using HowTo.Entities.Views;
 
 namespace HowTo.DataAccess.Managers;
 
 public class ViewManager
 {
-    private readonly ViewManager _viewManager;
-
-
-    public ViewManager(ViewManager viewManager)
+    private readonly ViewRepository _viewRepository;    
+    public ViewManager(ViewRepository viewRepository)
     {
-        _viewManager = viewManager;
+        _viewRepository = viewRepository;
     }
-    
-    public async Task<OperationResult> AddApprovedViewAsync(Guid articleId)
+
+    public Task<OperationResult<ViewDto>> AddViewAsync(int articleId, User user)
     {
-        return new (ActionStatus.Ok);
+        return _viewRepository.UpsertViewAsync(articleId, user);
     }
 }

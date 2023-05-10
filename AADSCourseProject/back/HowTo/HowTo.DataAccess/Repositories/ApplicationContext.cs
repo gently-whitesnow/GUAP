@@ -1,6 +1,8 @@
 using HowTo.Entities;
 using HowTo.Entities.Article;
 using HowTo.Entities.Course;
+using HowTo.Entities.Options;
+using HowTo.Entities.UserInfo;
 using HowTo.Entities.Views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -14,6 +16,7 @@ public class ApplicationContext : DbContext
     public DbSet<ArticleDto> ArticleDtos { get; set; }
     public DbSet<CourseDto> CourseDtos { get; set; }
     public DbSet<ViewDto> ViewDtos { get; set; }
+    public DbSet<UserInfoDto> UserInfoDtos { get; set; }
     
     public ApplicationContext(IOptions<DbSettings> options)
     {

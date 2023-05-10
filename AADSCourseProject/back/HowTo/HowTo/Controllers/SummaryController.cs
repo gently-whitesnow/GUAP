@@ -1,9 +1,12 @@
+using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors.OperationBuilder.Extensions;
 using HowTo.DataAccess.Managers;
+using HowTo.Entities.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HowTo;
+namespace HowTo.Controllers;
 
+[FakeAuthorizationRequired]
 public class SummaryController : Controller
 {
     private readonly SummaryManager _summaryManager;
@@ -18,8 +21,9 @@ public class SummaryController : Controller
     /// </summary>
     [HttpGet]
     [Route("api/summary/courses")]
-    public Task<IActionResult> GetSummaryCourses()
+    public Task<IActionResult> GetSummaryCoursesAsync()
     {
-        return _summaryManager.GetSummaryAsync().AsActionResultAsync();
+        var user = HttpContext.GetUser();
+        return _summaryManager.GetSummaryAsync(user).AsActionResultAsync();
     }
 }

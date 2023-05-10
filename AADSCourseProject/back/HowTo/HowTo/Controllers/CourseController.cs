@@ -1,10 +1,15 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors.OperationBuilder.Extensions;
 using HowTo.DataAccess.Managers;
 using HowTo.Entities.Course;
+using HowTo.Entities.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HowTo;
+namespace HowTo.Controllers;
 
+[FakeAuthorizationRequired]
 public class CourseController : Controller
 {
     private readonly CourseManager _courseManager;
@@ -15,13 +20,15 @@ public class CourseController : Controller
     }
 
     /// <summary>
-    /// Создание курса
+    /// Добавление/обновление курса
     /// </summary>
     [HttpPost]
     [Route("api/courses")]
-    public Task<IActionResult> CreateCourseAsync(CreateCourseRequest request)
+    [ValidateModelState]
+    public Task<IActionResult> UpsertCourseAsync(UpsertCourseRequest request)
     {
-        return _courseManager.CreateCourseAsync(request).AsActionResultAsync();
+        var user = HttpContext.GetUser();
+        return _courseManager.UpsertCourseAsync(request, user).AsActionResultAsync();
     }
 
     /// <summary>
@@ -29,9 +36,10 @@ public class CourseController : Controller
     /// </summary>
     [HttpPost]
     [Route("api/courses/{coursePath}")]
-    public Task<IActionResult> GetCourseAsync([FromRoute] string coursePath)
+    [ValidateModelState]
+    public Task<IActionResult> GetCourseAsync([FromRoute][Required] string coursePath)
     {
-        return _courseManager.GetCourseAsync(coursePath).AsActionResultAsync();
+        return _courseManager.GetCourseByPathAsync(coursePath).AsActionResultAsync();
     }
     
     /// <summary>
@@ -39,7 +47,8 @@ public class CourseController : Controller
     /// </summary>
     [HttpDelete]
     [Route("api/courses/{courseId}")]
-    public Task<IActionResult> DeleteArticleAsync([FromRoute] Guid courseId)
+    [ValidateModelState]
+    public Task<IActionResult> DeleteArticleAsync([FromRoute][Required] int courseId)
     {
         return _courseManager.DeleteCourseAsync(courseId).AsActionResultAsync();
     }

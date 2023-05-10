@@ -1,16 +1,21 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors.OperationBuilder.Extensions;
 using HowTo.DataAccess.Managers;
+using HowTo.Entities.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HowTo.Controllers;
 
+[FakeAuthorizationRequired]
 public class ViewController : Controller
 {
-    private readonly ViewManager _viewManager;
+    private readonly UserInfoManager _userInfoManager;
 
-    public ViewController(ViewManager viewManager)
+    public ViewController(UserInfoManager userInfoManager)
     {
-        _viewManager = viewManager;
+        _userInfoManager = userInfoManager;
     }
 
     /// <summary>
@@ -18,8 +23,10 @@ public class ViewController : Controller
     /// </summary>
     [HttpPost]
     [Route("api/views/approved")]
-    public Task<IActionResult> CreateCourseAsync(Guid articleId)
+    [ValidateModelState]
+    public Task<IActionResult> CreateCourseAsync([FromBody][Required] int articleId)
     {
-        return _viewManager.AddApprovedViewAsync(articleId).AsActionResultAsync();
+        var user = HttpContext.GetUser();
+        return _userInfoManager.AddApprovedViewAsync(user, articleId).AsActionResultAsync();
     }
 }

@@ -1,10 +1,13 @@
+using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors.OperationBuilder.Extensions;
 using HowTo.DataAccess.Managers;
 using HowTo.Entities.Article;
+using HowTo.Entities.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HowTo;
+namespace HowTo.Controllers;
 
+[FakeAuthorizationRequired]
 public class ArticleController: Controller
 {
     private readonly ArticleManager _articleManager;
@@ -15,13 +18,14 @@ public class ArticleController: Controller
     }
 
     /// <summary>
-    /// Создание статьи
+    /// Добавление/обновление статьи
     /// </summary>
     [HttpPost]
     [Route("api/articles")]
-    public Task<IActionResult> CreateArticleAsync(CreateArticleRequest request)
+    public Task<IActionResult> UpsertArticleAsync(UpsertArticleRequest request)
     {
-        return _articleManager.CreateArticleAsync(request).AsActionResultAsync();
+        var user = HttpContext.GetUser();
+        return _articleManager.UpsertArticleAsync(request, user).AsActionResultAsync();
     }
     
     /// <summary>
@@ -29,7 +33,7 @@ public class ArticleController: Controller
     /// </summary>
     [HttpDelete]
     [Route("api/articles/{articleId}")]
-    public Task<IActionResult> DeleteArticleAsync([FromRoute] Guid articleId)
+    public Task<IActionResult> DeleteArticleAsync([FromRoute] int articleId)
     {
         return _articleManager.DeleteArticleAsync(articleId).AsActionResultAsync();
     }
@@ -38,9 +42,10 @@ public class ArticleController: Controller
     /// Получение контента статьи
     /// </summary>
     [HttpPost]
-    [Route("api/courses/{coursePath}/{articlePath}")]
+    [Route("api/articles/{coursePath}/{articlePath}")]
     public Task<IActionResult> GetArticleContentAsync([FromRoute] string coursePath, [FromRoute] string articlePath)
     {
-        return _articleManager.GetArticleContentAsync(coursePath, articlePath).AsActionResultAsync();
+        var user = HttpContext.GetUser();
+        return _articleManager.GetArticleContentAsync(coursePath, articlePath, user).AsActionResultAsync();
     }
 }

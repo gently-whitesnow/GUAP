@@ -1,7 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
 namespace HowTo.Entities.Views;
 
 public class ViewDto
 {
-    public Guid EntityId { get; set; }
-    public HashSet<Guid> UserId { get; set; }
+    [Required]
+    public int Id { get; set; }
+    
+    [Required]
+    public List<UserIdEntity> Viewers { get; set; }
 }
