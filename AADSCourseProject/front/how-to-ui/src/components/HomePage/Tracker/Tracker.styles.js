@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import theme from "../../../theme.js";
 
 export const TrackerWrapper = styled.div`
   display: flex;
@@ -11,7 +10,7 @@ export const TrackerWrapper = styled.div`
 export const TrackerBody = styled.div`
   margin-top: 30px;
   display: flex;
-  height: 400px;
+  height: 300px;
   cursor: pointer;
   max-width: 1148px;
 
@@ -23,7 +22,7 @@ export const TrackerBody = styled.div`
 `;
 
 export const LeftSide = styled.div`
-  flex: 5;
+  flex: 4;
   margin-left: 10px;
 `;
 
@@ -35,7 +34,7 @@ export const LeftSideImage = styled.div`
 `;
 
 export const RightSide = styled.div`
-  flex: 8;
+  flex: 10;
   margin-right: 10px;
   padding: 20px;
   display: flex;
@@ -47,7 +46,7 @@ export const RightUpSide = styled.div``;
 export const RightBottomSide = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end
 `;
 
 export const Title = styled.div`
@@ -62,7 +61,7 @@ export const Description = styled.div`
 `;
 
 export const ContinueButton = styled.div`
-  font-size: 48px;
+  font-size: 36px;
   width: 80%;
   text-align: center;
   color: ${(props) => props.color};

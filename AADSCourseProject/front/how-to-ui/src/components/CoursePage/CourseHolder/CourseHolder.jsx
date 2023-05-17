@@ -1,3 +1,4 @@
+import { useStore } from "../../../store";
 import CourseButton from "../CourseButton/CourseButton";
 import {
   CourseHolderContent,
@@ -7,13 +8,26 @@ import {
 import { observer } from "mobx-react-lite";
 
 const CourseHolder = (props) => {
+  const {  courseStore } = useStore();
+  const {
+    id,
+    articles,
+    updateArticle
+  } = courseStore;
+
   let counter = 1;
   return (
     <CourseHolderWrapper>
       <CourseHolderContent>
-      <CourseButton counter={counter++} active={true} color={props.color}/>
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((answer, i) => {
-          return <CourseButton counter={counter++} color={props.color} />;
+        {articles?.map((article) => {
+          return (
+            <CourseButton
+              counter={counter++}
+              color={props.color}
+              article={article}
+              updateArticle={updateArticle}
+            />
+          );
         })}
       </CourseHolderContent>
     </CourseHolderWrapper>

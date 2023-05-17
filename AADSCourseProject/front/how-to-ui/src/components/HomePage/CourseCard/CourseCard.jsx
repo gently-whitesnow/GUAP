@@ -17,7 +17,7 @@ const CourseCard = (props) => {
     <CourseCardWrapper  color={props.color}  onClick={onClickHandler}>
       <CourseCardContent>
         <CardImage  color={props.color}  className="card-image"></CardImage>
-        <CardTitle>{props.title?props.title:"C++ для сишарпников"}</CardTitle>
+        <CardTitle>{props.title??"C++ для сишарпников"}</CardTitle>
       </CourseCardContent>
     </CourseCardWrapper>
   );

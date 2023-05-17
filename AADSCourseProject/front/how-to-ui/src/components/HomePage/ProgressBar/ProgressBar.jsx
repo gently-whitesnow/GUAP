@@ -3,7 +3,7 @@ import { Pie } from "./ProgressBar.styles";
 
 const ProgressBar = (props) => {
   return (
-      <Pie percentage={props.percents} color={props.color} className="animate" borderWidth="10px">{props.percents}%</Pie>
+      <Pie percentage={props.percents} color={props.color} className="animate" borderWidth="5px">{props.percents}%</Pie>
   );
 };
 

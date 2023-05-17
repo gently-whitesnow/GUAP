@@ -19,6 +19,10 @@ const GlobalStyles = createGlobalStyle`
     height:100vh; 
     font-family: 'Raleway', sans-serif;
     background-color: whitesmoke;
+
+    textarea{
+      font-family: 'Raleway', sans-serif;
+    }
 }
 
 
@@ -29,4 +33,3 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 export default GlobalStyles;
-

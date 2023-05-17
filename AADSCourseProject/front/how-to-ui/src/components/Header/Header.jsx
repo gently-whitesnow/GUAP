@@ -13,8 +13,9 @@ import Button from "../common/Button/Button";
 import { useStore } from "../../store";
 
 const Header = () => {
-  const { colorStore } = useStore();
+  const { colorStore, courseStore } = useStore();
   const { getColorTheme, setColorTheme } = colorStore;
+  const { addArticle } = courseStore;
 
   const navigate = useNavigate();
   const onClickHandler = (path) => {
@@ -24,34 +25,60 @@ const Header = () => {
   const location = useLocation();
   let path = location.pathname;
 
-  return (
-    <>
-      {path !== "/" ? (
-        <HeaderWrapper>
-          <HeaderContent>
+  let maybeIsCourse = path.length > 1;
+  let maybeIsArticle = path.substring(1, path.length).includes("/");
+
+  const getCurrentHeader = () => {
+    if (maybeIsCourse && maybeIsArticle) {
+      return (
+        <>
+          <Button
+            onClick={() =>
+              onClickHandler(path.substring(0, path.lastIndexOf("/")))
+            }
+            content="Назад"
+          />
+          <Colorimetr color={getColorTheme()} onClick={setColorTheme} />
+        </>
+      );
+    } else if (maybeIsCourse) {
+      return (
+        <>
+          <Button
+            onClick={() =>
+              onClickHandler(path.substring(0, path.lastIndexOf("/")))
+            }
+            content="Назад"
+          />
+          <ColorimetrWrapper>
             <Button
-              onClick={() =>
-                onClickHandler(path.substring(0, path.lastIndexOf("/")))
-              }
-              content="Назад"
+              onClick={() => addArticle()}
+              content="Добавить статью"
             />
             <Colorimetr color={getColorTheme()} onClick={setColorTheme} />
-          </HeaderContent>
-        </HeaderWrapper>
-      ) : (
-        <HeaderWrapper>
-          <HeaderContent>
-            <div />
-            <ColorimetrWrapper>
-              <Button
-                onClick={() => onClickHandler("/edit?create")}
-                content="Добавить курс"
-              />
-              <Colorimetr color={getColorTheme()} onClick={setColorTheme} />
-            </ColorimetrWrapper>
-          </HeaderContent>
-        </HeaderWrapper>
-      )}
+          </ColorimetrWrapper>
+        </>
+      );
+    }
+    return (
+      <>
+        <div />
+        <ColorimetrWrapper>
+          <Button
+            onClick={() => onClickHandler("/edit?create")}
+            content="Добавить курс"
+          />
+          <Colorimetr color={getColorTheme()} onClick={setColorTheme} />
+        </ColorimetrWrapper>
+      </>
+    );
+  };
+
+  return (
+    <>
+      <HeaderWrapper>
+        <HeaderContent>{getCurrentHeader()}</HeaderContent>
+      </HeaderWrapper>
     </>
   );
 };

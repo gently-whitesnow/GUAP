@@ -4,7 +4,7 @@ export const Pie = styled.div`
   --p: ${props => props.percentage};
   --b: ${props => props.borderWidth};
   --c: ${props => props.color};
-  --w: 85px;
+  --w: 50px;
 
   width: var(--w);
   aspect-ratio: 1;
@@ -12,7 +12,7 @@ export const Pie = styled.div`
   display: inline-grid;
   margin: 5px;
   place-content: center;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: bold;
   font-family: sans-serif;
 

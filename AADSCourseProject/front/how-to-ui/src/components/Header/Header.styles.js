@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import theme from "../../theme.js";
 
 export const HeaderWrapper = styled.div`
   position: sticky;
@@ -7,6 +6,7 @@ export const HeaderWrapper = styled.div`
   background-color: rgba(255, 255, 255, 0.9);
   display: flex;
   justify-content: center;
+  z-index: 100;
 `;
 
 export const HeaderContent = styled.div`

@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import theme from "../../../theme";
 
 export const ButtonWrapper = styled.button`
   display: flex;
