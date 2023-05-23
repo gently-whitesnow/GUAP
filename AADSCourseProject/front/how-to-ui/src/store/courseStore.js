@@ -5,6 +5,7 @@ import api from "../api/api";
 class CourseStore {
   constructor(rootStore) {
     this.rootStore = rootStore;
+    this.stateStore = rootStore.stateStore;
     makeAutoObservable(this);
     configure({
       enforceActions: "never",
@@ -20,14 +21,12 @@ class CourseStore {
   courseData = [];
 
   id = undefined;
-  title = "Введите название курсафывдфывофды фвдлы фd";
+  title = "Введите название курса";
   description =
     "It is important to define your styled components outside of the render method, otherwise it will be recreated on every single render pass. Defining a styled component within the render method will thwart caching and drastically slow down rendering speed, and should be avoided.";
   path = "";
   createdAt = "";
   updatedAt = "";
-  isCourseEditing = false;
-  isCourseContributor = false;
 
   contributors = [];
   articles = [];
@@ -42,15 +41,42 @@ class CourseStore {
     this.description = text;
   };
 
-  setCourseData = (data) => {
-    this.title = data.title;
-    this.description = data.description;
-    this.articles = data.articles;
-    this.id = data.id;
-    this.path = data.path;
-    this.createdAt = data.created_at;
-    this.updatedAt = data.updated_at;
-    this.contributors = data.contributors;
+  setCourseData = (course) => {
+    this.title = course.title;
+    this.description = course.description;
+    this.articles = course.articles?.map((a) => {
+      return {
+        id: a.id,
+        courseId: a.course_id,
+        title: a.title,
+        createdAt: a.created_at,
+        updatedAt: a.updated_at,
+        author: { userId: a.author?.user_id, name: a.author?.name },
+        isAuthor: a.is_author,
+        isViewed: a.is_viewed,
+      };
+    });
+    this.id = course.id;
+    this.path = course.path;
+    this.createdAt = course.created_at;
+    this.updatedAt = course.updated_at;
+    this.contributors = course.contributors;
+    this.isAuthor = course.is_author;
+  };
+
+  setArticleData = (article) => {
+    if(this.articles === undefined) this.articles = [];
+
+    this.articles.push( {
+        id: article.id,
+        courseId: article.course_id,
+        title: article.title,
+        createdAt: article.created_at,
+        updatedAt: article.updated_at,
+        author: { userId: article.author?.user_id, name: article.author?.name },
+        isAuthor: article.is_author,
+      }
+    );
   };
 
   courseActionError = "";
@@ -59,38 +85,35 @@ class CourseStore {
     this.courseActionError = error;
   };
 
-  articleActionError = [];
+  newArticle = undefined;
 
-  setArticleActionError = (error) => {
-    this.articleActionError = error;
-  };
-
-  addArticle = () => {
-    this.articles.push({
-      id: this.articles.length != 0 ? this.articles.slice(-1).id + 1 : 0,
-      title: "Введите название статьи",
-      path: "/адрес-статьи",
+  addNewArticle = () => {
+    console.log("click");
+    if (this.newArticle !== undefined) {
+      return;
+    }
+    this.newArticle = {
+      title: "Введите название страницы",
       isAuthor: true,
-      isRead: true,
       isArticleEditing: true,
-    });
+      isNewArticle: true,
+      courseId: this.id,
+    };
   };
 
-  updateArticle = (id, title, path) => {
-    this.articles = this.articles.map((article) => {
-      console.log(article);
-      if (article.id === id) {
-        article.title = title;
-        article.path = path;
-        article.isArticleEditing = false;
-        article.isAuthor = true;
-      }
-      return article;
-    });
+  setNewArticle = (value) => {
+    this.newArticle = value;
   };
+
+  isCourseEditing = false;
 
   setIsCourseEditing = (value) => {
     this.isCourseEditing = value;
+  };
+
+  isAuthor = false;
+  setIsCourseContributor = (value) => {
+    this.isAuthor = value;
   };
 
   getCourse = (path) => {
@@ -103,60 +126,99 @@ class CourseStore {
       })
       .catch((err) => {
         this.setIsLoading(false);
-        // todo remove
-        this.isCourseEditing = true;
-        this.isCourseContributor = true;
-        //
 
         console.error(err);
         if (err.response?.status === 401) {
-          NavigateToAuthorize();
-        } else if (err.response?.status === 404) {
-          this.isCourseEditing = true;
-          this.isCourseContributor = true;
+          this.rootStore.stateStore.setIsAuthorized(false);
         }
+        let course = {
+          title: err.response?.data?.error,
+          description: err.response?.data?.reason,
+        };
+        this.setCourseData(course);
       });
   };
 
-  upsertCourse = (courseId, title, description, path, image) => {
+  upsertCourse = (courseId, title, description, image, callback) => {
     api
-      .upsertCourse(courseId, title, description, path, image)
+      .upsertCourse(courseId, title, description, image)
       .then(({ data }) => {
         this.setIsLoading(false);
         this.setCourseData(data);
         console.log(data);
         this.setIsCourseEditing(false);
+        callback(data.id);
       })
       .catch((err) => {
         this.setIsLoading(false);
         console.error(err);
-        this.setCourseActionError(err.response?.data?.message);
-        this.setCourseActionError("save Internal server error");
+        this.setCourseActionError(err.response?.data?.reason);
         if (err.response?.status === 401) {
-          NavigateToAuthorize();
+          this.rootStore.stateStore.setIsAuthorized(false);
         }
-        //todo remove
-        this.setIsCourseEditing(false);
+        callback();
       });
   };
 
-  deleteCourse = (courseId) => {
+  deleteCourse = (courseId, callback) => {
     api
       .deleteCourse(courseId)
       .then(({ data }) => {
         this.setIsLoading(false);
         // todo redirect and cleaning
+        callback(true);
       })
       .catch((err) => {
         this.setIsLoading(false);
         console.error(err);
-        this.setCourseActionError(err.response?.data?.message);
-        this.setCourseActionError("delete Internal server error");
+        this.setCourseActionError(err.response?.data?.reason);
         if (err.response?.status === 401) {
-          NavigateToAuthorize();
+          this.rootStore.stateStore.setIsAuthorized(false);
         }
-        //todo remove
-        this.setIsCourseEditing(false);
+        callback(false);
+      });
+  };
+
+  upsertArticle = (
+    articleId,
+    courseId,
+    title,
+    file,
+    isNewArticle,
+    errorCallback
+  ) => {
+    api
+      .upsertArticle(articleId, courseId, title, file)
+      .then(({ data }) => {
+        console.log(data);
+
+        if (isNewArticle) {
+          this.setNewArticle(undefined)
+          this.setArticleData(data);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+
+        if (err.response?.status === 401) {
+          this.rootStore.stateStore.setIsAuthorized(false);
+        }
+        errorCallback(err.response?.data?.reason);
+      });
+  };
+
+  deleteArticle = (courseId, articleId, errorCallback) => {
+    api
+      .deleteArticle(courseId, articleId)
+      .then(({ data }) => {
+        this.articles = this.articles.filter((obj) => obj.id !== articleId);
+      })
+      .catch((err) => {
+        console.error(err);
+        if (err.response?.status === 401) {
+          this.rootStore.stateStore.setIsAuthorized(false);
+        }
+        errorCallback(err.response?.data?.reason);
       });
   };
 }

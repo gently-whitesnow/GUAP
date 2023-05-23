@@ -2,15 +2,23 @@ import { observer } from "mobx-react-lite";
 import { Interweave } from "interweave";
 import { useState, useEffect, useCallback } from "react";
 import TestModule from "../TestModule/TestModule";
+import { useStore } from "../../../store";
 
 const MarkdownHandler = (props) => {
   const [articleContent, setArticleContent] = useState();
 
+  const { articleStore } = useStore();
+
+  const {
+    article
+  } = articleStore;
+
   useEffect(() => {
-    fillArticleContent(props.path);
-  }, []);
-  const fillArticleContent = (path) => {
-    readFile(path, (mdFile) => {
+    fillArticleContent();
+  }, [article.fileURL]);
+  const fillArticleContent = () => {
+
+    readFile(article.fileURL, (mdFile) => {
       let htmlFileString = convertToHtmlString(mdFile);
       let domElement = convertToDomElementsWithTestsApplying(htmlFileString);
       setArticleContent(domElement);
@@ -18,6 +26,9 @@ const MarkdownHandler = (props) => {
   };
 
   const readFile = (path, callback) => {
+    if(path===undefined){
+      return;
+    }
     console.log(path);
     var rawFile = new XMLHttpRequest();
     rawFile.open("GET", path, false);

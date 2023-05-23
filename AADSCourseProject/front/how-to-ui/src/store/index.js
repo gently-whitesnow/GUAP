@@ -5,6 +5,7 @@ import SummaryStore from "./summaryStore";
 import CourseStore from "./courseStore";
 import ArticleStore from "./articleStore";
 import ViewStore from "./viewStore";
+import StateStore from "./stateStore";
 
 class Store {
   constructor() {
@@ -15,6 +16,8 @@ class Store {
     this.courseStore = new CourseStore(this);
     this.articleStore = new ArticleStore(this);
     this.viewStore = new ViewStore(this);
+
+    this.stateStore = new StateStore(this);
   }
 }
 

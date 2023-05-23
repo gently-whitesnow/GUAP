@@ -5,6 +5,7 @@ using HowTo.DataAccess.Repositories;
 using HowTo.Entities;
 using HowTo.Entities.Article;
 using HowTo.Entities.UserInfo;
+using HowTo.Entities.ViewedEntity;
 
 namespace HowTo.DataAccess.Managers;
 
@@ -18,17 +19,17 @@ public class UserInfoManager
         _userInfoRepository = userInfoRepository;
     }
 
-    public Task<OperationResult<UserInfoDto>> AddApprovedViewAsync(User user, int articleId)
+    public Task<OperationResult<UserUniqueInfoDto>> AddApprovedViewAsync(User user, AddApprovedViewRequest request)
     {
-        return _userInfoRepository.AddApprovedViewAsync(user, articleId);
+        return _userInfoRepository.AddApprovedViewAsync(user, request);
     }
 
-    public Task<OperationResult<UserInfoDto>> SetLastReadCourseIdAsync(User user, int articleId)
+    public Task<OperationResult<UserUniqueInfoDto>> SetLastReadCourseIdAsync(User user, int articleId)
     {
         return _userInfoRepository.SetLastReadCourseIdAsync(user, articleId);
     }
     
-    public Task<OperationResult<UserInfoDto>> GetUserInfoAsync(User user)
+    public Task<OperationResult<UserUniqueInfoDto>> GetUserInfoAsync(User user)
     {
         return _userInfoRepository.GetUserInfoAsync(user);
     }

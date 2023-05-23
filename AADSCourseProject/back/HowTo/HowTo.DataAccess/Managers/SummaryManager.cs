@@ -29,25 +29,28 @@ public class SummaryManager
         if (allCoursesOperation is { Success: false, ActionStatus: ActionStatus.InternalServerError })
             return new(allCoursesOperation);
 
-        var lastCourse = allCoursesOperation.Value.FirstOrDefault(c => c.Id == userOperation.Value.LastReadCourseId) ??
-                         allCoursesOperation.Value.FirstOrDefault(c => c.Id == 1);
-        var lastExtendedInfoCourse = lastCourse == null
-            ? null
-            : new CourseExtendedSummary
-            {
-                Description = lastCourse?.Description,
-                Title = lastCourse.Title,
-                Path = lastCourse.Path
-            };
-        
+        var lastCourse = allCoursesOperation.Value.FirstOrDefault(c => c.Id == userOperation.Value?.LastReadCourseId) ??
+                         allCoursesOperation.Value.FirstOrDefault();
+        if (lastCourse == null)
+            return new OperationResult<SummaryResponse>();
+
         return new(new SummaryResponse
         {
             Courses = allCoursesOperation.Value.Select(c => new CourseSummary
             {
-                Path = c.Path,
+                Id = c.Id,
                 Title = c.Title,
             }).ToList(),
-            LastCourse = lastExtendedInfoCourse
+            
+            LastCourse = new CourseExtendedSummary
+            {
+                Id = lastCourse.Id,
+                Description = lastCourse!.Description,
+                Title = lastCourse.Title,
+                UserApprovedViews = userOperation.Value?.ApprovedViewArticleIds.
+                    Where(a=>a.CourseId == lastCourse.Id).Count() ?? 0,
+                ArticlesCount = lastCourse.Articles.Count
+            }
         });
     }
 }

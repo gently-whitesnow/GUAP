@@ -1,4 +1,5 @@
 import ArticlePage from "../ArticlePage/ArticlePage";
+import AuthPage from "../AuthPage/AuthPage";
 import CoursePage from "../CoursePage/CoursePage";
 import Header from "../Header/Header";
 import HomePage from "../HomePage/HomePage";
@@ -22,13 +23,19 @@ const Content = () => {
             }
           />
           <Route
-            path="/:course"
+            path="/auth"
+            element={
+              <AuthPage/>
+            }
+          />
+          <Route
+            path="/:courseId"
             element={
               <CoursePage/>
             }
           />
           <Route
-            path="/:course/:article"
+            path="/:courseId/:articleId"
             element={
               <ArticlePage/>
             }

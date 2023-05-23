@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors.OperationBuilder.Extensions;
 using HowTo.DataAccess.Managers;
@@ -22,7 +23,8 @@ public class ArticleController: Controller
     /// </summary>
     [HttpPost]
     [Route("api/articles")]
-    public Task<IActionResult> UpsertArticleAsync(UpsertArticleRequest request)
+    [ValidateModelState]
+    public Task<IActionResult> UpsertArticleAsync([FromForm] UpsertArticleRequest request)
     {
         var user = HttpContext.GetUser();
         return _articleManager.UpsertArticleAsync(request, user).AsActionResultAsync();
@@ -32,20 +34,23 @@ public class ArticleController: Controller
     /// Удаление статьи
     /// </summary>
     [HttpDelete]
-    [Route("api/articles/{articleId}")]
-    public Task<IActionResult> DeleteArticleAsync([FromRoute] int articleId)
+    [Route("api/articles/{courseId}/{articleId}")]
+    [ValidateModelState]
+    public Task<IActionResult> DeleteArticleAsync([Required][FromRoute] int courseId,
+        [Required][FromRoute] int articleId)
     {
-        return _articleManager.DeleteArticleAsync(articleId).AsActionResultAsync();
+        return _articleManager.DeleteArticleAsync(courseId, articleId).AsActionResultAsync();
     }
 
     /// <summary>
     /// Получение контента статьи
     /// </summary>
-    [HttpPost]
-    [Route("api/articles/{coursePath}/{articlePath}")]
-    public Task<IActionResult> GetArticleContentAsync([FromRoute] string coursePath, [FromRoute] string articlePath)
+    [HttpGet]
+    [Route("api/articles/{courseId}/{articleId}")]
+    [ValidateModelState]
+    public Task<IActionResult> GetArticleContentAsync([Required][FromRoute] int courseId, [Required][FromRoute] int articleId)
     {
         var user = HttpContext.GetUser();
-        return _articleManager.GetArticleContentAsync(coursePath, articlePath, user).AsActionResultAsync();
+        return _articleManager.GetArticleWithFileByIdAsync(courseId, articleId, user).AsActionResultAsync();
     }
 }

@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors;
 using HowTo.Entities;
 using HowTo.Entities.Article;
+using HowTo.Entities.Contributor;
 using HowTo.Entities.Course;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,16 +19,22 @@ public class ArticleRepository
         _db = applicationContext;
     }
 
-    public async Task<OperationResult<ArticleDto>> InsertArticleAsync(UpsertArticleRequest request, User user, CourseDto course)
+    public async Task<OperationResult<ArticleDto>> InsertArticleAsync(
+        UpsertArticleRequest request,
+        User user,
+        CourseDto course)
     {
         var dto = new ArticleDto
         {
-            Course = course,
+            CourseId = course.Id,
             Title = request.Title,
-            FullPath = request.FullPath,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            Author = user
+            Author = new ContributorEntity
+            {
+                UserId = user.Id,
+                Name = user.Name
+            }
         };
         try
         {
@@ -36,60 +44,95 @@ public class ArticleRepository
         }
         catch (Exception ex)
         {
-            return new OperationResult<ArticleDto>(ex);
+            return new(ex);
         }
     }
 
-    public async Task<OperationResult<ArticleDto>> UpdateArticleAsync(UpsertArticleRequest request, User user)
+    public async Task<OperationResult<ArticleDto>> UpsertArticleAsync(UpsertArticleRequest request, User user)
     {
         try
         {
-            var articleDto = await _db.ArticleDtos.FirstOrDefaultAsync(c => c.Id == request.ArticleId);
-            if (articleDto == null)
-            {
-                return new(ActionStatus.NotFound, "article_not_found", $"Article with id {request.ArticleId} not found");
-            }
+            var courseDto = await _db.CourseDtos
+                .Include(d => d.Articles)
+                .ThenInclude(a => a.Author)
+                .Include(d => d.Contributors)
+                .SingleOrDefaultAsync(c => c.Id == request.CourseId);
+            if (courseDto == null)
+                return new(Errors.CourseNotFound(request.CourseId));
 
-            articleDto.UpdatedAt = DateTime.UtcNow;
-            articleDto.Title = request.Title;
-            articleDto.FullPath = request.FullPath;
+            if (request.ArticleId == null)
+            {
+                var dto = new ArticleDto
+                {
+                    CourseId = courseDto.Id,
+                    Title = request.Title,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    Author = new ContributorEntity
+                    {
+                        UserId = user.Id,
+                        Name = user.Name
+                    }
+                };
+                courseDto.Articles.Add(dto);
+                await _db.SaveChangesAsync();
+                return new(dto);
+            }
+            var article = courseDto.Articles.FirstOrDefault(a => a.Id == request.ArticleId);
+            if (article == null)
+                return new(Errors.ArticleNotFound(request.CourseId, request.ArticleId.Value));
+            
+            courseDto.UpdatedAt = DateTimeOffset.Now;
+            if (courseDto.Contributors.All(u => u.UserId != user.Id))
+                courseDto.Contributors.Add(new ContributorEntity
+                {
+                    UserId = user.Id,
+                    Name = user.Name
+                });
+
+            article.UpdatedAt = DateTime.UtcNow;
+            article.Title = request.Title;
 
             await _db.SaveChangesAsync();
+            return new(article);
+        }
+        catch (Exception ex)
+        {
+            return new(ex);
+        }
+    }
+
+    public async Task<OperationResult<ArticleDto>> GetArticleByIdAsync(int courseId, int articleId)
+    {
+        try
+        {
+            var articleDto = await _db.ArticleDtos
+                .Include(d => d.Author)
+                .SingleOrDefaultAsync(a => a.Id == articleId && a.CourseId == courseId);
+            if (articleDto == null)
+                return new(Errors.ArticleNotFound(courseId, articleId));
+            
             return new(articleDto);
         }
         catch (Exception ex)
         {
-            return new OperationResult<ArticleDto>(ex);
-        }
-    }
-    
-    public async Task<OperationResult<ArticleDto>> GetArticleByPathAsync(string articlePath)
-    {
-        try
-        {
-            var articleDto = await _db.ArticleDtos.FirstOrDefaultAsync(c => c.FullPath == articlePath);
-            if (articleDto == null)
-            {
-                return new(ActionStatus.NotFound, "article_not_found", $"Article with path {articlePath} not found");
-            }
-
-            return new(articleDto);
-        }
-        catch (Exception ex)
-        {
-            return new OperationResult<ArticleDto>(ex);
+            return new(ex);
         }
     }
 
-    public async Task<OperationResult<ArticleDto>> DeleteArticleByIdAsync(int articleId)
+    public async Task<OperationResult<ArticleDto>> DeleteArticleByIdAsync(int courseId, int articleId)
     {
         try
         {
-            var articleDto = await _db.ArticleDtos.FirstOrDefaultAsync(c => c.Id == articleId);
+            var articleDto =
+                await _db.ArticleDtos
+                    .Include(d=>d.Author)
+                    .SingleOrDefaultAsync(c => c.CourseId == courseId && c.Id == articleId);
             if (articleDto == null)
             {
-                return new(ActionStatus.NotFound, "Article_not_found", $"Article with id {articleId} not found");
+                return new(Errors.ArticleNotFound(courseId, articleId));
             }
+
             _db.ArticleDtos.Remove(articleDto);
             await _db.SaveChangesAsync();
             return new(articleDto);

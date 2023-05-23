@@ -15,9 +15,9 @@ export const ArticlePageContent = styled.div`
 `;
 
 export const ArticlePageButtonsWrapper = styled.div`
-margin-top: 100px;
+  margin-top: 100px;
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
 `;
 
 export const ArticlePageDecorator = styled.div`

@@ -9,51 +9,45 @@ import theme from "../../theme";
 import MarkdownHandler from "./MarkdownHandler/MarkdownHandler";
 import Button from "../common/Button/Button";
 import OneClickButton from "../common/OneClickButton/OneClickButton";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useStore } from "../../store";
-import { useNavigate } from "react-router-dom";
-
+import { useParams } from "react-router-dom";
 
 const ArticlePage = () => {
-  const [readed, setReaded] = useState(false);
+  const { colorStore, articleStore, viewStore } = useStore();
+  const { getColorTheme } = colorStore;
 
-  const { colorStore, courseStore, articleStore } = useStore();
-  const {
-    getColorTheme
-  } = colorStore;
+  const { courseId, articleId } = useParams();
+  const { setIsLoading, getArticle, article, setArticleIsViewed } =
+    articleStore;
 
-  const {
-    courseData,
-    getCourse
-  } = courseStore;
-
-  const {
-    setIsLoading,
-    articleData,
-    getArticle
-  } = articleStore;
+  const { addApprovedView } = viewStore;
 
   useEffect(() => {
     setIsLoading(true);
-    getArticle();
-    getCourse();
+    getArticle(courseId, articleId);
   }, []);
 
-  const navigate = useNavigate();
-  const onClickHandler = () => {
-    navigate("/ast/reabase");
+  const onReadedClickHandler = () => {
+    setArticleIsViewed(true);
+    addApprovedView(article.courseId, article.id);
   };
 
   return (
     <ArticlePageWrapper>
       <ArticlePageContent>
         <ArticlePageDecorator color={getColorTheme()}>
-          <MarkdownHandler path="/example.md" color={getColorTheme()} />
+          <MarkdownHandler color={getColorTheme()} />
         </ArticlePageDecorator>
         <ArticlePageButtonsWrapper>
-          <OneClickButton content="Прочитана" onClick={()=>setReaded(!readed)} active={readed} color={getColorTheme()}/>
-
-          <Button content="Следующая статья" onClick={onClickHandler}/>
+          {article != undefined ? (
+            <OneClickButton
+              content="Прочитана"
+              onClick={onReadedClickHandler}
+              active={article.isViewed}
+              color={getColorTheme()}
+            />
+          ) : null}
         </ArticlePageButtonsWrapper>
       </ArticlePageContent>
     </ArticlePageWrapper>

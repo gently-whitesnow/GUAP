@@ -11,11 +11,13 @@ import { useNavigate } from "react-router";
 import { useLocation } from "react-router-dom";
 import Button from "../common/Button/Button";
 import { useStore } from "../../store";
+import { useEffect } from "react";
 
 const Header = () => {
-  const { colorStore, courseStore } = useStore();
+  const { colorStore, courseStore, stateStore } = useStore();
   const { getColorTheme, setColorTheme } = colorStore;
-  const { addArticle } = courseStore;
+  const { addNewArticle } = courseStore;
+  const { isAuthorized, isNotFound, setIsNotFound } = stateStore;
 
   const navigate = useNavigate();
   const onClickHandler = (path) => {
@@ -24,6 +26,18 @@ const Header = () => {
 
   const location = useLocation();
   let path = location.pathname;
+
+  useEffect(() => {
+
+    if (!isAuthorized) {
+      navigate("/auth");
+    } else if(isAuthorized && path.includes("auth") || isNotFound) {
+      setIsNotFound(false);
+      navigate("/");
+    }
+  }, [isAuthorized, isNotFound]);
+
+  
 
   let maybeIsCourse = path.length > 1;
   let maybeIsArticle = path.substring(1, path.length).includes("/");
@@ -52,8 +66,8 @@ const Header = () => {
           />
           <ColorimetrWrapper>
             <Button
-              onClick={() => addArticle()}
-              content="Добавить статью"
+              onClick={() => addNewArticle()}
+              content="Добавить страницу"
             />
             <Colorimetr color={getColorTheme()} onClick={setColorTheme} />
           </ColorimetrWrapper>
@@ -65,7 +79,7 @@ const Header = () => {
         <div />
         <ColorimetrWrapper>
           <Button
-            onClick={() => onClickHandler("/edit?create")}
+            onClick={() => onClickHandler("/create")}
             content="Добавить курс"
           />
           <Colorimetr color={getColorTheme()} onClick={setColorTheme} />

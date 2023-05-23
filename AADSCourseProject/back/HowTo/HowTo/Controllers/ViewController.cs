@@ -1,9 +1,9 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors.OperationBuilder.Extensions;
 using HowTo.DataAccess.Managers;
 using HowTo.Entities.Extensions;
+using HowTo.Entities.ViewedEntity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HowTo.Controllers;
@@ -24,9 +24,9 @@ public class ViewController : Controller
     [HttpPost]
     [Route("api/views/approved")]
     [ValidateModelState]
-    public Task<IActionResult> CreateCourseAsync([FromBody][Required] int articleId)
+    public Task<IActionResult> AddApprovedViewAsync([FromBody][Required] AddApprovedViewRequest request)
     {
         var user = HttpContext.GetUser();
-        return _userInfoManager.AddApprovedViewAsync(user, articleId).AsActionResultAsync();
+        return _userInfoManager.AddApprovedViewAsync(user, request).AsActionResultAsync();
     }
 }

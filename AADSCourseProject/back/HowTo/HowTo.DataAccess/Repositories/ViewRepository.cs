@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors;
 using HowTo.Entities;
+using HowTo.Entities.ViewedEntity;
 using HowTo.Entities.Views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -19,24 +20,27 @@ public class ViewRepository
         _db = applicationContext;
     }
 
-    public async Task<OperationResult<ViewDto>> UpsertViewAsync(int articleId, User user)
+    public async Task<OperationResult<ViewDto>> UpsertViewAsync(int courseId, int articleId, User user)
     {
         try
         {
-            var viewDto = await _db.ViewDtos.FirstOrDefaultAsync(v => v.Id == articleId);
+            var viewDto = await _db.ViewDtos
+                .Include(d=>d.Viewers)
+                .SingleOrDefaultAsync(v => v.CourseId == courseId && v.ArticleId == articleId);
             if (viewDto == null)
             {
                 viewDto = new ViewDto
                 {
-                    Id = articleId,
-                    Viewers = new List<UserIdEntity> { new (user.Id) }
+                    CourseId = courseId,
+                    ArticleId = articleId,
+                    Viewers = new List<UserGuid> { new(user.Id) }
                 };
                 await _db.ViewDtos.AddAsync(viewDto);
             }
             else
             {
-                if (viewDto.Viewers.All(userEntity => userEntity.Id != user.Id))
-                    viewDto.Viewers.Add(new (user.Id));
+                if (viewDto.Viewers.All(userEntity => userEntity.UserId != user.Id))
+                    viewDto.Viewers.Add(new(user.Id));
             }
 
             await _db.SaveChangesAsync();
@@ -47,22 +51,20 @@ public class ViewRepository
             return new(ex);
         }
     }
-    
-    public async Task<OperationResult<ViewDto>> GetViewAsync(int entityId)
+
+    public async Task<OperationResult<List<ViewDto>>> GetViewsAsync(int courseId, int? articleId = null)
     {
         try
         {
-            var viewDto = await _db.ViewDtos.FirstOrDefaultAsync(u => u.Id == entityId);
-            if (viewDto == null)
-            {
-                return new(ActionStatus.NotFound, "view_not_found", $"view with id {entityId} not found");
-            }
-
-            return new(viewDto);
+            return new(await _db.ViewDtos
+                .Include(d=>d.Viewers)
+                .Where(v => v.CourseId == courseId 
+                            && (articleId == null || v.ArticleId == articleId))
+                .ToListAsync());
         }
         catch (Exception ex)
         {
-            return new (ex);
+            return new(ex);
         }
     }
 }

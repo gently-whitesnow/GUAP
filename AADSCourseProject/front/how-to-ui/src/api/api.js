@@ -6,8 +6,8 @@ export class Api {
     // this.client.defaults.baseURL = "https://thousandwords.ru/";
     this.client.defaults.baseURL = "http://localhost:1999/";
     this.client.defaults.headers["Access-Control-Allow-Origin"] = "*";
-    this.client.defaults.headers["Content-Type"] =
-      "application/json;charset=UTF-8";
+    // this.client.defaults.headers["Content-Type"] =
+    //   "application/json;charset=UTF-8";
     this.client.defaults.withCredentials = true;
     this.client.timeout = 3000;
   }
@@ -23,37 +23,60 @@ export class Api {
 
   // courses
 
-  getCourse = (path) => this.clientWrapper("get", `api/courses/${path}`);
-  upsertCourse = (courseId, title, description, path, image) =>
-    this.clientWrapper("post", `api/courses`, {
-      course_id: courseId,
-      title: title,
-      description: description,
-      path: path,
-      image: image,
-    });
+  getCourse = (id) => this.clientWrapper("get", `api/courses/${id}`);
+
+  upsertCourse = (courseId, title, description, image) => {
+    const formData = new FormData();
+    if (courseId !== undefined) {
+      formData.append("CourseId", courseId);
+    }
+    if (image !== undefined) {
+      formData.append("Image", image);
+    }
+
+    formData.append("Title", title);
+    formData.append("Description", description);
+
+    return this.clientWrapper("post", "api/courses", formData);
+  };
   deleteCourse = (id) => this.clientWrapper("delete", `api/courses/${id}`);
 
   // articles
 
   getArticle = (coursePath, articlePath) =>
     this.clientWrapper("get", `api/articles/${coursePath}/${articlePath}`);
-  upsertArticle = (articleId, courseId, title, fullPath, files) =>
-    this.clientWrapper("post", `api/articles`, {
-      article_id: articleId,
-      course_id: courseId,
-      title: title,
-      full_path: fullPath,
-      files: files,
-    });
-  deleteArticle = (id) => this.clientWrapper("delete", `api/articles/${id}`);
+
+  upsertArticle = (articleId, courseId, title, file) => {
+    const formData = new FormData();
+    if(articleId!==undefined){
+      formData.append("articleId", articleId);
+    }
+    if(file!==undefined){
+      formData.append("file", file);
+    }
+    formData.append("courseId", courseId);
+    formData.append("title", title);
+
+    return this.clientWrapper("post", "api/articles", formData);
+  };
+  deleteArticle = (courseId, articleId) =>
+    this.clientWrapper("delete", `api/articles/${courseId}/${articleId}`);
 
   // views
 
-  postApprovedView = (articleId) =>
+  postApprovedView = (courseId, articleId) =>
     this.clientWrapper("post", `api/views/approved`, {
-      article_id: articleId
+      course_id: courseId,
+      article_id: articleId,
     });
+
+  // auth
+  // http://localhost:3000/auth?userId=69550bf7-e7e1-4650-801d-e9159530decb&userName=testSanya
+  getAuth = (userId, userName) =>
+    this.clientWrapper(
+      "get",
+      `api/fakeauth?userId=${userId}&userName=${userName}`
+    );
 }
 const api = new Api();
 

@@ -1,6 +1,5 @@
 import CourseHolder from "./CourseHolder/CourseHolder";
 import {
-  CourseDescription,
   CourseHeader,
   CourseHeaderContent,
   CourseHeaderWrapper,
@@ -8,23 +7,22 @@ import {
   CourseLeftSideImage,
   CoursePageWrapper,
   CourseRightSide,
-  CourseTitle,
   IconButtonsWrapper,
 } from "./CoursePage.styles";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../store";
 import { useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import IconButton from "../common/IconButton/IconButton";
 import { ReactComponent as IconEdit } from "../../icons/pen-edit.svg";
 import { ReactComponent as IconCheck } from "../../icons/check.svg";
 import { ReactComponent as IconTrash } from "../../icons/trash.svg";
 import theme from "../../theme";
-import { adjustFontSize } from "../../helpers/textareaHelper";
 import ErrorLineHandler from "../common/ErrorLineHandler/ErrorLineHandler";
+import { TextareaWrapper } from "../common/Textarea/Textarea.styles";
+import Textarea from "../common/Textarea/Textarea";
 
 const CoursePage = () => {
-  const textareaRef = useRef(null);
   const { colorStore, courseStore } = useStore();
   const { getColorTheme } = colorStore;
   const {
@@ -36,7 +34,8 @@ const CoursePage = () => {
     description,
     setTitle,
     setDescription,
-    isCourseContributor,
+    isAuthor,
+    setIsCourseContributor,
     setIsCourseEditing,
     courseActionError,
     setCourseActionError,
@@ -44,22 +43,28 @@ const CoursePage = () => {
     id,
     path,
     image,
-    deleteCourse
+    deleteCourse,
   } = courseStore;
-  const { course } = useParams();
+  const { courseId } = useParams();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (courseId === "create") {
+      setIsCourseEditing(true);
+      setIsCourseContributor(true);
+      return;
+    }
     setIsLoading(true);
-    getCourse(course);
-    adjustFontSize(textareaRef, 5);
+    getCourse(courseId);
   }, []);
-
-  useEffect(() => {
-    adjustFontSize(textareaRef, 2);
-  }, [title]);
 
   const onTitleChangeHandler = (e) => {
     setTitle(e.target.value);
+  };
+
+  const onCourseDescriptionChangeHandler = (e) => {
+    setDescription(e.target.value);
   };
 
   const onCourseEditClickHandler = () => {
@@ -67,11 +72,20 @@ const CoursePage = () => {
   };
 
   const onCourseSaveClickHandler = () => {
-    upsertCourse(id, title, description, path, image)
+    upsertCourse(id, title, description, image, (id) => {
+      if (id !== undefined) {
+        console.log(id);
+        navigate(`/${id}`);
+      }
+    });
   };
 
   const onCourseDeleteClickHandler = () => {
-    deleteCourse(id)
+    deleteCourse(id, (result) => {
+      if (result) {
+        navigate(`/`);
+      }
+    });
   };
 
   return (
@@ -82,39 +96,54 @@ const CoursePage = () => {
             <CourseLeftSideImage color={getColorTheme()} />
           </CourseLeftSide>
           <CourseRightSide>
-            <ErrorLineHandler error={courseActionError} setActionError={setCourseActionError}>
+            <ErrorLineHandler
+              error={courseActionError}
+              setActionError={setCourseActionError}
+            >
               <CourseHeaderWrapper>
-                <CourseTitle
-                  ref={textareaRef}
+                <Textarea
                   color={getColorTheme()}
                   value={title}
                   disabled={!isCourseEditing}
                   onChange={(e) => onTitleChangeHandler(e)}
-                  maxLength={100}
+                  maxLength={70}
+                  height={"100px"}
                 />
 
-                {isCourseContributor ? (
+                {isAuthor ? (
                   isCourseEditing ? (
-                    <IconButtonsWrapper>
+                    <>
+                      <IconButtonsWrapper>
+                        <IconButton
+                          color={theme.colors.green}
+                          onClick={onCourseSaveClickHandler}
+                          active
+                          size={"50px"}
+                        >
+                          <IconCheck />
+                        </IconButton>
+                        <IconButton
+                          color={theme.colors.red}
+                          onClick={onCourseDeleteClickHandler}
+                          active
+                          size={"50px"}
+                        >
+                          <IconTrash />
+                        </IconButton>
+                      </IconButtonsWrapper>
                       <IconButton
-                        color={theme.colors.red}
-                        onClick={deleteCourse}
-                        active
+                        color={getColorTheme()}
+                        onClick={onCourseEditClickHandler}
+                        size={"50px"}
                       >
-                        <IconTrash />
+                        <IconEdit />
                       </IconButton>
-                      <IconButton
-                        color={theme.colors.green}
-                        onClick={onCourseSaveClickHandler}
-                        active
-                      >
-                        <IconCheck />
-                      </IconButton>
-                    </IconButtonsWrapper>
+                    </>
                   ) : (
                     <IconButton
                       color={getColorTheme()}
                       onClick={onCourseEditClickHandler}
+                      size={"50px"}
                     >
                       <IconEdit />
                     </IconButton>
@@ -122,19 +151,19 @@ const CoursePage = () => {
                 ) : null}
               </CourseHeaderWrapper>
             </ErrorLineHandler>
-            <CourseDescription
+            <Textarea
               value={description}
               disabled={!isCourseEditing}
-              onChange={(e) => setDescription(e.target.value)}
-              maxLength={700}
+              onChange={(e) => onCourseDescriptionChangeHandler(e)}
+              maxLength={600}
+              fontsize={"18px"}
+              fontweight={"400"}
+              height={"100%"}
             />
           </CourseRightSide>
         </CourseHeaderContent>
       </CourseHeader>
-      <CourseHolder
-        color={getColorTheme()}
-        articles={courseData.course?.articles}
-      />
+      <CourseHolder color={getColorTheme()} />
     </CoursePageWrapper>
   );
 };

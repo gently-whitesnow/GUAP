@@ -13,6 +13,7 @@ export const TrackerBody = styled.div`
   height: 300px;
   cursor: pointer;
   max-width: 1148px;
+  width: 100%;
 
   :hover {
     .continue-button {

@@ -1,5 +1,8 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using HowTo.Entities;
+using HowTo.Entities.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,14 +15,15 @@ public class FakeAuthorizationController : Controller
     /// </summary>
     [HttpGet]
     [Route("api/fakeauth")]
-    public Task<IActionResult> GetAuthAsync([FromQuery] Guid userId, [FromQuery] string userName)
+    [ValidateModelState]
+    public IActionResult GetAuthAsync([Required] [FromQuery] Guid userId, [Required] [FromQuery] string userName)
     {
-        HttpContext.Response.Cookies.Append(Constants.FakeAuthCookie, $"{userId}:{userName}",
+        HttpContext.Response.Cookies.Append(Constants.FakeAuthCookie, $"{userName}:{userId}",
             new CookieOptions
             {
                 Domain = HttpContext.Request.Host.Host,
-                Expires = DateTimeOffset.FromUnixTimeSeconds(TimeSpan.FromDays(5).Seconds)
+                Expires = DateTimeOffset.Now.AddDays(5)
             });
-        return Task.FromResult<IActionResult>(Ok());
+        return Ok(new User(userId, userName));
     }
 }

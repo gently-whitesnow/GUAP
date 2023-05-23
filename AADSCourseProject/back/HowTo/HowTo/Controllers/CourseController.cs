@@ -25,7 +25,7 @@ public class CourseController : Controller
     [HttpPost]
     [Route("api/courses")]
     [ValidateModelState]
-    public Task<IActionResult> UpsertCourseAsync(UpsertCourseRequest request)
+    public Task<IActionResult> UpsertCourseAsync([FromForm] UpsertCourseRequest request)
     {
         var user = HttpContext.GetUser();
         return _courseManager.UpsertCourseAsync(request, user).AsActionResultAsync();
@@ -34,12 +34,13 @@ public class CourseController : Controller
     /// <summary>
     /// Получение информации по курсу
     /// </summary>
-    [HttpPost]
-    [Route("api/courses/{coursePath}")]
+    [HttpGet]
+    [Route("api/courses/{courseId}")]
     [ValidateModelState]
-    public Task<IActionResult> GetCourseAsync([FromRoute][Required] string coursePath)
+    public Task<IActionResult> GetCourseAsync([FromRoute][Required] int courseId)
     {
-        return _courseManager.GetCourseByPathAsync(coursePath).AsActionResultAsync();
+        var user = HttpContext.GetUser();
+        return _courseManager.GetCourseWithFilesByIdAsync(courseId, user).AsActionResultAsync();
     }
     
     /// <summary>

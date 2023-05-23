@@ -13,8 +13,8 @@ public class ArticleManager
     private readonly ArticleRepository _articleRepository;
     private readonly CourseManager _courseManager;
     private readonly FileSystemHelper _fileSystemHelper;
-    private readonly ViewManager _viewManager;  
-    private readonly UserInfoManager _userInfoManager;      
+    private readonly ViewManager _viewManager;
+    private readonly UserInfoManager _userInfoManager;
 
     public ArticleManager(ArticleRepository articleRepository,
         CourseManager courseManager,
@@ -29,65 +29,76 @@ public class ArticleManager
         _userInfoManager = userInfoManager;
     }
 
-    public async Task<OperationResult<ArticleDto>> UpsertArticleAsync(UpsertArticleRequest request, User user)
+    public async Task<OperationResult<ArticlePublic>> UpsertArticleAsync(UpsertArticleRequest request, User user)
     {
-        var courseOperation = await _courseManager.GetCourseByIdAsync(request.CourseId);
-        if (!courseOperation.Success)
-            return new(courseOperation);
-
-        OperationResult<ArticleDto> upsertOperation;
-        if (request.ArticleId != null)
-            upsertOperation = await _articleRepository.UpdateArticleAsync(request, user);
-        else
-            upsertOperation = await _articleRepository.InsertArticleAsync(request, user, courseOperation.Value);
-
-        if (!upsertOperation.Success || request.Files == null)
-            return upsertOperation;
-
-        await _courseManager.UpsertArticleToCourseAsync(request.CourseId, upsertOperation.Value, user);
+        var upsertOperation = await _articleRepository.UpsertArticleAsync(request, user);
+        if (!upsertOperation.Success)
+            return new(upsertOperation);
         
-        
-        var deleteOperation = await _fileSystemHelper.DeleteArticleFilesAsync(request.CourseId, upsertOperation.Value.Id);
+        var userOperation = await _userInfoManager.GetUserInfoAsync(user);
+        if (userOperation is { Success: false, ActionStatus: ActionStatus.InternalServerError })
+            return new(userOperation);
+
+        if (request.File == null)
+            return new(new ArticlePublic(upsertOperation.Value, user, userOperation.Value));
+
+        var deleteOperation =
+            await _fileSystemHelper.DeleteArticleDirectoryAsync(request.CourseId, upsertOperation.Value.Id);
         if (!deleteOperation.Success)
             return new(deleteOperation);
-        
-        var saveOperation = await _fileSystemHelper.SaveArticleFilesAsync(request.CourseId, upsertOperation.Value.Id, request.Files);
+
+        var saveOperation =
+            await _fileSystemHelper.SaveArticleFilesAsync(request.CourseId, upsertOperation.Value.Id, request.File);
         if (!saveOperation.Success)
             return new(saveOperation);
-            
-        return new(upsertOperation);
+
+        return new(new ArticlePublic(upsertOperation.Value, user, userOperation.Value));
     }
 
 
-    public async Task<OperationResult<GetArticleResponse>> GetArticleContentAsync(string coursePath, string articlePath, User user)
+    public async Task<OperationResult<GetArticleResponse>> GetArticleWithFileByIdAsync(
+        int courseId,
+        int articleId,
+        User user)
     {
-        var articleOperation = await _articleRepository.GetArticleByPathAsync($"{coursePath}/{articlePath}");
+        var articleOperation = await _articleRepository.GetArticleByIdAsync(courseId, articleId);
         if (!articleOperation.Success)
             return new(articleOperation);
 
         var filesOperation = await
-            _fileSystemHelper.GetArticleFilesAsync(articleOperation.Value.Course.Id, articleOperation.Value.Id);
+            _fileSystemHelper.GetArticleFilesAsync(articleOperation.Value.CourseId, articleOperation.Value.Id);
         if (!filesOperation.Success)
-            return new(filesOperation);
+            if(filesOperation.ActionStatus == ActionStatus.Ok)
+                return new(Errors.ArticleFileNotFound(courseId, articleId));
+            else
+                return new(filesOperation);
+        
+        var userOperation = await _userInfoManager.GetUserInfoAsync(user);
+        if (userOperation is { Success: false, ActionStatus: ActionStatus.InternalServerError })
+            return new(userOperation);
 
-        await _viewManager.AddViewAsync(articleOperation.Value.Id, user);
-        await _userInfoManager.SetLastReadCourseIdAsync(user, articleOperation.Value.Course.Id);
+        await _viewManager.AddViewAsync(articleOperation.Value.CourseId, articleOperation.Value.Id, user);
+        await _userInfoManager.SetLastReadCourseIdAsync(user, articleOperation.Value.CourseId);
 
-        return new(new GetArticleResponse(articleOperation.Value, filesOperation.Value));
+        return new(
+            new GetArticleResponse(
+                new ArticlePublic(articleOperation.Value, user, userOperation.Value),
+                filesOperation.Value));
     }
 
 
-    public async Task<OperationResult<ArticleDto>> DeleteArticleAsync(int articleId)
+    public async Task<OperationResult<ArticleDto>> DeleteArticleAsync(int courseId, int articleId)
     {
-        var articleOperation = await _articleRepository.DeleteArticleByIdAsync(articleId);
+        var articleOperation = await _articleRepository.DeleteArticleByIdAsync(courseId, articleId);
         if (!articleOperation.Success)
             return articleOperation;
-        
+
         var filesOperation =
-            await _fileSystemHelper.DeleteArticleFilesAsync(articleOperation.Value.Course.Id, articleOperation.Value.Id);
+            await _fileSystemHelper.DeleteArticleDirectoryAsync(articleOperation.Value.CourseId,
+                articleOperation.Value.Id);
         if (!filesOperation.Success)
             return new(filesOperation);
-        
+
         return articleOperation;
     }
 }

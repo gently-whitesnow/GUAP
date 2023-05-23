@@ -1,5 +1,5 @@
 import { useStore } from "../../../store";
-import CourseButton from "../CourseButton/CourseButton";
+import ArticleButton from "../ArticleButton/ArticleButton";
 import {
   CourseHolderContent,
   CourseHolderWrapper,
@@ -10,25 +10,31 @@ import { observer } from "mobx-react-lite";
 const CourseHolder = (props) => {
   const {  courseStore } = useStore();
   const {
-    id,
     articles,
-    updateArticle
+    upsertArticle,
+    newArticle,
+    deleteArticle
   } = courseStore;
 
-  let counter = 1;
   return (
     <CourseHolderWrapper>
       <CourseHolderContent>
         {articles?.map((article) => {
           return (
-            <CourseButton
-              counter={counter++}
+            <ArticleButton
               color={props.color}
               article={article}
-              updateArticle={updateArticle}
+              upsertArticle={upsertArticle}
+              deleteArticle={deleteArticle}
             />
           );
         })}
+        {newArticle!==undefined?<ArticleButton
+              color={props.color}
+              article={newArticle}
+              upsertArticle={upsertArticle}
+              deleteArticle={deleteArticle}
+            />:null}
       </CourseHolderContent>
     </CourseHolderWrapper>
   );

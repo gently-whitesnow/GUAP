@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
+using Microsoft.AspNetCore.Http;
 
 namespace HowTo.Entities.Course;
 
@@ -12,8 +13,5 @@ public class UpsertCourseRequest
 
     [Required] public string Description { get; set; }
 
-    [Required] public string Path { get; set; }
-
-
-    public MultipartFormDataContent? Image { get; set; }
+    public IFormFile? Image { get; set; }
 }

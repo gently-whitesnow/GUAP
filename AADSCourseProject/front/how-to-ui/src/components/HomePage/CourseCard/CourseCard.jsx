@@ -10,14 +10,14 @@ import { useNavigate } from "react-router";
 const CourseCard = (props) => {
   const navigate = useNavigate();
   const onClickHandler = () => {
-    navigate("/ast");
+    navigate(`/${props.id}`);
   };
 
   return (
     <CourseCardWrapper  color={props.color}  onClick={onClickHandler}>
       <CourseCardContent>
         <CardImage  color={props.color}  className="card-image"></CardImage>
-        <CardTitle>{props.title??"C++ для сишарпников"}</CardTitle>
+        <CardTitle>{props.title}</CardTitle>
       </CourseCardContent>
     </CourseCardWrapper>
   );

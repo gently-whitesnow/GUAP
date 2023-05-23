@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Net.Http;
+using Microsoft.AspNetCore.Http;
 
 namespace HowTo.Entities.Article;
 
-public record GetArticleResponse(ArticleDto Article, MultipartFormDataContent Files);
+public record GetArticleResponse(ArticlePublic Article, List<byte[]> Files);

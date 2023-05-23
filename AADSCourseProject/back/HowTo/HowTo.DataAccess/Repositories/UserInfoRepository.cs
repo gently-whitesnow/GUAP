@@ -6,6 +6,7 @@ using ATI.Services.Common.Behaviors;
 using HowTo.Entities;
 using HowTo.Entities.Article;
 using HowTo.Entities.UserInfo;
+using HowTo.Entities.ViewedEntity;
 using Microsoft.EntityFrameworkCore;
 
 namespace HowTo.DataAccess.Repositories;
@@ -19,19 +20,19 @@ public class UserInfoRepository
         _db = applicationContext;
     }
 
-    public async Task<OperationResult<UserInfoDto>> SetLastReadCourseIdAsync(User user, int courseId)
+    public async Task<OperationResult<UserUniqueInfoDto>> SetLastReadCourseIdAsync(User user, int courseId)
     {
         try
         {
-            var userInfoDto = await _db.UserInfoDtos.FirstOrDefaultAsync(v => v.Id == user.Id);
+            var userInfoDto = await _db.UserUniqueInfoDtos.FirstOrDefaultAsync(v => v.Id == user.Id);
             if (userInfoDto == null)
             {
-                userInfoDto = new UserInfoDto
+                userInfoDto = new UserUniqueInfoDto
                 {
                     Id = user.Id,
                     LastReadCourseId = courseId
                 };
-                await _db.UserInfoDtos.AddAsync(userInfoDto);
+                await _db.UserUniqueInfoDtos.AddAsync(userInfoDto);
             }
             else
             {
@@ -47,24 +48,27 @@ public class UserInfoRepository
         }
     }
 
-    public async Task<OperationResult<UserInfoDto>> AddApprovedViewAsync(User user, int articleId)
+    public async Task<OperationResult<UserUniqueInfoDto>> AddApprovedViewAsync(User user, AddApprovedViewRequest request)
     {
         try
         {
-            var userInfoDto = await _db.UserInfoDtos.FirstOrDefaultAsync(v => v.Id == user.Id);
+            var userInfoDto = await _db.UserUniqueInfoDtos
+                .Include(d=>d.ApprovedViewArticleIds)
+                .SingleOrDefaultAsync(v => v.Id == user.Id);
+            
             if (userInfoDto == null)
             {
-                userInfoDto = new UserInfoDto
+                userInfoDto = new UserUniqueInfoDto
                 {
                     Id = user.Id,
-                    ApprovedViewArticleIds = new List<ApprovedViewArticleEntity> { new(articleId)}
+                    ApprovedViewArticleIds = new List<ViewedEntity> { new(request.CourseId, request.ArticleId)}
                 };
-                await _db.UserInfoDtos.AddAsync(userInfoDto);
+                await _db.UserUniqueInfoDtos.AddAsync(userInfoDto);
             }
             else
             {
-                if (userInfoDto.ApprovedViewArticleIds.All(entity => entity.Id != articleId))
-                    userInfoDto.ApprovedViewArticleIds.Add(new(articleId));
+                if (userInfoDto.ApprovedViewArticleIds.All(v => v.CourseId != request.CourseId && v.ArticleId != request.ArticleId))
+                    userInfoDto.ApprovedViewArticleIds.Add(new(request.CourseId, request.ArticleId));
             }
 
             await _db.SaveChangesAsync();
@@ -76,14 +80,16 @@ public class UserInfoRepository
         }
     }
 
-    public async Task<OperationResult<UserInfoDto>> GetUserInfoAsync(User user)
+    public async Task<OperationResult<UserUniqueInfoDto>> GetUserInfoAsync(User user)
     {
         try
         {
-            var userInfoDto = await _db.UserInfoDtos.FirstOrDefaultAsync(u => u.Id == user.Id);
+            var userInfoDto = await _db.UserUniqueInfoDtos
+                .Include(d=>d.ApprovedViewArticleIds)
+                .SingleOrDefaultAsync(u => u.Id == user.Id);
             if (userInfoDto == null)
             {
-                return new(ActionStatus.NotFound, "user_not_found", $"user with id {user.Id} not found");
+                return new(ActionStatus.BadRequest, "user_not_found", $"user with id {user.Id} not found");
             }
 
             return new(userInfoDto);

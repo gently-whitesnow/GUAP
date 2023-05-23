@@ -34,14 +34,6 @@ export const CourseRightSide = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-
-  textarea {
-    box-sizing: border-box;
-    overflow: hidden;
-    resize: none;
-    background-color: white;
-    margin: 0px;
-  }
 `;
 
 export const CourseHeaderWrapper = styled.div`
@@ -49,22 +41,8 @@ export const CourseHeaderWrapper = styled.div`
 `;
 
 export const IconButtonsWrapper = styled.div`
-  display: flex;
-`;
-
-export const CourseTitle = styled.textarea`
-  font-size: 36px;
-  font-weight: 600;
-  margin-bottom: 10px;
-  color: ${(props) => props.color};
-  width: 100%;
-  height: 60px;
-  ${(props) => (props.disabled ? "border:none" : "")}
-`;
-export const CourseDescription = styled.textarea`
-  font-size: 18px;
-  width: 100%;
   height: 100%;
-  color: black;
-  ${(props) => (props.disabled ? "border:none" : "")}
+  background-color: white;
+  display: flex;
+  flex-direction: column;
 `;

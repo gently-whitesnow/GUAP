@@ -11,40 +11,17 @@ import { useEffect } from "react";
 const CourseHolder = () => {
 
   const { summaryStore } = useStore();
-  const { getSummaryCourses, summaryData, setIsLoading } = summaryStore;
+  const {  summaryData } = summaryStore;
 
-  useEffect(() => {
-    setIsLoading(true);
-    getSummaryCourses();
-  }, []);
 
   return (
     <CourseHolderWrapper>
       <CourseHolderContent>
-        <CourseCard
-          title="Основы аста для начинающих новичков джунов и всех подобных"
-          color={
-            theme.CardColors[
-              Math.floor(Math.random() * theme.CardColors.length)
-            ]
-          }
-        />
         {summaryData.courses?.map((data)=>{
           return (
             <CourseCard
               title={data.title}
-              path={data.path}
-              color={
-                theme.CardColors[
-                  Math.floor(Math.random() * theme.CardColors.length)
-                ]
-              }
-            />
-          );
-        })}
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((answer, i) => {
-          return (
-            <CourseCard
+              id={data.id}
               color={
                 theme.CardColors[
                   Math.floor(Math.random() * theme.CardColors.length)

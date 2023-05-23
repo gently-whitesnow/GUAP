@@ -1,4 +1,5 @@
 import { makeAutoObservable, configure } from "mobx";
+import api from "../api/api";
 
 class ViewStore {
   constructor(rootStore) {
@@ -13,6 +14,17 @@ class ViewStore {
 
   setValue = (value) => {
     this.value = value;
+  };
+
+  addApprovedView = (courseId, articleId) => {
+    api
+      .postApprovedView(courseId, articleId)
+      .then(({ data }) => {
+
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 }
 

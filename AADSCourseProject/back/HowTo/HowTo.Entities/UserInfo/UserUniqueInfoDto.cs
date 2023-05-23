@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace HowTo.Entities.UserInfo;
 
 /// <summary>
 /// Информация, которую нельзя получить из авторизационной модели
 /// </summary>
-public class UserInfoDto
+public class UserUniqueInfoDto
 {
     [Required]
     public Guid Id { get; set; }
     public int? LastReadCourseId { get; set; }
-    public List<ApprovedViewArticleEntity> ApprovedViewArticleIds { get; set; }
+    public virtual List<ViewedEntity.ViewedEntity> ApprovedViewArticleIds { get; set; }
 }

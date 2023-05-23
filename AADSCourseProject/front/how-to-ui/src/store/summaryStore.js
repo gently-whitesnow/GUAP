@@ -1,10 +1,10 @@
 import { makeAutoObservable, configure } from "mobx";
 import api from "../api/api";
-import { NavigateToAuthorize } from "./navigateHelper";
 
 class SummaryStore {
   constructor(rootStore) {
     this.rootStore = rootStore;
+    this.stateStore = rootStore.stateStore;
     makeAutoObservable(this);
     configure({
       enforceActions: "never",
@@ -33,7 +33,7 @@ class SummaryStore {
 
         console.error(err);
         if (err.response?.status === 401) {
-          NavigateToAuthorize();
+          this.rootStore.stateStore.setIsAuthorized(false);
         }
       });
   };

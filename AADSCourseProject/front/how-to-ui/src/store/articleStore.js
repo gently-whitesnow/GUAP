@@ -5,6 +5,7 @@ import api from "../api/api";
 class ArticleStore {
   constructor(rootStore) {
     this.rootStore = rootStore;
+    this.stateStore = rootStore.stateStore;
     makeAutoObservable(this);
     configure({
       enforceActions: "never",
@@ -17,24 +18,61 @@ class ArticleStore {
     this.isLoading = value;
   };
 
-  articleData = {};
+  articleActionError = [];
 
-  getArticle = () => {
+  setArticleActionError = (error) => {
+    this.articleActionError = error;
+  };
+
+  article = {};
+
+  setArticleData = (data) => {
+    this.article= {
+        id: data.article.id,
+        courseId: data.article.course_id,
+        title: data.article.title,
+        createdAt: data.article.created_at,
+        updatedAt: data.article.updated_at,
+        author: { userId: data.article.author?.user_id, name: data.article.author?.name },
+        isAuthor: data.article.is_author,
+        isViewed: data.article.is_viewed,
+      }
+      this.setFiles(data.files)
+  };
+
+  setArticleIsViewed = (value) => {
+    this.article.isViewed = value;
+  }
+
+  setFiles = (files) => {
+    console.log(files)
+    if(files === undefined || files.length === 0) return;
+    let file = files[0];
+    let fileData = atob(file);
+    let fileByteArray = new Uint8Array(fileData.length);
+    for (let i = 0; i < fileData.length; i++) {
+      fileByteArray[i] = fileData.charCodeAt(i);
+    }
+    let fileMdData = new Blob([fileByteArray], { type: 'application/octet-stream' });
+    this.article.fileURL = URL.createObjectURL(fileMdData);
+    console.log(this.article.fileURL)
+  }
+
+  getArticle = (courseId, articleId) => {
     api
-      .getArticle()
+      .getArticle(courseId, articleId)
       .then(({ data }) => {
         this.setIsLoading(false);
-
-        console.log(data);
-        this.articleData = data;
+        this.setArticleData(data)
       })
       .catch((err) => {
         this.setIsLoading(false);
 
         console.error(err);
         if (err.response?.status === 401) {
-          NavigateToAuthorize();
+          this.rootStore.stateStore.setIsAuthorized(false);
         }
+        this.setArticleActionError(err.response?.data?.reason)
       });
   };
 }

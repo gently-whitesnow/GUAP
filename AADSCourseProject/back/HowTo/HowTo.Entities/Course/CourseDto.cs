@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using HowTo.Entities.Article;
+using HowTo.Entities.Contributor;
 
 namespace HowTo.Entities.Course;
 
 public class CourseDto
 {
+    [Key]
     [Required]
     public int Id { get; set; }
     [Required]
@@ -17,15 +19,12 @@ public class CourseDto
     [MinLength(10)]
     [MaxLength(1000)]
     public string Description { get; set; }
-    [Required]
-    [MinLength(3)]
-    [MaxLength(30)]
-    public string Path { get; set; }
+
     [Required]
     public DateTimeOffset CreatedAt { get; set; }
     [Required]
     public DateTimeOffset UpdatedAt { get; set; }
     [Required]
-    public List<User> Contributors { get; set; }
+    public virtual List<ContributorEntity> Contributors { get; set; }
     public virtual List<ArticleDto> Articles { get; set; }
 }

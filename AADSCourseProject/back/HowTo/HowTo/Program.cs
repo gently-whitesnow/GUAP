@@ -11,9 +11,11 @@ var services = builder.Services;
 
 services.AddCors(options =>
     options.AddPolicy(CommonBehavior.AllowAllOriginsCorsPolicyName,
-        corsPolicyBuilder => corsPolicyBuilder.WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-            .AllowAnyOrigin()
-            .AllowAnyHeader()));
+        corsPolicyBuilder => corsPolicyBuilder
+            .WithOrigins("http://localhost:3000") // TODO
+            .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            .AllowAnyHeader()
+            .AllowCredentials()));
 
 services.AddControllers(options =>
     {
