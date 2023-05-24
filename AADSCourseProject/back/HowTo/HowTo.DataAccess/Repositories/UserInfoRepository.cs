@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors;
 using HowTo.Entities;
-using HowTo.Entities.Article;
 using HowTo.Entities.UserInfo;
 using HowTo.Entities.ViewedEntity;
 using Microsoft.EntityFrameworkCore;
@@ -88,9 +87,8 @@ public class UserInfoRepository
                 .Include(d=>d.ApprovedViewArticleIds)
                 .SingleOrDefaultAsync(u => u.Id == user.Id);
             if (userInfoDto == null)
-            {
                 return new(ActionStatus.BadRequest, "user_not_found", $"user with id {user.Id} not found");
-            }
+            
 
             return new(userInfoDto);
         }

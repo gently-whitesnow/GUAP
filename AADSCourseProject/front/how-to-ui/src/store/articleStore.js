@@ -55,18 +55,19 @@ class ArticleStore {
     }
     let fileMdData = new Blob([fileByteArray], { type: 'application/octet-stream' });
     this.article.fileURL = URL.createObjectURL(fileMdData);
-    console.log(this.article.fileURL)
+    this.rootStore.stateStore.setIsLoading(false);
   }
 
   getArticle = (courseId, articleId) => {
+    this.clearStore();
+    this.rootStore.stateStore.setIsLoading(true);
     api
       .getArticle(courseId, articleId)
       .then(({ data }) => {
-        this.setIsLoading(false);
-        this.setArticleData(data)
+         this.setArticleData(data)
       })
       .catch((err) => {
-        this.setIsLoading(false);
+        this.rootStore.stateStore.setIsLoading(false);
 
         console.error(err);
         if (err.response?.status === 401) {
@@ -75,6 +76,10 @@ class ArticleStore {
         this.setArticleActionError(err.response?.data?.reason)
       });
   };
+
+  clearStore = () => {
+    this.article = {};
+  }
 }
 
 export default ArticleStore;

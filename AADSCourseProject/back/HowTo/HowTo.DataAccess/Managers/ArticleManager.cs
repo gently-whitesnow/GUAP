@@ -11,19 +11,16 @@ namespace HowTo.DataAccess.Managers;
 public class ArticleManager
 {
     private readonly ArticleRepository _articleRepository;
-    private readonly CourseManager _courseManager;
     private readonly FileSystemHelper _fileSystemHelper;
     private readonly ViewManager _viewManager;
     private readonly UserInfoManager _userInfoManager;
 
     public ArticleManager(ArticleRepository articleRepository,
-        CourseManager courseManager,
         FileSystemHelper fileSystemHelper,
         ViewManager viewManager,
         UserInfoManager userInfoManager)
     {
         _articleRepository = articleRepository;
-        _courseManager = courseManager;
         _fileSystemHelper = fileSystemHelper;
         _viewManager = viewManager;
         _userInfoManager = userInfoManager;

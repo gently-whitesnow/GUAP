@@ -29,7 +29,7 @@ const MarkdownHandler = (props) => {
     if(path===undefined){
       return;
     }
-    console.log(path);
+
     var rawFile = new XMLHttpRequest();
     rawFile.open("GET", path, false);
     rawFile.onreadystatechange = function () {
@@ -53,10 +53,10 @@ const MarkdownHandler = (props) => {
 
   //   ---test
 
-  // += аст лучше всех
-  // -= гит лучше всех
-  // += аст лучше всех
-  // -= гит лучше всех
+  // +=  позитивный
+  // -= негативный
+  // +=  позитивный
+  // -= негативный
 
   // ---test
 
@@ -154,13 +154,13 @@ const MarkdownHandler = (props) => {
   }
     
 
-    /* !test</p><p>+= аст лучше всех<br>-= гит лучше всех<br>+= аст лучше всех<br>-= гит лучше всех</p><p>!test*/
+    /* !test</p><p>+=  позитивный<br>-= негативный<br>+=  позитивный<br>-= негативный</p><p>!test*/
 
     /* !test</p>
-<p>+= аст лучше всех<br>
--= гит лучше всех<br>
-+= аст лучше всех<br>
--= гит лучше всех</p>
+<p>+=  позитивный<br>
+-= негативный<br>
++=  позитивный<br>
+-= негативный</p>
 <p>!test*/
 
 

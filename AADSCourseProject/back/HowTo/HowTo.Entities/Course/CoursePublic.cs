@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using HowTo.Entities.Article;
 using HowTo.Entities.Contributor;
 using HowTo.Entities.UserInfo;
-using Microsoft.AspNetCore.Http;
 
 namespace HowTo.Entities.Course;
 

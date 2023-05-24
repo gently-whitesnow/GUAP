@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors.OperationBuilder.Extensions;
@@ -30,10 +29,7 @@ public class CourseController : Controller
         var user = HttpContext.GetUser();
         return _courseManager.UpsertCourseAsync(request, user).AsActionResultAsync();
     }
-
-    /// <summary>
-    /// Получение информации по курсу
-    /// </summary>
+    
     [HttpGet]
     [Route("api/courses/{courseId}")]
     [ValidateModelState]
@@ -43,9 +39,6 @@ public class CourseController : Controller
         return _courseManager.GetCourseWithFilesByIdAsync(courseId, user).AsActionResultAsync();
     }
     
-    /// <summary>
-    /// Удаление курса
-    /// </summary>
     [HttpDelete]
     [Route("api/courses/{courseId}")]
     [ValidateModelState]

@@ -27,8 +27,6 @@ const CoursePage = () => {
   const { getColorTheme } = colorStore;
   const {
     getCourse,
-    courseData,
-    setIsLoading,
     isCourseEditing,
     title,
     description,
@@ -41,9 +39,9 @@ const CoursePage = () => {
     setCourseActionError,
     upsertCourse,
     id,
-    path,
     image,
     deleteCourse,
+    setCourseCreate,
   } = courseStore;
   const { courseId } = useParams();
 
@@ -51,11 +49,9 @@ const CoursePage = () => {
 
   useEffect(() => {
     if (courseId === "create") {
-      setIsCourseEditing(true);
-      setIsCourseContributor(true);
+      setCourseCreate();
       return;
     }
-    setIsLoading(true);
     getCourse(courseId);
   }, []);
 
@@ -108,6 +104,7 @@ const CoursePage = () => {
                   onChange={(e) => onTitleChangeHandler(e)}
                   maxLength={70}
                   height={"100px"}
+                  placeholder={"Введите название курса"}
                 />
 
                 {isAuthor ? (
@@ -159,6 +156,7 @@ const CoursePage = () => {
               fontsize={"18px"}
               fontweight={"400"}
               height={"100%"}
+              placeholder={"Введите описание курса"}
             />
           </CourseRightSide>
         </CourseHeaderContent>

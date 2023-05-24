@@ -12,19 +12,9 @@ class CourseStore {
     });
   }
 
-  isLoading = false;
-
-  setIsLoading = (value) => {
-    this.isLoading = value;
-  };
-
-  courseData = [];
-
   id = undefined;
-  title = "Введите название курса";
-  description =
-    "It is important to define your styled components outside of the render method, otherwise it will be recreated on every single render pass. Defining a styled component within the render method will thwart caching and drastically slow down rendering speed, and should be avoided.";
-  path = "";
+  title = "";
+  description = "";
   createdAt = "";
   updatedAt = "";
 
@@ -57,7 +47,6 @@ class CourseStore {
       };
     });
     this.id = course.id;
-    this.path = course.path;
     this.createdAt = course.created_at;
     this.updatedAt = course.updated_at;
     this.contributors = course.contributors;
@@ -93,7 +82,7 @@ class CourseStore {
       return;
     }
     this.newArticle = {
-      title: "Введите название страницы",
+      title: "",
       isAuthor: true,
       isArticleEditing: true,
       isNewArticle: true,
@@ -107,6 +96,11 @@ class CourseStore {
 
   isCourseEditing = false;
 
+  setCourseCreate=()=>{
+    this.clearStore();
+    this.setIsCourseEditing(true);
+    this.setIsCourseContributor(true);
+  }
   setIsCourseEditing = (value) => {
     this.isCourseEditing = value;
   };
@@ -116,16 +110,18 @@ class CourseStore {
     this.isAuthor = value;
   };
 
-  getCourse = (path) => {
+  getCourse = (id) => {
+    this.clearStore();
+    this.rootStore.stateStore.setIsLoading(true);
     api
-      .getCourse(path)
+      .getCourse(id)
       .then(({ data }) => {
-        this.setIsLoading(false);
+        this.rootStore.stateStore.setIsLoading(false);
         this.setCourseData(data);
         console.log(data);
       })
       .catch((err) => {
-        this.setIsLoading(false);
+        this.rootStore.stateStore.setIsLoading(false);
 
         console.error(err);
         if (err.response?.status === 401) {
@@ -140,17 +136,18 @@ class CourseStore {
   };
 
   upsertCourse = (courseId, title, description, image, callback) => {
+    this.rootStore.stateStore.setIsLoading(true);
     api
       .upsertCourse(courseId, title, description, image)
       .then(({ data }) => {
-        this.setIsLoading(false);
+        this.rootStore.stateStore.setIsLoading(false);
         this.setCourseData(data);
         console.log(data);
         this.setIsCourseEditing(false);
         callback(data.id);
       })
       .catch((err) => {
-        this.setIsLoading(false);
+        this.rootStore.stateStore.setIsLoading(false);
         console.error(err);
         this.setCourseActionError(err.response?.data?.reason);
         if (err.response?.status === 401) {
@@ -161,15 +158,16 @@ class CourseStore {
   };
 
   deleteCourse = (courseId, callback) => {
+    this.rootStore.stateStore.setIsLoading(true);
     api
       .deleteCourse(courseId)
       .then(({ data }) => {
-        this.setIsLoading(false);
+        this.rootStore.stateStore.setIsLoading(false);
         // todo redirect and cleaning
         callback(true);
       })
       .catch((err) => {
-        this.setIsLoading(false);
+        this.rootStore.stateStore.setIsLoading(false);
         console.error(err);
         this.setCourseActionError(err.response?.data?.reason);
         if (err.response?.status === 401) {
@@ -187,10 +185,11 @@ class CourseStore {
     isNewArticle,
     errorCallback
   ) => {
+    this.rootStore.stateStore.setIsLoading(true);
     api
       .upsertArticle(articleId, courseId, title, file)
       .then(({ data }) => {
-        console.log(data);
+        this.rootStore.stateStore.setIsLoading(false);
 
         if (isNewArticle) {
           this.setNewArticle(undefined)
@@ -198,8 +197,7 @@ class CourseStore {
         }
       })
       .catch((err) => {
-        console.error(err);
-
+        this.rootStore.stateStore.setIsLoading(false);
         if (err.response?.status === 401) {
           this.rootStore.stateStore.setIsAuthorized(false);
         }
@@ -208,12 +206,15 @@ class CourseStore {
   };
 
   deleteArticle = (courseId, articleId, errorCallback) => {
+    this.rootStore.stateStore.setIsLoading(true);
     api
       .deleteArticle(courseId, articleId)
       .then(({ data }) => {
+        this.rootStore.stateStore.setIsLoading(false);
         this.articles = this.articles.filter((obj) => obj.id !== articleId);
       })
       .catch((err) => {
+        this.rootStore.stateStore.setIsLoading(false);
         console.error(err);
         if (err.response?.status === 401) {
           this.rootStore.stateStore.setIsAuthorized(false);
@@ -221,6 +222,21 @@ class CourseStore {
         errorCallback(err.response?.data?.reason);
       });
   };
+
+  clearStore() {
+    this.id = undefined;
+    this.title = "";
+    this.description = "";
+    this.createdAt = "";
+    this.updatedAt = "";
+    this.contributors = [];
+    this.articles = [];
+    this.image = undefined;
+    this.courseActionError = "";
+    this.newArticle = undefined;
+    this.isCourseEditing = false;
+    this.isAuthor = false;
+  }
 }
 
 export default CourseStore;

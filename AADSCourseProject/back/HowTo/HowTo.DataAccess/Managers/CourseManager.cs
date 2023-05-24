@@ -5,7 +5,6 @@ using HowTo.DataAccess.Helpers;
 using HowTo.DataAccess.Repositories;
 using HowTo.Entities;
 using HowTo.Entities.Course;
-using HowTo.Entities.Views;
 
 namespace HowTo.DataAccess.Managers;
 
@@ -48,6 +47,7 @@ public class CourseManager
         var saveOperation = await _fileSystemHelper.SaveCourseFilesAsync(upsertOperation.Value.Id, request.Image);
         if (!saveOperation.Success)
             return new(saveOperation);
+        
         return new(new CoursePublic(upsertOperation.Value, user, userOperation.Value));
     }
     public async Task<OperationResult<CoursePublic>> GetCourseWithFilesByIdAsync(int courseId, User user)

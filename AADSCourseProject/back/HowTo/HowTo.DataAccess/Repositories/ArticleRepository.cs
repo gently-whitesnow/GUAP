@@ -5,7 +5,6 @@ using ATI.Services.Common.Behaviors;
 using HowTo.Entities;
 using HowTo.Entities.Article;
 using HowTo.Entities.Contributor;
-using HowTo.Entities.Course;
 using Microsoft.EntityFrameworkCore;
 
 namespace HowTo.DataAccess.Repositories;
@@ -17,35 +16,6 @@ public class ArticleRepository
     public ArticleRepository(ApplicationContext applicationContext)
     {
         _db = applicationContext;
-    }
-
-    public async Task<OperationResult<ArticleDto>> InsertArticleAsync(
-        UpsertArticleRequest request,
-        User user,
-        CourseDto course)
-    {
-        var dto = new ArticleDto
-        {
-            CourseId = course.Id,
-            Title = request.Title,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
-            Author = new ContributorEntity
-            {
-                UserId = user.Id,
-                Name = user.Name
-            }
-        };
-        try
-        {
-            await _db.ArticleDtos.AddAsync(dto);
-            await _db.SaveChangesAsync();
-            return new(dto);
-        }
-        catch (Exception ex)
-        {
-            return new(ex);
-        }
     }
 
     public async Task<OperationResult<ArticleDto>> UpsertArticleAsync(UpsertArticleRequest request, User user)
@@ -78,6 +48,7 @@ public class ArticleRepository
                 await _db.SaveChangesAsync();
                 return new(dto);
             }
+            
             var article = courseDto.Articles.FirstOrDefault(a => a.Id == request.ArticleId);
             if (article == null)
                 return new(Errors.ArticleNotFound(request.CourseId, request.ArticleId.Value));

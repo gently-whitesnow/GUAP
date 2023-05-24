@@ -7,6 +7,9 @@ export const HeaderWrapper = styled.div`
   display: flex;
   justify-content: center;
   z-index: 100;
+  transition: 0.2s;
+  box-sizing: border-box;
+  border-bottom: ${(props)=> props.isLoading?`6px solid ${props.color}`:`0px solid ${props.color}`}
 `;
 
 export const HeaderContent = styled.div`

@@ -16,9 +16,6 @@ public class SummaryController : Controller
         _summaryManager = summaryManager;
     }
 
-    /// <summary>
-    /// Получение информации по существующим курсам
-    /// </summary>
     [HttpGet]
     [Route("api/summary/courses")]
     public Task<IActionResult> GetSummaryCoursesAsync()

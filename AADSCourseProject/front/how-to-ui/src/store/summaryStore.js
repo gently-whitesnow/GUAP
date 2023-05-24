@@ -11,31 +11,30 @@ class SummaryStore {
     });
   }
 
-  isLoading = false;
-
   summaryData = {};
 
-  setIsLoading = (value) => {
-    this.isLoading = value;
-  };
-
   getSummaryCourses = () => {
+    this.rootStore.stateStore.setIsLoading(true);
     api
       .getSummaryCourses()
       .then(({ data }) => {
-        this.setIsLoading(false);
+        this.rootStore.stateStore.setIsLoading(false);
 
         console.log(data);
         this.summaryData = data;
       })
       .catch((err) => {
-        this.setIsLoading(false);
+        this.rootStore.stateStore.setIsLoading(false);
 
         console.error(err);
         if (err.response?.status === 401) {
           this.rootStore.stateStore.setIsAuthorized(false);
         }
       });
+  };
+
+  clearStore = () => {
+    this.summaryData = {};
   };
 }
 

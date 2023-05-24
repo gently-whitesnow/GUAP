@@ -1,8 +1,8 @@
 using ATI.Services.Common.Behaviors;
+using ATI.Services.Common.Serializers.SystemTextJsonSerialization;
 using HowTo;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args)
     .SetUpHost();
@@ -23,19 +23,10 @@ services.AddControllers(options =>
         options.SuppressOutputFormatterBuffering = true;
     })
     .AddControllersAsServices()
-    .AddNewtonsoftJson(
-        options =>
-        {
-            options.SerializerSettings.ContractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new SnakeCaseNamingStrategy
-                {
-                    ProcessDictionaryKeys = true,
-                    OverrideSpecifiedNames = true
-                }
-            };
-        }
-    );
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = new SnakeCaseNamingPolicy();
+    });
 
 services.WithOptions()
     .WithServices()

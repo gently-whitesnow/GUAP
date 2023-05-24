@@ -8,10 +8,9 @@ import { useEffect } from "react";
 const HomePage = () => {
 
   const { summaryStore } = useStore();
-  const { getSummaryCourses, setIsLoading } = summaryStore;
+  const { getSummaryCourses } = summaryStore;
 
   useEffect(() => {
-    setIsLoading(true);
     getSummaryCourses();
   }, []);
 

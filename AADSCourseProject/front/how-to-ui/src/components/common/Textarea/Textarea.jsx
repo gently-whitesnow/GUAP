@@ -21,6 +21,7 @@ const Textarea = (props) => {
         height={props.height}
         fontsize={props.fontsize}
         fontweight={props.fontweight}
+        placeholder={props.placeholder}
       ></TextareaContent>
     </TextareaWrapper>
   );

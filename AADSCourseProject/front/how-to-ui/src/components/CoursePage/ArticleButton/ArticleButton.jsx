@@ -18,16 +18,17 @@ import { IconButtonsWrapper } from "../CoursePage.styles";
 import Textarea from "../../common/Textarea/Textarea";
 import ErrorLineHandler from "../../common/ErrorLineHandler/ErrorLineHandler";
 import FileUploader from "../FileUploader/FileUploader";
+import { useStore } from "../../../store";
 
 const ArticleButton = (props) => {
+  const fileInputRef = useRef(null);
+
   const [isArticleEditing, setIsArticleEditing] = useState(
     props.article?.isArticleEditing
   );
-
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
   const [title, setTitle] = useState(props.article?.title);
-  const fileInputRef = useRef(null);
+
   const navigate = useNavigate();
   const onClickHandler = () => {
     if (isArticleEditing || props.article?.id === undefined) {
@@ -41,15 +42,12 @@ const ArticleButton = (props) => {
   };
 
   const onDeleteClickHandler = () => {
-    setIsLoading(true);
     props.deleteArticle(props.article.courseId, props.article.id, (error) => {
       setError(error);
-      setIsLoading(false);
     });
   };
 
   const onSaveClickHandler = () => {
-    setIsLoading(true);
     
     props.upsertArticle(
       props.article.id,
@@ -59,7 +57,6 @@ const ArticleButton = (props) => {
       props.article.isNewArticle,
       (error) => {
         setError(error);
-        setIsLoading(false);
         console.log(error);
       }
     );
@@ -73,7 +70,7 @@ const ArticleButton = (props) => {
   return (
     <ErrorLineHandler error={error} setActionError={setError}>
       <ArticleButtonWrapper>
-        <ArticleButtonContent onClick={onClickHandler} color={props.color}>
+        <ArticleButtonContent onClick={onClickHandler} color={props.color} isArticleEditing={isArticleEditing}>
           {isArticleEditing ? (
             <Textarea
               value={title}
@@ -82,6 +79,7 @@ const ArticleButton = (props) => {
               maxLength={100}
               height={"60px"}
               fontsize={"24px"}
+              placeholder={"Введите название страницы"}
             />
           ) : (
             <ArticleTitle>{title}</ArticleTitle>

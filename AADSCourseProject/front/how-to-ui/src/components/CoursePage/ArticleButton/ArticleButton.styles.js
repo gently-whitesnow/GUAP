@@ -14,23 +14,28 @@ export const ArticleButtonContent = styled.div`
   align-items: center;
   justify-content: space-between;
 
-  cursor: pointer;
+  cursor: ${(props) => (props.isArticleEditing ? 'default' : 'pointer')};
 
   background-color: white;
 
   transition: 0.1s;
-  :hover {
-    background-color: ${(props) => props.color};
-    color: white;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
-    transform: scale(1.005);
-    div {
+  ${(props) =>
+    !props.isArticleEditing &&
+    `
+    :hover {
+      background-color: ${props.color};
       color: white;
+      box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+      transform: scale(1.005);
+      div {
+        color: white;
+      }
+      textarea {
+        color: white;
+      }
     }
-    textarea {
-      color: white;
-    }
-  }
+  `}
+  
 `;
 
 export const ArticleTitle = styled.div`

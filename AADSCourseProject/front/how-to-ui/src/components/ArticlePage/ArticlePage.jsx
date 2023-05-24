@@ -14,17 +14,17 @@ import { useStore } from "../../store";
 import { useParams } from "react-router-dom";
 
 const ArticlePage = () => {
-  const { colorStore, articleStore, viewStore } = useStore();
+  const { colorStore, articleStore, viewStore, stateStore } = useStore();
   const { getColorTheme } = colorStore;
+  const { isLoading } = stateStore;
 
   const { courseId, articleId } = useParams();
-  const { setIsLoading, getArticle, article, setArticleIsViewed } =
+  const { getArticle, article, setArticleIsViewed } =
     articleStore;
 
   const { addApprovedView } = viewStore;
 
   useEffect(() => {
-    setIsLoading(true);
     getArticle(courseId, articleId);
   }, []);
 
@@ -40,7 +40,7 @@ const ArticlePage = () => {
           <MarkdownHandler color={getColorTheme()} />
         </ArticlePageDecorator>
         <ArticlePageButtonsWrapper>
-          {article != undefined ? (
+          {article != undefined && !isLoading ? (
             <OneClickButton
               content="Прочитана"
               onClick={onReadedClickHandler}

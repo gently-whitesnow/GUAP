@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors;
 using HowTo.Entities;
-using HowTo.Entities.Article;
 using HowTo.Entities.Contributor;
 using HowTo.Entities.Course;
 using Microsoft.EntityFrameworkCore;

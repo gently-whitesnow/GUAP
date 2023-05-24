@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Net.Http;
-using Microsoft.AspNetCore.Http;
 
 namespace HowTo.Entities.Article;
 

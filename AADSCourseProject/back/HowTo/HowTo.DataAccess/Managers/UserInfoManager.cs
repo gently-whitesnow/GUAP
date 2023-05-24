@@ -1,9 +1,7 @@
-using System;
 using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors;
 using HowTo.DataAccess.Repositories;
 using HowTo.Entities;
-using HowTo.Entities.Article;
 using HowTo.Entities.UserInfo;
 using HowTo.Entities.ViewedEntity;
 
@@ -13,8 +11,7 @@ public class UserInfoManager
 {
     private readonly UserInfoRepository _userInfoRepository;
 
-    public UserInfoManager(
-        UserInfoRepository userInfoRepository)
+    public UserInfoManager(UserInfoRepository userInfoRepository)
     {
         _userInfoRepository = userInfoRepository;
     }

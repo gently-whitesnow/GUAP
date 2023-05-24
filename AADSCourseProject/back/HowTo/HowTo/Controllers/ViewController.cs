@@ -19,7 +19,7 @@ public class ViewController : Controller
     }
 
     /// <summary>
-    /// Добавлени подтвержденного просмотра
+    /// Добавление подтвержденного просмотра на странице статьи
     /// </summary>
     [HttpPost]
     [Route("api/views/approved")]

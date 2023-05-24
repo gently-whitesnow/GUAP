@@ -30,9 +30,6 @@ public class ArticleController: Controller
         return _articleManager.UpsertArticleAsync(request, user).AsActionResultAsync();
     }
     
-    /// <summary>
-    /// Удаление статьи
-    /// </summary>
     [HttpDelete]
     [Route("api/articles/{courseId}/{articleId}")]
     [ValidateModelState]
@@ -41,10 +38,7 @@ public class ArticleController: Controller
     {
         return _articleManager.DeleteArticleAsync(courseId, articleId).AsActionResultAsync();
     }
-
-    /// <summary>
-    /// Получение контента статьи
-    /// </summary>
+    
     [HttpGet]
     [Route("api/articles/{courseId}/{articleId}")]
     [ValidateModelState]

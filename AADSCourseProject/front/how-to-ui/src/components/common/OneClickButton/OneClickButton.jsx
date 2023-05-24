@@ -2,7 +2,7 @@ import { useState } from "react";
 import { OneClickButtonWrapper } from "./OneClickButton.styles";
 
 const OneClickButton = (props) => {
-  const [clicked, setClicked] = useState(false);
+  const [clicked, setClicked] = useState(props.active);
 
   const onClickHandler = () => {
     if (clicked) return;

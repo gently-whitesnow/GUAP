@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 using HowTo.Entities;
 using HowTo.Entities.Extensions;
 using Microsoft.AspNetCore.Http;

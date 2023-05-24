@@ -13,6 +13,7 @@ class StateStore {
   isLoading = false;
 
   setIsLoading = (value) => {
+    console.log(value);
     this.isLoading = value;
   };
 

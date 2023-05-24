@@ -1,4 +1,3 @@
-using HowTo.Entities;
 using HowTo.Entities.Article;
 using HowTo.Entities.Contributor;
 using HowTo.Entities.Course;
@@ -29,8 +28,7 @@ public class ApplicationContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        
-        // TODO
+        // TODO 
         optionsBuilder.UseSqlite(_options.ConnectionString);
     }
 }

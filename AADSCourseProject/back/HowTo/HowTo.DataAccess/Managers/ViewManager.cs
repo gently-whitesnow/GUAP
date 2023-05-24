@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors;
@@ -19,10 +18,5 @@ public class ViewManager
     public Task<OperationResult<ViewDto>> AddViewAsync(int courseId, int articleId, User user)
     {
         return _viewRepository.UpsertViewAsync(courseId, articleId, user);
-    }
-    
-    public Task<OperationResult<List<ViewDto>>> GetViewsAsync(int courseId, int? articleId = null)
-    {
-        return _viewRepository.GetViewsAsync(courseId, articleId);
     }
 }

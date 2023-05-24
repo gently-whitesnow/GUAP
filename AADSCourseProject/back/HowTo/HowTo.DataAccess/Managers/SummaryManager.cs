@@ -48,7 +48,7 @@ public class SummaryManager
                 Description = lastCourse!.Description,
                 Title = lastCourse.Title,
                 UserApprovedViews = userOperation.Value?.ApprovedViewArticleIds.
-                    Where(a=>a.CourseId == lastCourse.Id).Count() ?? 0,
+                    Count(a=>a.CourseId == lastCourse.Id) ?? 0,
                 ArticlesCount = lastCourse.Articles.Count
             }
         });

@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using HowTo.Entities.Contributor;
-using HowTo.Entities.Course;
 
 namespace HowTo.Entities.Article;
 

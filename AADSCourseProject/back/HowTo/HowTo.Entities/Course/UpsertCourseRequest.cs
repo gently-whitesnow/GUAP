@@ -1,6 +1,4 @@
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 
 namespace HowTo.Entities.Course;

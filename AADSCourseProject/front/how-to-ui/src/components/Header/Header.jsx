@@ -17,7 +17,7 @@ const Header = () => {
   const { colorStore, courseStore, stateStore } = useStore();
   const { getColorTheme, setColorTheme } = colorStore;
   const { addNewArticle } = courseStore;
-  const { isAuthorized, isNotFound, setIsNotFound } = stateStore;
+  const { isAuthorized, isNotFound, setIsNotFound, isLoading } = stateStore;
 
   const navigate = useNavigate();
   const onClickHandler = (path) => {
@@ -28,21 +28,19 @@ const Header = () => {
   let path = location.pathname;
 
   useEffect(() => {
-
     if (!isAuthorized) {
       navigate("/auth");
-    } else if(isAuthorized && path.includes("auth") || isNotFound) {
+    } else if ((isAuthorized && path.includes("auth")) || isNotFound) {
       setIsNotFound(false);
       navigate("/");
     }
   }, [isAuthorized, isNotFound]);
 
-  
-
   let maybeIsCourse = path.length > 1;
   let maybeIsArticle = path.substring(1, path.length).includes("/");
 
   const getCurrentHeader = () => {
+    if (isLoading) return null;
     if (maybeIsCourse && maybeIsArticle) {
       return (
         <>
@@ -90,7 +88,7 @@ const Header = () => {
 
   return (
     <>
-      <HeaderWrapper>
+      <HeaderWrapper color={getColorTheme()} isLoading={isLoading}>
         <HeaderContent>{getCurrentHeader()}</HeaderContent>
       </HeaderWrapper>
     </>
