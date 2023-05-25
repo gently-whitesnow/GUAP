@@ -8,28 +8,28 @@ const MarkdownHandler = (props) => {
   const [articleContent, setArticleContent] = useState();
 
   const { articleStore } = useStore();
-
-  const {
-    article
-  } = articleStore;
+  const { article } = articleStore;
 
   useEffect(() => {
     fillArticleContent();
   }, [article.fileURL]);
+  
+  
   const fillArticleContent = () => {
-
-    readFile(article.fileURL, (mdFile) => {
-      let htmlFileString = convertToHtmlString(mdFile);
+    if(path === undefined){
+      return;
+    }
+    
+    readFileAndFillContent(article.fileURL, (mdFileString) => {
+      let htmlFileString = convertToHtmlString(mdFileString);
       let domElement = convertToDomElementsWithTestsApplying(htmlFileString);
+      
       setArticleContent(domElement);
     });
   };
 
-  const readFile = (path, callback) => {
-    if(path===undefined){
-      return;
-    }
-
+  const readFileAndFillContent = (path, callback) => {
+    
     var rawFile = new XMLHttpRequest();
     rawFile.open("GET", path, false);
     rawFile.onreadystatechange = function () {
@@ -41,6 +41,7 @@ const MarkdownHandler = (props) => {
     };
     rawFile.send(null);
   };
+  
   const convertToHtmlString = (rawText) => {
     var md = require("markdown-it")({
       html: true,
@@ -50,15 +51,16 @@ const MarkdownHandler = (props) => {
 
     return md.render(rawText);
   };
+  
 
-  //   ---test
+  // !test
 
   // +=  позитивный
   // -= негативный
   // +=  позитивный
   // -= негативный
 
-  // ---test
+  // !test
 
   const convertToDomElementsWithTestsApplying = (htmlFileString) => {
     let domElements = [];
@@ -152,22 +154,6 @@ const MarkdownHandler = (props) => {
 
     return <TestModule rightAnswers={rightAnswers} wrongAnswers={wrongAnswers} color={props.color} testModuleCounterId={testModuleCounterId}/>;
   }
-    
-
-    /* !test</p><p>+=  позитивный<br>-= негативный<br>+=  позитивный<br>-= негативный</p><p>!test*/
-
-    /* !test</p>
-<p>+=  позитивный<br>
--= негативный<br>
-+=  позитивный<br>
--= негативный</p>
-<p>!test*/
-
-
-    // !test<br>+= test test-= test - test+= best test!!test
-
-    
-  
 
   return articleContent;
 };
