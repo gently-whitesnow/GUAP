@@ -65,37 +65,34 @@ const MarkdownHandler = (props) => {
   const convertToDomElementsWithTestsApplying = (htmlFileString) => {
     let domElements = [];
 
-    let testKey = "!test";
+    const testKey = "!test";
+
     let firstTestModuleIndex = htmlFileString.indexOf(testKey);
-    console.log(firstTestModuleIndex);
+
     let testModuleCounterId = 0;
     while (firstTestModuleIndex !== -1) {
-      let lastTestModuleIndex =
-        htmlFileString
+      let lastTestModuleIndex = htmlFileString
           .substring(firstTestModuleIndex + 1, htmlFileString.length)
-          .indexOf(testKey) +
-        firstTestModuleIndex +
-        testKey.length +
-        1;
+          .indexOf(testKey) + firstTestModuleIndex + testKey.length + 1;
+
       let testModulesRawString = htmlFileString.substring(
-        firstTestModuleIndex,
-        lastTestModuleIndex
-      );
+        firstTestModuleIndex, lastTestModuleIndex);
+
       domElements.push(
         <Interweave
           content={htmlFileString.substring(0, firstTestModuleIndex)}
         />
       );
-      console.log(testModulesRawString)
+
       domElements.push(applyTestModules(testModulesRawString, testModuleCounterId++));
+
       htmlFileString = htmlFileString.substring(
-        lastTestModuleIndex,
-        htmlFileString.length
-      );
+        lastTestModuleIndex,htmlFileString.length);
+
       firstTestModuleIndex = htmlFileString.indexOf(testKey);
     }
-    domElements.push(<Interweave content={htmlFileString} />);
 
+    domElements.push(<Interweave content={htmlFileString} />);
     return (
       <>
         {domElements.map((element) => {
@@ -106,25 +103,27 @@ const MarkdownHandler = (props) => {
   };
 
   const applyTestModules = (partHtml, testModuleCounterId) => {
-    let rightAnswerKey = "+"; // +=
-    let wrongAnswerKey = "-"; // +=
-    let stoppowers = ["+=", "-=", "<", "!test"];
+    const rightAnswerKey = "+"; // +=
+    const wrongAnswerKey = "-"; // +=
+    const stoppowers = ["+=", "-=", "<", "!test"];
 
     let rightAnswers = [];
     let wrongAnswers = [];
 
-    let readRight = false;
+    let isPositiveChoice = false;
 
     partHtml = partHtml.replaceAll('\n', '');
+
     // -1 for checking i+1 condition
     for (let i = 0; i < partHtml.length - 1; i++) {
       if (partHtml.charAt(i + 1) !== "=") {
         continue;
       }
+
       if (partHtml.charAt(i) === rightAnswerKey) {
-        readRight = true;
+        isPositiveChoice = true;
       } else if (partHtml.charAt(i) === wrongAnswerKey) {
-        readRight = false;
+        isPositiveChoice = false;
       } else {
         continue;
       }
@@ -134,6 +133,7 @@ const MarkdownHandler = (props) => {
       let buffer = "";
       for (var j = i + 2; j < partHtml.length; j++) {
         if (
+          // look stoppowers length
           stoppowers.includes(partHtml.substring(j, j + 1)) ||
           stoppowers.includes(partHtml.substring(j, j + 2)) ||
           stoppowers.includes(partHtml.substring(j, j + 5))
@@ -144,12 +144,11 @@ const MarkdownHandler = (props) => {
         buffer += partHtml.charAt(j);
       }
       i = lastChar -1;
-      if (readRight) {
+      if (isPositiveChoice) {
         rightAnswers.push(buffer);
       } else {
         wrongAnswers.push(buffer);
       }
-      
     }
 
     return <TestModule rightAnswers={rightAnswers} wrongAnswers={wrongAnswers} color={props.color} testModuleCounterId={testModuleCounterId}/>;
