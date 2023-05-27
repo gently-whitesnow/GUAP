@@ -1,12 +1,12 @@
 import styled from "styled-components";
 
 export const AnswerWrapper = styled.div`
- .right{
+  .right {
     background-color: rgb(0, 212, 102);
   }
 
-  .wrong{
-    background-color: rgba(255, 106, 106,1);
+  .wrong {
+    background-color: rgba(255, 106, 106, 1);
   }
 `;
 
@@ -24,11 +24,11 @@ export const AnswerContent = styled.div`
     div .checkbox {
       background: rgba(220, 227, 227, 0.2);
     }
-    .checkbox .right{
-      background: rgb(0, 212, 102);;
+    .checkbox .right {
+      background: rgb(0, 212, 102);
     }
-    .checkbox .wrong{
-      background: rgba(255, 106, 106,1);
+    .checkbox .wrong {
+      background: rgba(255, 106, 106, 1);
     }
   }
 `;
@@ -39,4 +39,5 @@ export const Checkbox = styled.div`
   width: 20px;
   margin-right: 10px;
   border: solid 0.5px ${(props) => props.color};
+  ${(props) => (props.isCirceledAnswer ? "border-radius: 50%" : "")};
 `;

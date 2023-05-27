@@ -25,6 +25,7 @@ const Answer = (props) => {
             (checked ? (props.isTrue ? "right" : "wrong") : "") + " checkbox"
           }
           color={props.color}
+          isCirceledAnswer={props.isCirceledAnswer}
         />
         {props.content}
       </AnswerContent>

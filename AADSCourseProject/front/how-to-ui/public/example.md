@@ -149,6 +149,13 @@ console.log(foo(5));
 += best test!
 !test
 
+
+!test    
++= test test
+-= test - test
+-= best test!
+!test
+
 ``` hljs
 var foo = function (bar) {
   return bar++;

@@ -3,8 +3,8 @@ import axios from "axios";
 export class Api {
   constructor() {
     this.client = axios.create();
-    // this.client.defaults.baseURL = "https://thousandwords.ru/";
-    this.client.defaults.baseURL = "http://localhost:1999/";
+    this.client.defaults.baseURL = "http://localhost:80/gw/";
+    // this.client.defaults.baseURL = "http://localhost:1999/";
     this.client.defaults.headers["Access-Control-Allow-Origin"] = "*";
     // this.client.defaults.headers["Content-Type"] =
     //   "application/json;charset=UTF-8";

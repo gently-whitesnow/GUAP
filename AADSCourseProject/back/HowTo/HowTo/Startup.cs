@@ -83,6 +83,29 @@ public static class Startup
                 NamingStrategy = new SnakeCaseNamingStrategy()
             }
         });
+        
+        services
+            .AddControllers(options =>
+            {
+                options.SuppressInputFormatterBuffering = true;
+                options.SuppressOutputFormatterBuffering = true;
+            })
+            .AddNewtonsoftJson(
+                options =>
+                {
+                    options.SerializerSettings.ContractResolver = new DefaultContractResolver
+                    {
+                        NamingStrategy = new SnakeCaseNamingStrategy()
+                    };
+                });
+        
+        CommonBehavior.SetSerializer(new JsonSerializerSettings
+        {
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy { ProcessDictionaryKeys = false }
+            }
+        });
 
         return services;
     }

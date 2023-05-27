@@ -60,17 +60,18 @@ export const ArticlePageDecorator = styled.div`
     margin: 0 0 10px;
     font-size: 13px;
     line-height: 1.42857143;
-    color: #333;
+    color: black;
     word-break: break-all;
     word-wrap: break-word;
-    background-color: #f5f5f5;
+    background-color: #fbfdff;
     border: 1px solid #ccc;
+    border-radius: 4px;
   }
   .language-js {
     display: block;
     overflow-x: auto;
     padding: 0.5em;
     color: #333;
-    background: #f8f8f8;
+    background: #fbfdff;
   }
 `;

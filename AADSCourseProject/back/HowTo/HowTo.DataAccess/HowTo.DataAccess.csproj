@@ -8,5 +8,9 @@
     <ItemGroup>
         <ProjectReference Include="..\HowTo.Entities\HowTo.Entities.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Design" Version="1.1.6" />
+    </ItemGroup>
     
 </Project>

@@ -16,7 +16,7 @@ const MarkdownHandler = (props) => {
   
   
   const fillArticleContent = () => {
-    if(path === undefined){
+    if(article.fileURL === undefined){
       return;
     }
     

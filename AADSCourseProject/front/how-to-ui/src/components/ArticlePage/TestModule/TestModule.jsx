@@ -19,7 +19,7 @@ const TestModule = (props) => {
   }, []);
 
   const rightsCount = props.rightAnswers.length;
-
+  const isCirceledAnswer = rightsCount === 1;
 
   const getAnswers = () => {
     let answers = props.rightAnswers.map((text) => {
@@ -29,6 +29,7 @@ const TestModule = (props) => {
           content={text}
           isTrue={true}
           testModuleCounterId={props.testModuleCounterId}
+          isCirceledAnswer={isCirceledAnswer}
         />
       );
     });
@@ -40,6 +41,7 @@ const TestModule = (props) => {
             content={text}
             isTrue={false}
             testModuleCounterId={props.testModuleCounterId}
+            isCirceledAnswer={isCirceledAnswer}
           />
         );
       })
