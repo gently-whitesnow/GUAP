@@ -1,0 +1,34 @@
+version: "3.7"  
+
+services: 
+  reverseproxy:  
+    container_name: nginx 
+    image: nginx:1.21     
+    volumes:              
+      - /var/log/nginx:/var/log/nginx 
+      - /etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /usr/share/nginx/html:/usr/share/nginx/html:ro 
+    ports: 
+      - "80:80"
+    restart: always
+    depends_on: 
+      - howto-api
+    networks:
+      - nginx_network
+    
+  howto-api:
+    container_name: howto-api
+    image: howto-api:latest
+    restart: always
+    networks:
+      - nginx_network
+    volumes:
+      - sqlite-data:/sqlite-db
+      - howto-content-data:/howto-content
+
+volumes:
+  sqlite-data:
+  howto-content-data:
+        
+networks:
+  nginx_network: 

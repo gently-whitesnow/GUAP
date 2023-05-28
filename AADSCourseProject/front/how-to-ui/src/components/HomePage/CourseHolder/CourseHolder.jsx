@@ -17,7 +17,7 @@ const CourseHolder = () => {
   return (
     <CourseHolderWrapper>
       <CourseHolderContent>
-        {summaryData.courses?.map((data)=>{
+        {summaryData?.courses?.map((data)=>{
           return (
             <CourseCard
               title={data.title}
