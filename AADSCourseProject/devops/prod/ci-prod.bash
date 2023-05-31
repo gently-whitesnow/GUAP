@@ -1,5 +1,7 @@
 #!/bin/bash
 
+git -C ./GUAP pull
+
 # build api image
 docker build -t "howto-api" ./GUAP/AADSCourseProject/back/HowTo
 
