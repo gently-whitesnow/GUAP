@@ -5,6 +5,7 @@ using HowTo.Entities.Options;
 using HowTo.Entities.UserInfo;
 using HowTo.Entities.ViewedEntity;
 using HowTo.Entities.Views;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -26,9 +27,21 @@ public class ApplicationContext : DbContext
         _options = options.Value;
     }
 
+    // TODO подумать как можно многопоточно взаимодействовать с sqlite 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        // TODO 
-        optionsBuilder.UseSqlite(_options.ConnectionString);
+        if (!optionsBuilder.IsConfigured)
+        {
+            var connection = new SqliteConnection(_options.ConnectionString);
+            connection.Open();
+
+            // Установка уровня изоляции на SERIALIZABLE
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "PRAGMA read_uncommitted = false";
+                command.ExecuteNonQuery();
+            }
+            optionsBuilder.UseSqlite(connection);
+        }
     }
 }

@@ -14,16 +14,18 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 #rm -rf ./image.tar
 
 # delivery front
-ssh admin@45.132.18.97 'rm -rf ~/build
-ssh admin@45.132.18.97 'rm -rf ~/build.zip
+ssh admin@45.132.18.97 'rm -rf ~/build'
+ssh admin@45.132.18.97 'rm -rf ~/build.zip'
 rm -rf build.zip
 
 npm run build --prefix $SCRIPT_DIR/../../front/how-to-ui
-zip -r ./build.zip $SCRIPT_DIR/../../front/how-to-ui/build
+cp -R $SCRIPT_DIR/../../front/how-to-ui/build build
+zip -r ./build.zip ./build/*
 scp ./build.zip admin@45.132.18.97:~/ 
-ssh admin@45.132.18.97 'unzip build.zip -d build'
+ssh admin@45.132.18.97 'unzip build.zip -d ./'
 
 rm -rf build.zip
+rm -rf build
 
 # delivery scripts
 scp ./ci-prod.bash admin@45.132.18.97:~/ 

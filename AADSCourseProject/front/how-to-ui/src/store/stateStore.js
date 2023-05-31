@@ -23,22 +23,22 @@ class StateStore {
   setIsAuthorized = (value) => {
     console.log(value);
     this.isAuthorized = value;
-  }
+  };
 
   isNotFound = false;
 
   setIsNotFound = (value) => {
     this.isNotFound = value;
-  }
+  };
 
   getAuth = (userId, userName) => {
     api
       .getAuth(userId, userName)
       .then(({ data }) => {
         this.setIsLoading(false);
-        console.log(data);
         this.authData = data;
-        this.setIsAuthorized(true);
+        // небольшой костыль позволяющий дождатся проставления кук перед последующими запросами
+        setTimeout(this.setIsAuthorized(true), 1000);
       })
       .catch((err) => {
         this.setIsLoading(false);

@@ -35,3 +35,11 @@ ssh-keygen -t ed25519 -C "gently.whitesnow@outlook.com"
 
 ### additional
 sudo apt-get install unzip
+
+### nginx optional
+
+
+
+it looks like a problem with the folder permissions. Try to execute the following:
+
+chmod -R 755 /usr/share/nginx/html

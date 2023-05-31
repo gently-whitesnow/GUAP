@@ -10,6 +10,7 @@ namespace HowTo.Entities.UserInfo;
 public class UserUniqueInfoDto
 {
     [Required]
+    // UserId
     public Guid Id { get; set; }
     public int? LastReadCourseId { get; set; }
     public virtual List<ViewedEntity.ViewedEntity> ApprovedViewArticleIds { get; set; }

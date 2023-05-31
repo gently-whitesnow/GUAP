@@ -1,0 +1,15 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [{
+        "name": "Launch 3_lab",
+        "type": "lldb",
+        "program": "${workspaceFolder}/build/3_lab/3_lab",
+        // "cwd":"${workspaceFolder}/build",
+        "stopOnEntry": false,
+        "args": [],
+        "request": "launch"
+    }]
+}

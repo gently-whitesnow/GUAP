@@ -66,7 +66,7 @@ public class UserInfoRepository
             }
             else
             {
-                if (userInfoDto.ApprovedViewArticleIds.All(v => v.CourseId != request.CourseId && v.ArticleId != request.ArticleId))
+                if (!userInfoDto.ApprovedViewArticleIds.Any(v => v.CourseId == request.CourseId && v.ArticleId == request.ArticleId))
                     userInfoDto.ApprovedViewArticleIds.Add(new(request.CourseId, request.ArticleId));
             }
 

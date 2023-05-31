@@ -40,7 +40,7 @@ const ArticlePage = () => {
           <MarkdownHandler color={getColorTheme()} />
         </ArticlePageDecorator>
         <ArticlePageButtonsWrapper>
-          {article != undefined && !isLoading ? (
+          {article.id != undefined && !isLoading ? (
             <OneClickButton
               content="Прочитана"
               onClick={onReadedClickHandler}
