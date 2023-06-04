@@ -1,15 +1,56 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [{
-        "name": "Launch 3_lab",
-        "type": "lldb",
-        "program": "${workspaceFolder}/build/3_lab/3_lab",
-        // "cwd":"${workspaceFolder}/build",
-        "stopOnEntry": false,
-        "args": [],
-        "request": "launch"
-    }]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch 1_lab",
+      "type": "lldb",
+      "program": "${workspaceFolder}/build/1_lab/1_lab",
+      "stopOnEntry": false,
+      "args": [],
+      "request": "launch"
+    },
+    {
+      "name": "Launch 2_lab",
+      "type": "lldb",
+      "program": "${workspaceFolder}/build/2_lab/2_lab",
+      "stopOnEntry": false,
+      "args": [],
+      "request": "launch"
+    },
+    {
+      "name": "Launch 3_lab",
+      "type": "lldb",
+      "program": "${workspaceFolder}/build/3_lab/3_lab",
+      "stopOnEntry": false,
+      "args": [],
+      "request": "launch"
+    },
+    {
+      "name": "Launch 4_lab",
+      "type": "lldb",
+      "program": "${workspaceFolder}/build/4_lab/4_lab",
+      "stopOnEntry": false,
+      "args": [],
+      "request": "launch"
+    },
+    {
+      "name": "Launch 5_lab",
+      "type": "lldb",
+      "program": "${workspaceFolder}/build/5_lab/5_lab",
+      "stopOnEntry": false,
+      "args": [],
+      "request": "launch"
+    },
+    {
+      "name": "Launch 6_lab",
+      "type": "lldb",
+      "program": "${workspaceFolder}/build/6_lab/6_lab",
+      "stopOnEntry": false,
+      "args": [],
+      "request": "launch"
+    }
+  ]
 }

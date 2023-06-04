@@ -4,7 +4,6 @@ class Angle
 {
 public:
     Angle() = default;
-
     double ToRadians() const
     {
         double sec_normalized = _sec != 0 ? _sec / 60 : 0;
@@ -41,7 +40,7 @@ public:
         return _sec;
     }
 
-    int SetSec(const int &sec)
+    void SetSec(const int &sec)
     {
         if (IsTimeValid(sec))
             _sec = sec;

@@ -21,15 +21,15 @@ int main() {
     Complex complexSum = complexByTrigonometric + complexByAlgebraic;
     cout << "complexSum: " << complexSum << endl;
 
-    step("Difference thix complex numbers");
+    step("Difference this complex numbers");
     Complex complexDifference = complexByTrigonometric - complexByAlgebraic;
     cout << "complexDifference: " << complexDifference << endl;
 
-    step("Multiplication thix complex numbers");
+    step("Multiplication this complex numbers");
     Complex complexMultiplication = complexByTrigonometric * complexByAlgebraic;
     cout << "complexMultiplication: " << complexMultiplication << endl;
 
-    step("Division thix complex numbers");
+    step("Division this complex numbers");
     Complex complexDivision = complexByTrigonometric / complexByAlgebraic;
     cout << "complexDivision: " << complexDivision << endl;
 }
