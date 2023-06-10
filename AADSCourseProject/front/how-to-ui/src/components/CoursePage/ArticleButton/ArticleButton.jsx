@@ -48,7 +48,6 @@ const ArticleButton = (props) => {
   };
 
   const onSaveClickHandler = () => {
-    
     props.upsertArticle(
       props.article.id,
       props.article.courseId,
@@ -57,20 +56,19 @@ const ArticleButton = (props) => {
       props.article.isNewArticle,
       (error) => {
         setError(error);
-        console.log(error);
+        if (error === "") setIsArticleEditing(false);
       }
     );
-
-    if (error === "") {
-      setIsArticleEditing(false);
-    }
-    setIsArticleEditing(false);
   };
 
   return (
     <ErrorLineHandler error={error} setActionError={setError}>
       <ArticleButtonWrapper>
-        <ArticleButtonContent onClick={onClickHandler} color={props.color} isArticleEditing={isArticleEditing}>
+        <ArticleButtonContent
+          onClick={onClickHandler}
+          color={props.color}
+          isArticleEditing={isArticleEditing}
+        >
           {isArticleEditing ? (
             <Textarea
               value={title}

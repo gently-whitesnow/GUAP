@@ -15,7 +15,7 @@ import { useEffect } from "react";
 
 const Header = () => {
   const { colorStore, courseStore, stateStore } = useStore();
-  const { getColorTheme, setColorTheme } = colorStore;
+  const { currentColorTheme, setColorTheme } = colorStore;
   const { addNewArticle } = courseStore;
   const { isAuthorized, isNotFound, setIsNotFound, isLoading } = stateStore;
 
@@ -50,7 +50,7 @@ const Header = () => {
             }
             content="Назад"
           />
-          <Colorimetr color={getColorTheme()} onClick={setColorTheme} />
+          <Colorimetr color={currentColorTheme} onClick={setColorTheme} />
         </>
       );
     } else if (maybeIsCourse) {
@@ -67,7 +67,7 @@ const Header = () => {
               onClick={() => addNewArticle()}
               content="Добавить страницу"
             />
-            <Colorimetr color={getColorTheme()} onClick={setColorTheme} />
+            <Colorimetr color={currentColorTheme} onClick={setColorTheme} />
           </ColorimetrWrapper>
         </>
       );
@@ -80,7 +80,7 @@ const Header = () => {
             onClick={() => onClickHandler("/create")}
             content="Добавить курс"
           />
-          <Colorimetr color={getColorTheme()} onClick={setColorTheme} />
+          <Colorimetr color={currentColorTheme} onClick={setColorTheme} />
         </ColorimetrWrapper>
       </>
     );
@@ -88,7 +88,7 @@ const Header = () => {
 
   return (
     <>
-      <HeaderWrapper color={getColorTheme()} isLoading={isLoading}>
+      <HeaderWrapper color={currentColorTheme} isLoading={isLoading}>
         <HeaderContent>{getCurrentHeader()}</HeaderContent>
       </HeaderWrapper>
     </>

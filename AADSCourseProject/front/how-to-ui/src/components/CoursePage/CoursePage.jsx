@@ -24,7 +24,7 @@ import Textarea from "../common/Textarea/Textarea";
 
 const CoursePage = () => {
   const { colorStore, courseStore } = useStore();
-  const { getColorTheme } = colorStore;
+  const { currentColorTheme } = colorStore;
   const {
     getCourse,
     isCourseEditing,
@@ -89,7 +89,7 @@ const CoursePage = () => {
       <CourseHeader>
         <CourseHeaderContent>
           <CourseLeftSide>
-            <CourseLeftSideImage color={getColorTheme()} />
+            <CourseLeftSideImage color={currentColorTheme} />
           </CourseLeftSide>
           <CourseRightSide>
             <ErrorLineHandler
@@ -98,7 +98,7 @@ const CoursePage = () => {
             >
               <CourseHeaderWrapper>
                 <Textarea
-                  color={getColorTheme()}
+                  color={currentColorTheme}
                   value={title}
                   disabled={!isCourseEditing}
                   onChange={(e) => onTitleChangeHandler(e)}
@@ -129,7 +129,7 @@ const CoursePage = () => {
                         </IconButton>
                       </IconButtonsWrapper>
                       <IconButton
-                        color={getColorTheme()}
+                        color={currentColorTheme}
                         onClick={onCourseEditClickHandler}
                         size={"50px"}
                       >
@@ -138,7 +138,7 @@ const CoursePage = () => {
                     </>
                   ) : (
                     <IconButton
-                      color={getColorTheme()}
+                      color={currentColorTheme}
                       onClick={onCourseEditClickHandler}
                       size={"50px"}
                     >
@@ -161,7 +161,7 @@ const CoursePage = () => {
           </CourseRightSide>
         </CourseHeaderContent>
       </CourseHeader>
-      <CourseHolder color={getColorTheme()} />
+      <CourseHolder color={currentColorTheme} />
     </CoursePageWrapper>
   );
 };

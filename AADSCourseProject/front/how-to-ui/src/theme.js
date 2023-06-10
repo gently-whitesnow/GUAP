@@ -4,6 +4,8 @@ const theme = {
     blue: "#05aae3",
     black: "#222222",
     purpule: "#e002c2",
+    violet:"#b5b1fc",
+    orange:"#ffc96f",
     red:"rgba(255, 106, 106,1)"
   },
   CardColors: [
@@ -16,16 +18,11 @@ const theme = {
     ["rgba(245, 183, 221,1)","rgba(245, 183, 221,0.8)", "rgba(245, 183, 221,0.6)", "rgba(245, 183, 221,0.4)", "rgba(245, 183, 221,0.2)"],
     ["rgba(255, 201, 111,1)","rgba(255, 201, 111,0.8)", "rgba(255, 201, 111,0.6)", "rgba(255, 201, 111,0.4)", "rgba(255, 201, 111,0.2)"],
   ],
-  // green: "#00D466",
-  // blue: "#05aae3"
-  // black: "#222222",
-  // purpule: "#e002c2",
-  // orange
   ReadableColors: [
     "#00D466", // green
     "#05aae3", // blue
-    "#b5b1fc", // 
-    "#ffc96f"
+    "#b5b1fc", // violet
+    "#ffc96f" // orange
   ]
 };
 

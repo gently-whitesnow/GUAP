@@ -1,11 +1,12 @@
 using System;
 using System.Linq;
+using HowTo.Entities.BTree;
 using HowTo.Entities.Contributor;
 using HowTo.Entities.UserInfo;
 
 namespace HowTo.Entities.Article;
 
-public class ArticlePublic
+public class ArticlePublic : IBTreeValue
 {
     public ArticlePublic(ArticleDto articleDto,User user, UserUniqueInfoDto userUniqueInfo)
     {
@@ -19,17 +20,17 @@ public class ArticlePublic
         IsViewed = userUniqueInfo?.ApprovedViewArticleIds.Any(a=>a.ArticleId == Id && a.CourseId == CourseId)
                    ?? false;
     }
-    public int Id { get; set; }
+    public int Id { get;}
 
-    public int CourseId { get; set; }
+    public int CourseId { get;  }
 
 
-    public string Title { get; set; }
+    public string Title { get; }
 
-    public DateTimeOffset CreatedAt { get; set; }
-    public DateTimeOffset UpdatedAt { get; set; }
-    public ContributorEntity Author { get; set; }
+    public DateTimeOffset CreatedAt { get; }
+    public DateTimeOffset UpdatedAt { get; }
+    public ContributorEntity Author { get; }
 
-    public bool IsAuthor { get; set; }
-    public bool IsViewed { get; set; }
+    public bool IsAuthor { get; }
+    public bool IsViewed { get; }
 }

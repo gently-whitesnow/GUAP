@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HowTo.DataAccess", "HowTo.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HowTo.Entities", "HowTo.Entities\HowTo.Entities.csproj", "{7DCB33E0-5D5C-4914-97B1-E7C4F1117C04}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HowTo.Tests", "HowTo.Tests\HowTo.Tests.csproj", "{A9B35F5A-D268-420C-AD6B-F12653864B20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{7DCB33E0-5D5C-4914-97B1-E7C4F1117C04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DCB33E0-5D5C-4914-97B1-E7C4F1117C04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DCB33E0-5D5C-4914-97B1-E7C4F1117C04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9B35F5A-D268-420C-AD6B-F12653864B20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9B35F5A-D268-420C-AD6B-F12653864B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9B35F5A-D268-420C-AD6B-F12653864B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9B35F5A-D268-420C-AD6B-F12653864B20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

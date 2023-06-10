@@ -12,6 +12,11 @@ class SummaryStore {
   }
 
   summaryData = {};
+  summaryStaticData = {};
+
+  setSummaryCoursesData = (courses) => {
+    this.summaryData.courses = courses;
+  };
 
   getSummaryCourses = () => {
     this.rootStore.stateStore.setIsLoading(true);
@@ -22,6 +27,7 @@ class SummaryStore {
 
         console.log(data);
         this.summaryData = data;
+        this.summaryStaticData = data;
       })
       .catch((err) => {
         this.rootStore.stateStore.setIsLoading(false);
@@ -35,6 +41,7 @@ class SummaryStore {
 
   clearStore = () => {
     this.summaryData = {};
+    this.summaryStaticData = {};
   };
 }
 

@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 from numpy import asarray
 
 
-imgpath = '/Users/gently/Downloads/test-images'
+imgpath = '/Users/gently/test-images'
 onlyfiles = [f for f in listdir(imgpath) if isfile(join(imgpath, f)) and join(imgpath, f).__contains__("photo")]
 print(len(onlyfiles))
 i=1

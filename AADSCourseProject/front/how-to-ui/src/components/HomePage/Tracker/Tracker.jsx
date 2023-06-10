@@ -20,7 +20,7 @@ import { useStore } from "../../../store";
 
 const Tracker = () => {
   const { colorStore, summaryStore } = useStore();
-  const { getColorTheme } = colorStore;
+  const { currentColorTheme } = colorStore;
   const { summaryData } = summaryStore;
 
   const navigate = useNavigate();
@@ -35,22 +35,22 @@ const Tracker = () => {
     <TrackerWrapper>
       <TrackerBody onClick={onClickHandler}>
         <LeftSide>
-          <LeftSideImage color={getColorTheme()}></LeftSideImage>
+          <LeftSideImage color={currentColorTheme}></LeftSideImage>
         </LeftSide>
         <RightSide>
           <RightUpSide>
-            <Title color={getColorTheme()}>
+            <Title color={currentColorTheme}>
               {summaryData?.last_course?.title}
             </Title>
             <Description>{summaryData?.last_course?.description}</Description>
           </RightUpSide>
           <RightBottomSide>
-            <ContinueButton color={getColorTheme()} className="continue-button">
+            <ContinueButton color={currentColorTheme} className="continue-button">
               Продолжить
             </ContinueButton>
             <ProgressBar
               percents={percent}
-              color={getColorTheme()}
+              color={currentColorTheme}
             />
           </RightBottomSide>
         </RightSide>

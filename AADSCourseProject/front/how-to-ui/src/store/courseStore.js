@@ -54,18 +54,17 @@ class CourseStore {
   };
 
   setArticleData = (article) => {
-    if(this.articles === undefined) this.articles = [];
+    if (this.articles === undefined) this.articles = [];
 
-    this.articles.push( {
-        id: article.id,
-        courseId: article.course_id,
-        title: article.title,
-        createdAt: article.created_at,
-        updatedAt: article.updated_at,
-        author: { userId: article.author?.user_id, name: article.author?.name },
-        isAuthor: article.is_author,
-      }
-    );
+    this.articles.push({
+      id: article.id,
+      courseId: article.course_id,
+      title: article.title,
+      createdAt: article.created_at,
+      updatedAt: article.updated_at,
+      author: { userId: article.author?.user_id, name: article.author?.name },
+      isAuthor: article.is_author,
+    });
   };
 
   courseActionError = "";
@@ -96,11 +95,11 @@ class CourseStore {
 
   isCourseEditing = false;
 
-  setCourseCreate=()=>{
+  setCourseCreate = () => {
     this.clearStore();
     this.setIsCourseEditing(true);
     this.setIsCourseContributor(true);
-  }
+  };
   setIsCourseEditing = (value) => {
     this.isCourseEditing = value;
   };
@@ -185,6 +184,11 @@ class CourseStore {
     isNewArticle,
     errorCallback
   ) => {
+    console.log("file", file);
+    if (isNewArticle && file === undefined) {
+      errorCallback("Необходимо передать MD файл");
+      return;
+    }
     this.rootStore.stateStore.setIsLoading(true);
     api
       .upsertArticle(articleId, courseId, title, file)
@@ -192,7 +196,7 @@ class CourseStore {
         this.rootStore.stateStore.setIsLoading(false);
 
         if (isNewArticle) {
-          this.setNewArticle(undefined)
+          this.setNewArticle(undefined);
           this.setArticleData(data);
         }
       })

@@ -4,6 +4,7 @@ import Tracker from "./Tracker/Tracker";
 import CourseHolder from "./CourseHolder/CourseHolder";
 import { useStore } from "../../store";
 import { useEffect } from "react";
+import SearchInput from "./SearchInput/SearchInput";
 
 const HomePage = () => {
 
@@ -16,6 +17,7 @@ const HomePage = () => {
 
   return <HomePageWrapper>
     <Tracker/>
+    <SearchInput/>
     <CourseHolder/>
   </HomePageWrapper>;
 };

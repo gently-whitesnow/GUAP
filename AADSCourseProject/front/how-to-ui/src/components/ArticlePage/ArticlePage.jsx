@@ -15,7 +15,7 @@ import { useParams } from "react-router-dom";
 
 const ArticlePage = () => {
   const { colorStore, articleStore, viewStore, stateStore } = useStore();
-  const { getColorTheme } = colorStore;
+  const { currentColorTheme } = colorStore;
   const { isLoading } = stateStore;
 
   const { courseId, articleId } = useParams();
@@ -36,8 +36,8 @@ const ArticlePage = () => {
   return (
     <ArticlePageWrapper>
       <ArticlePageContent>
-        <ArticlePageDecorator color={getColorTheme()}>
-          <MarkdownHandler color={getColorTheme()} />
+        <ArticlePageDecorator color={currentColorTheme}>
+          <MarkdownHandler color={currentColorTheme} />
         </ArticlePageDecorator>
         <ArticlePageButtonsWrapper>
           {article.id != undefined && !isLoading ? (
@@ -45,7 +45,7 @@ const ArticlePage = () => {
               content="Прочитана"
               onClick={onReadedClickHandler}
               active={article.isViewed}
-              color={getColorTheme()}
+              color={currentColorTheme}
             />
           ) : null}
         </ArticlePageButtonsWrapper>
