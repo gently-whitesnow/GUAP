@@ -23,8 +23,7 @@ public class ArticlePublic : IBTreeValue
     public int Id { get;}
 
     public int CourseId { get;  }
-
-
+    
     public string Title { get; }
 
     public DateTimeOffset CreatedAt { get; }

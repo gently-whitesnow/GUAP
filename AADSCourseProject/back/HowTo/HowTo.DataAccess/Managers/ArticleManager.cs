@@ -70,13 +70,13 @@ public class ArticleManager
             else
                 return new(filesOperation);
         
-        var userOperation = await _userInfoManager.GetUserInfoAsync(user);
-        if (userOperation is { Success: false, ActionStatus: ActionStatus.InternalServerError })
-            return new(userOperation);
-
         await _viewManager.AddViewAsync(articleOperation.Value.CourseId, articleOperation.Value.Id, user);
         await _userInfoManager.SetLastReadCourseIdAsync(user, articleOperation.Value.CourseId);
 
+        var userOperation = await _userInfoManager.GetUserInfoAsync(user);
+        if (userOperation is { Success: false, ActionStatus: ActionStatus.InternalServerError })
+            return new(userOperation);
+        
         return new(
             new GetArticleResponse(
                 new ArticlePublic(articleOperation.Value, user, userOperation.Value),

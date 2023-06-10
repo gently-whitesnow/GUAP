@@ -114,6 +114,10 @@ public class CourseRepository
                 return new(Errors.CourseNotFound(courseId));
 
             _db.CourseDtos.Remove(courseDto);
+            foreach (var articleDto in courseDto.Articles)
+            {
+                _db.ArticleDtos.Remove(articleDto);
+            }
             await _db.SaveChangesAsync();
             return new(courseDto);
         }

@@ -1,0 +1,91 @@
+using System.Text;
+using HowTo.DataAccess.Helpers;
+using HowTo.DataAccess.Managers;
+using HowTo.DataAccess.Repositories;
+using HowTo.Entities.Options;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+
+namespace HowTo.Tests;
+
+public class BaseTests : IDisposable
+{
+    protected readonly ArticleManager _articleManager;
+    protected readonly CourseManager _courseManager;
+    protected readonly ViewManager _viewManager;
+    protected readonly UserInfoManager _userInfoManager;
+    protected readonly ApplicationContext _dbContext;
+    protected readonly FileSystemHelper _fileSystemHelper;
+    protected readonly SummaryManager _summaryManager;
+
+    protected const string _firstFormFileContent = "#first content form file";
+    protected const string _secondFormFileContent = "#second content form file";
+
+    private readonly string _rootPath;
+
+    protected BaseTests(string rootPath)
+    {
+        _rootPath = rootPath;
+        _dbContext = new ApplicationContext(Options.Create(new DbSettings
+        {
+            ConnectionString = "Filename=:memory:"
+        }));
+
+        _dbContext.Database.OpenConnection();
+        _dbContext.Database.EnsureCreated();
+
+        _fileSystemHelper = new FileSystemHelper(Options.Create(new FileSystemOptions
+        {
+            RootPath = _rootPath
+        }));
+
+        var viewRepository = new ViewRepository(_dbContext);
+        _viewManager = new ViewManager(viewRepository);
+
+        var userInfoRepository = new UserInfoRepository(_dbContext);
+        _userInfoManager = new UserInfoManager(userInfoRepository);
+
+        var articleRepository = new ArticleRepository(_dbContext);
+        _articleManager = new ArticleManager(articleRepository, _fileSystemHelper, _viewManager, _userInfoManager);
+
+        var courseRepository = new CourseRepository(_dbContext);
+        _courseManager = new CourseManager(courseRepository, _fileSystemHelper, _userInfoManager);
+
+        _summaryManager = new SummaryManager(_userInfoManager, _courseManager);
+    }
+    
+    public IFormFile GetFormFile(string content)
+    {
+        var memoryStream = new MemoryStream();
+        
+        var contentBytes = Encoding.UTF8.GetBytes(content);
+        memoryStream.Write(contentBytes, 0, contentBytes.Length);
+
+        memoryStream.Position = 0;
+        return new FormFile(
+            baseStream: memoryStream,
+            baseStreamOffset: 0,
+            length: memoryStream.Length,
+            name: "formFile",
+            fileName: "example.md");
+    }
+    
+    public void Dispose()
+    {
+        var directory = new DirectoryInfo(_rootPath);
+        
+        foreach (var file in directory.GetFiles())
+        {
+            file.Delete(); 
+        }
+        foreach (var dir in directory.GetDirectories())
+        {
+            dir.Delete(true); 
+        }
+        directory.Delete();
+        
+        _dbContext.Database.CloseConnection();
+        _dbContext.Dispose();
+    }
+}
