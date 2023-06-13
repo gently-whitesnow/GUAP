@@ -31,8 +31,9 @@ export class Api {
     if (courseId !== undefined) {
       formData.append("CourseId", courseId);
     }
+    console.log(image);
     if (image !== undefined) {
-      formData.append("Image", image);
+      formData.append("File", image);
     }
 
     formData.append("Title", title);
