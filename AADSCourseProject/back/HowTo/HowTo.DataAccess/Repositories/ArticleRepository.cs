@@ -25,7 +25,6 @@ public class ArticleRepository
             var courseDto = await _db.CourseDtos
                 .Include(d => d.Articles)
                 .ThenInclude(a => a.Author)
-                .Include(d => d.Contributors)
                 .SingleOrDefaultAsync(c => c.Id == request.CourseId);
             if (courseDto == null)
                 return new(Errors.CourseNotFound(request.CourseId));
@@ -54,13 +53,7 @@ public class ArticleRepository
                 return new(Errors.ArticleNotFound(request.CourseId, request.ArticleId.Value));
             
             courseDto.UpdatedAt = DateTimeOffset.Now;
-            if (courseDto.Contributors.All(u => u.UserId != user.Id))
-                courseDto.Contributors.Add(new ContributorEntity
-                {
-                    UserId = user.Id,
-                    Name = user.Name
-                });
-
+            
             article.UpdatedAt = DateTime.UtcNow;
             article.Title = request.Title;
 

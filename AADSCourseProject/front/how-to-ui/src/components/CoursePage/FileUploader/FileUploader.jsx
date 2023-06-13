@@ -10,12 +10,12 @@ const FileUploader = (props) => {
   };
   return (
     <FileUploaderWrapper color={props.color}>
-      <label for="myfile" class="chous">
+      <label for="myfile" className="chous">
         {name != undefined ? name : "Выберите md файл"}
       </label>
       <input
         type="file"
-        class="my"
+        className="my"
         id="myfile"
         name="myfile"
         ref={props.fileInputRef}

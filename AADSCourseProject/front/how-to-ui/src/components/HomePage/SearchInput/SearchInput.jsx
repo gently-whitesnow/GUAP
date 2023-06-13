@@ -6,7 +6,6 @@ import {
 } from "./SearchInput.styles";
 import { useStore } from "../../../store";
 import { ReactComponent as SearchIcon } from "../../../icons/search.svg";
-import IconButton from "../../common/IconButton/IconButton";
 
 const SearchInput = (props) => {
   const { colorStore, summaryStore } = useStore();

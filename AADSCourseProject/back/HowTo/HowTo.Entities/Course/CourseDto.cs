@@ -24,7 +24,5 @@ public class CourseDto
     public DateTimeOffset CreatedAt { get; set; }
     [Required]
     public DateTimeOffset UpdatedAt { get; set; }
-    [Required]
-    public virtual List<ContributorEntity> Contributors { get; set; }
     public virtual List<ArticleDto> Articles { get; set; }
 }

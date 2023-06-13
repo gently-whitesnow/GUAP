@@ -6,6 +6,21 @@ export const ArticlePageWrapper = styled.div`
   justify-content: center;
 `;
 
+export const ArticlePageTitleWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+export const ArticlePageTitle = styled.div`
+  font-size: 38px;
+`;
+export const ArticlePageAuthor = styled.div`
+  font-size: 16px;
+  color: gray;
+  margin-top: 16px;
+  margin-bottom: 16px;
+`;
+
 export const ArticlePageContent = styled.div`
   margin-top: 30px;
   max-width: 800px;

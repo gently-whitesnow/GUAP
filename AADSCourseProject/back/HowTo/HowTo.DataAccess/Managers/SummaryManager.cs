@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors;
+using HowTo.DataAccess.Helpers;
 using HowTo.Entities;
 using HowTo.Entities.Course;
 using HowTo.Entities.Summary;
@@ -11,12 +13,15 @@ public class SummaryManager
 {
     private readonly UserInfoManager _userInfoManager;
     private readonly CourseManager _courseManager;
+    private readonly FileSystemHelper _fileSystemHelper;    
 
     public SummaryManager(UserInfoManager userInfoManager,
-        CourseManager courseManager)
+        CourseManager courseManager,
+        FileSystemHelper fileSystemHelper)
     {
         _userInfoManager = userInfoManager;
         _courseManager = courseManager;
+        _fileSystemHelper = fileSystemHelper;
     }
 
     public async Task<OperationResult<SummaryResponse>> GetSummaryAsync(User user)
@@ -33,24 +38,42 @@ public class SummaryManager
                          allCoursesOperation.Value.FirstOrDefault();
         if (lastCourse == null)
             return new OperationResult<SummaryResponse>();
-
-        return new(new SummaryResponse
+        var summaryResponse = new SummaryResponse
         {
             Courses = allCoursesOperation.Value.Select(c => new CourseSummary
             {
                 Id = c.Id,
                 Title = c.Title,
             }).ToList(),
-            
+
             LastCourse = new CourseExtendedSummary
             {
                 Id = lastCourse.Id,
                 Description = lastCourse!.Description,
                 Title = lastCourse.Title,
-                UserApprovedViews = userOperation.Value?.ApprovedViewArticleIds.
-                    Count(a=>a.CourseId == lastCourse.Id) ?? 0,
+                UserApprovedViews =
+                    userOperation.Value?.ApprovedViewArticleIds.Count(a => a.CourseId == lastCourse.Id) ?? 0,
                 ArticlesCount = lastCourse.Articles.Count
             }
-        });
+        };
+        var courseFilesOperation = await AddCourseFilesAsync(summaryResponse.Courses);
+        if (!courseFilesOperation.Success)
+            return new(courseFilesOperation);
+        
+        return new(summaryResponse);
+    }
+
+    private async Task<OperationResult> AddCourseFilesAsync(List<CourseSummary> courses)
+    {
+        var getFilesTasks = courses.Select(c => _fileSystemHelper.GetCourseFilesAsync(c.Id)).ToArray();
+        await Task.WhenAll(getFilesTasks);
+        for (int i = 0; i < getFilesTasks.Length; i++)
+        {
+            if (!getFilesTasks[i].Result.Success)
+                return getFilesTasks[i].Result;
+            
+            courses[i].Files = getFilesTasks[i].Result.Value;
+        }
+        return OperationResult.Ok;
     }
 }

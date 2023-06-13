@@ -9,6 +9,7 @@ void step(const std::string& description) {
 
 int main() {
     step("try create overflow array");
+    std::cout << "1, 2, 3, 4, -1, 2, 3, 4, 5, -6, 0, 2, 0, 1, 2" << std::endl;
     int overflowArray[] = {1, 2, 3, 4, -1, 2, 3, 4, 5, -6, 0, 2, 0, 1, 2};
     auto len1 = sizeof(overflowArray) / sizeof(int);
     Array array1(overflowArray, len1);

@@ -5,6 +5,7 @@ using namespace std;
 void step(const string& description) {
     cout << endl;
     cout << endl;
+    cout << endl;
     cout << "=== " << description << " ===" << endl;
     cout << endl;
 }
@@ -32,4 +33,8 @@ int main() {
     step("Division this complex numbers");
     Complex complexDivision = complexByTrigonometric / complexByAlgebraic;
     cout << "complexDivision: " << complexDivision << endl;
+
+    step("Equaling this complex numbers");
+    bool isEqual = complexByTrigonometric == complexByAlgebraic;
+    cout << "complexEqual: " << isEqual << endl;
 }

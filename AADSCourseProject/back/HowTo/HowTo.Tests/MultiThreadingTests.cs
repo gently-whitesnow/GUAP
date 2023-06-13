@@ -38,7 +38,7 @@ public class MultiThreadingTests : BaseTests
             {
                 Title = id.ToString(),
                 Description = "TestCourseDescription",
-                Image = GetFormFile(_secondFormFileContent)
+                File = GetFormImage()
             };
             courseTaskList.Add(_courseManager.UpsertCourseAsync(course, user));
             articleTaskList.Add(_articleManager.UpsertArticleAsync(article, user));

@@ -8,7 +8,7 @@ namespace HowTo.Entities.Article;
 
 public class ArticlePublic : IBTreeValue
 {
-    public ArticlePublic(ArticleDto articleDto,User user, UserUniqueInfoDto userUniqueInfo)
+    public ArticlePublic(ArticleDto articleDto,User user, UserUniqueInfoDto? userUniqueInfo)
     {
         Id = articleDto.Id;
         CourseId = articleDto.CourseId;

@@ -31,3 +31,4 @@ int main() {
     step("Not zero count");
     std::cout << data.NotZeroCount() << std::endl;
 }
+

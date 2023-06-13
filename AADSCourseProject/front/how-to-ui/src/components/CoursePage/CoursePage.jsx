@@ -1,10 +1,10 @@
 import CourseHolder from "./CourseHolder/CourseHolder";
 import {
+  AuthorsWrapper,
   CourseHeader,
   CourseHeaderContent,
   CourseHeaderWrapper,
   CourseLeftSide,
-  CourseLeftSideImage,
   CoursePageWrapper,
   CourseRightSide,
   IconButtonsWrapper,
@@ -19,10 +19,11 @@ import { ReactComponent as IconCheck } from "../../icons/check.svg";
 import { ReactComponent as IconTrash } from "../../icons/trash.svg";
 import theme from "../../theme";
 import ErrorLineHandler from "../common/ErrorLineHandler/ErrorLineHandler";
-import { TextareaWrapper } from "../common/Textarea/Textarea.styles";
 import Textarea from "../common/Textarea/Textarea";
+import ImageButton from "./ImageButton/ImageButton";
 
 const CoursePage = () => {
+  const imageInputRef = useRef(null);
   const { colorStore, courseStore } = useStore();
   const { currentColorTheme } = colorStore;
   const {
@@ -33,7 +34,6 @@ const CoursePage = () => {
     setTitle,
     setDescription,
     isAuthor,
-    setIsCourseContributor,
     setIsCourseEditing,
     courseActionError,
     setCourseActionError,
@@ -42,6 +42,7 @@ const CoursePage = () => {
     image,
     deleteCourse,
     setCourseCreate,
+    contributors,
   } = courseStore;
   const { courseId } = useParams();
 
@@ -65,15 +66,29 @@ const CoursePage = () => {
 
   const onCourseEditClickHandler = () => {
     setIsCourseEditing(!isCourseEditing);
+    clearImageHandler();
+  };
+
+  const clearImageHandler = () => {
+    if (imageInputRef.current?.value) {
+      imageInputRef.current.value = '';
+    }
   };
 
   const onCourseSaveClickHandler = () => {
-    upsertCourse(id, title, description, image, (id) => {
-      if (id !== undefined) {
-        console.log(id);
-        navigate(`/${id}`);
+    console.log("onCourseSaveClickHandler", imageInputRef);
+    upsertCourse(
+      id,
+      title,
+      description,
+      imageInputRef.current?.files[0],
+      (id) => {
+        if (id !== undefined) {
+          console.log(id);
+          navigate(`/${id}`);
+        }
       }
-    });
+    );
   };
 
   const onCourseDeleteClickHandler = () => {
@@ -89,45 +104,62 @@ const CoursePage = () => {
       <CourseHeader>
         <CourseHeaderContent>
           <CourseLeftSide>
-            <CourseLeftSideImage color={currentColorTheme} />
+            <ImageButton
+              color={currentColorTheme}
+              isAuthor={isAuthor}
+              imageRef={imageInputRef}
+              isCourseEditing={isCourseEditing}
+              setIsCourseEditing={setIsCourseEditing}
+              image={image}
+            />
           </CourseLeftSide>
           <CourseRightSide>
-            <ErrorLineHandler
-              error={courseActionError}
-              setActionError={setCourseActionError}
-            >
-              <CourseHeaderWrapper>
-                <Textarea
-                  color={currentColorTheme}
-                  value={title}
-                  disabled={!isCourseEditing}
-                  onChange={(e) => onTitleChangeHandler(e)}
-                  maxLength={70}
-                  height={"100px"}
-                  placeholder={"Введите название курса"}
-                />
+            <>
+              <ErrorLineHandler
+                error={courseActionError}
+                setActionError={setCourseActionError}
+              >
+                <CourseHeaderWrapper>
+                  <Textarea
+                    color={currentColorTheme}
+                    value={title}
+                    disabled={!isCourseEditing}
+                    onChange={(e) => onTitleChangeHandler(e)}
+                    maxLength={70}
+                    height={"100px"}
+                    placeholder={"Введите название курса"}
+                  />
 
-                {isAuthor ? (
-                  isCourseEditing ? (
-                    <>
-                      <IconButtonsWrapper>
+                  {isAuthor ? (
+                    isCourseEditing ? (
+                      <>
+                        <IconButtonsWrapper>
+                          <IconButton
+                            color={theme.colors.green}
+                            onClick={onCourseSaveClickHandler}
+                            active
+                            size={"50px"}
+                          >
+                            <IconCheck />
+                          </IconButton>
+                          <IconButton
+                            color={theme.colors.red}
+                            onClick={onCourseDeleteClickHandler}
+                            active
+                            size={"50px"}
+                          >
+                            <IconTrash />
+                          </IconButton>
+                        </IconButtonsWrapper>
                         <IconButton
-                          color={theme.colors.green}
-                          onClick={onCourseSaveClickHandler}
-                          active
+                          color={currentColorTheme}
+                          onClick={onCourseEditClickHandler}
                           size={"50px"}
                         >
-                          <IconCheck />
+                          <IconEdit />
                         </IconButton>
-                        <IconButton
-                          color={theme.colors.red}
-                          onClick={onCourseDeleteClickHandler}
-                          active
-                          size={"50px"}
-                        >
-                          <IconTrash />
-                        </IconButton>
-                      </IconButtonsWrapper>
+                      </>
+                    ) : (
                       <IconButton
                         color={currentColorTheme}
                         onClick={onCourseEditClickHandler}
@@ -135,29 +167,24 @@ const CoursePage = () => {
                       >
                         <IconEdit />
                       </IconButton>
-                    </>
-                  ) : (
-                    <IconButton
-                      color={currentColorTheme}
-                      onClick={onCourseEditClickHandler}
-                      size={"50px"}
-                    >
-                      <IconEdit />
-                    </IconButton>
-                  )
-                ) : null}
-              </CourseHeaderWrapper>
-            </ErrorLineHandler>
-            <Textarea
-              value={description}
-              disabled={!isCourseEditing}
-              onChange={(e) => onCourseDescriptionChangeHandler(e)}
-              maxLength={600}
-              fontsize={"18px"}
-              fontweight={"400"}
-              height={"100%"}
-              placeholder={"Введите описание курса"}
-            />
+                    )
+                  ) : null}
+                </CourseHeaderWrapper>
+              </ErrorLineHandler>
+              <Textarea
+                value={description}
+                disabled={!isCourseEditing}
+                onChange={(e) => onCourseDescriptionChangeHandler(e)}
+                maxLength={600}
+                fontsize={"18px"}
+                fontweight={"400"}
+                height={"100%"}
+                placeholder={"Введите описание курса"}
+              />
+            </>
+            <AuthorsWrapper color={currentColorTheme}>
+              {contributors?.map((e) => e.name).join(", ")}
+            </AuthorsWrapper>
           </CourseRightSide>
         </CourseHeaderContent>
       </CourseHeader>

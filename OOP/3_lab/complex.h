@@ -17,34 +17,22 @@ class Complex {
         double angle;
     };
 
-    Complex(Algebraic algebraic)
-        : algebraic_(algebraic), trigonometric_(ToTrigonometric(algebraic_)) {}
+    Complex(Algebraic algebraic);
 
-    Complex(Trigonometric trigonometric)
-        : algebraic_(ToAlgebraic(trigonometric)),
-          trigonometric_(trigonometric) {}
+    Complex(Trigonometric trigonometric);
 
-    std::string ToString() const {
-        std::stringstream ss;
-        ss << "Complex(real: " << algebraic_.real
-           << " image: " << algebraic_.image
-           << " radius: " << trigonometric_.radius
-           << " angle: " << trigonometric_.angle << ")";
-        return ss.str();
-    }
+    std::string ToString() const;
 
-    ~Complex() {
-        std::cout << std::endl
-                  << "___ destruct: " << ToString() << " ___" << std::endl;
-    }
+    ~Complex();
 
-    Algebraic GetAlgebraic() const { return algebraic_; }
+    Algebraic GetAlgebraic() const;
 
-    Trigonometric GetTrigonometric() const { return trigonometric_; }
+    Trigonometric GetTrigonometric() const;
+
+    const bool operator==(const Complex& rhs) const;
 
     friend Complex operator+(const Complex& lhs, const Complex& rhs);
     friend Complex operator-(const Complex& lhs, const Complex& rhs);
-    friend bool operator==(const Complex& lhs, const Complex& rhs);
     friend Complex operator*(const Complex& lhs, const Complex& rhs);
     friend Complex operator/(const Complex& lhs, const Complex& rhs);
 
@@ -54,19 +42,49 @@ class Complex {
     Algebraic algebraic_;
     Trigonometric trigonometric_;
 
-    Algebraic ToAlgebraic(const Trigonometric& trigonometric) {
-        return Algebraic{
-            .real = trigonometric.radius * cos(trigonometric.angle),
-            .image = trigonometric.radius * sin(trigonometric.angle)};
-    }
+    Algebraic ToAlgebraic(const Trigonometric& trigonometric);
 
-    Trigonometric ToTrigonometric(const Algebraic& algebraic) {
-        auto x = algebraic.real;
-        auto y = algebraic.image;
-        return Trigonometric{.radius = sqrt(x * x + y * y),
-                             .angle = atan2(y, x)};
-    }
+    Trigonometric ToTrigonometric(const Algebraic& algebraic);
 };
+
+Complex::Complex(Algebraic algebraic)
+    : algebraic_(algebraic), trigonometric_(ToTrigonometric(algebraic_)) {}
+
+Complex::Complex(Trigonometric trigonometric)
+    : algebraic_(ToAlgebraic(trigonometric)), trigonometric_(trigonometric) {}
+
+std::string Complex::ToString() const {
+    std::stringstream ss;
+    ss << "Complex(real: " << algebraic_.real << " image: " << algebraic_.image
+       << " radius: " << trigonometric_.radius
+       << " angle: " << trigonometric_.angle << ")";
+    return ss.str();
+}
+
+Complex::~Complex() {
+    std::cout << std::endl
+              << "___ destruct: " << ToString() << " ___" << std::endl;
+}
+
+Complex::Algebraic Complex::GetAlgebraic() const { return algebraic_; }
+
+Complex::Trigonometric Complex::GetTrigonometric() const { return trigonometric_; }
+
+const bool Complex::operator==(const Complex& rhs) const {
+    return std::tie(algebraic_.real, algebraic_.image) ==
+           std::tie(rhs.algebraic_.real, rhs.algebraic_.image);
+}
+
+Complex::Algebraic Complex::ToAlgebraic(const Complex::Trigonometric& trigonometric) {
+    return Algebraic{.real = trigonometric.radius * cos(trigonometric.angle),
+                     .image = trigonometric.radius * sin(trigonometric.angle)};
+}
+
+Complex::Trigonometric Complex::ToTrigonometric(const Complex::Algebraic& algebraic) {
+    auto x = algebraic.real;
+    auto y = algebraic.image;
+    return Trigonometric{.radius = sqrt(x * x + y * y), .angle = atan2(y, x)};
+}
 
 Complex operator+(const Complex& lhs, const Complex& rhs) {
     return Complex(Complex::Algebraic{
@@ -78,11 +96,6 @@ Complex operator-(const Complex& lhs, const Complex& rhs) {
     return Complex(Complex::Algebraic{
         .real = lhs.algebraic_.real - rhs.algebraic_.real,
         .image = lhs.algebraic_.image - rhs.algebraic_.image});
-}
-
-bool operator==(const Complex& lhs, const Complex& rhs) {
-    return std::tie(lhs.algebraic_.real, lhs.algebraic_.image) ==
-           std::tie(rhs.algebraic_.real, rhs.algebraic_.image);
 }
 
 std::ostream& operator<<(std::ostream& stream, const Complex& complex) {

@@ -5,12 +5,13 @@ import TestModule from "../TestModule/TestModule";
 import { useStore } from "../../../store";
 
 const MarkdownHandler = (props) => {
-  const [articleContent, setArticleContent] = useState();
+  const [articleContent, setArticleContent] = useState(null);
 
   const { articleStore } = useStore();
   const { article } = articleStore;
 
   useEffect(() => {
+    setArticleContent(null);
     fillArticleContent();
   }, [article.fileURL]);
   

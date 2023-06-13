@@ -27,9 +27,9 @@ public class CourseManager
     {
         OperationResult<CourseDto> upsertOperation;
         if (request.CourseId == null)
-            upsertOperation = await _courseRepository.InsertCourseAsync(request, user);
+            upsertOperation = await _courseRepository.InsertCourseAsync(request);
         else
-            upsertOperation = await _courseRepository.UpdateCourseAsync(request, user);
+            upsertOperation = await _courseRepository.UpdateCourseAsync(request);
 
         var userOperation = await _userInfoManager.GetUserInfoAsync(user);
         if (userOperation is { Success: false, ActionStatus: ActionStatus.InternalServerError })
@@ -37,14 +37,14 @@ public class CourseManager
         
         if (!upsertOperation.Success)
             return new(upsertOperation);
-        if (request.Image == null)
-            return new(new CoursePublic(upsertOperation.Value, user, userOperation.Value));
-
+        
         var deleteOperation = await _fileSystemHelper.DeleteCourseDirectoryAsync(upsertOperation.Value.Id);
         if (!deleteOperation.Success)
             return new(deleteOperation);
         
-        var saveOperation = await _fileSystemHelper.SaveCourseFilesAsync(upsertOperation.Value.Id, request.Image);
+        if (request.File == null)
+            return new(new CoursePublic(upsertOperation.Value, user, userOperation.Value));
+        var saveOperation = await _fileSystemHelper.SaveCourseFilesAsync(upsertOperation.Value.Id, request.File);
         if (!saveOperation.Success)
             return new(saveOperation);
         

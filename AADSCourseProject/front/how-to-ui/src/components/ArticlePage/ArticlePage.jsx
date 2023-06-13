@@ -1,7 +1,10 @@
 import {
+  ArticlePageAuthor,
   ArticlePageButtonsWrapper,
   ArticlePageContent,
   ArticlePageDecorator,
+  ArticlePageTitle,
+  ArticlePageTitleWrapper,
   ArticlePageWrapper,
 } from "./ArticlePage.styles";
 import { observer } from "mobx-react-lite";
@@ -19,8 +22,7 @@ const ArticlePage = () => {
   const { isLoading } = stateStore;
 
   const { courseId, articleId } = useParams();
-  const { getArticle, article, setArticleIsViewed } =
-    articleStore;
+  const { getArticle, article, setArticleIsViewed } = articleStore;
 
   const { addApprovedView } = viewStore;
 
@@ -36,6 +38,10 @@ const ArticlePage = () => {
   return (
     <ArticlePageWrapper>
       <ArticlePageContent>
+        <ArticlePageTitleWrapper>
+          <ArticlePageTitle>{article.title}</ArticlePageTitle>
+          <ArticlePageAuthor>{article.author?.name}</ArticlePageAuthor>
+        </ArticlePageTitleWrapper>
         <ArticlePageDecorator color={currentColorTheme}>
           <MarkdownHandler color={currentColorTheme} />
         </ArticlePageDecorator>

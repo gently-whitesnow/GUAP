@@ -25,6 +25,23 @@ export const CourseLeftSideImage = styled.div`
   display: flex;
   height: 100%;
   background-color: ${(props) => props.color};
+  position: relative;
+  :hover {
+    cursor: pointer;
+    svg {
+      transform: scale(1.5);
+    }
+  }
+  svg {
+    transform: scale(1.2);
+    color: white;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+  }
 `;
 
 export const CourseRightSide = styled.div`
@@ -33,6 +50,7 @@ export const CourseRightSide = styled.div`
   padding: 20px;
   display: flex;
   flex-direction: column;
+
   width: 100%;
 `;
 
@@ -45,4 +63,9 @@ export const IconButtonsWrapper = styled.div`
   background-color: white;
   display: flex;
   flex-direction: column;
+`;
+
+export const AuthorsWrapper = styled.div`
+  opacity: 0.6;
+  color: ${(props) => props.color};
 `;

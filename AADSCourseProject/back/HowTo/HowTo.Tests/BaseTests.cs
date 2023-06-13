@@ -6,6 +6,10 @@ using HowTo.Entities.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace HowTo.Tests;
 
@@ -52,13 +56,13 @@ public class BaseTests : IDisposable
         var courseRepository = new CourseRepository(_dbContext);
         _courseManager = new CourseManager(courseRepository, _fileSystemHelper, _userInfoManager);
 
-        _summaryManager = new SummaryManager(_userInfoManager, _courseManager);
+        _summaryManager = new SummaryManager(_userInfoManager, _courseManager, _fileSystemHelper);
     }
-    
+
     public IFormFile GetFormFile(string content)
     {
         var memoryStream = new MemoryStream();
-        
+
         var contentBytes = Encoding.UTF8.GetBytes(content);
         memoryStream.Write(contentBytes, 0, contentBytes.Length);
 
@@ -71,21 +75,68 @@ public class BaseTests : IDisposable
             fileName: "example.md");
     }
     
+    public IFormFile GetFormImage()
+    {
+        int width = 200;
+        int height = 200;
+        
+        using var image = new Image<Rgba32>(width, height);
+        // Apply image processing operations
+        image.Mutate(ctx => ctx.BackgroundColor(Rgba32.ParseHex("#6cadfe")));
+
+        var memoryStream = new MemoryStream();
+        
+        image.Save(memoryStream, new PngEncoder());
+        memoryStream.Position = 0;
+        return new FormFile(
+            baseStream: memoryStream,
+            baseStreamOffset: 0,
+            length: memoryStream.Length,
+            name: "formFile",
+            fileName: "example.png");
+    }
+
     public void Dispose()
     {
         var directory = new DirectoryInfo(_rootPath);
-        
-        foreach (var file in directory.GetFiles())
+
+        if (directory.Exists)
         {
-            file.Delete(); 
+            foreach (var file in directory.GetFiles())
+            {
+                file.Delete();
+            }
+
+            foreach (var dir in directory.GetDirectories())
+            {
+                dir.Delete(true);
+            }
+
+            directory.Delete();
         }
-        foreach (var dir in directory.GetDirectories())
-        {
-            dir.Delete(true); 
-        }
-        directory.Delete();
         
         _dbContext.Database.CloseConnection();
         _dbContext.Dispose();
+    }
+    
+    
+    protected bool CompareByteArrayAndFormFile(byte[] byteArray, IFormFile formFile)
+    {
+        using var memoryStream = new MemoryStream();
+        formFile.CopyTo(memoryStream);
+        byte[] fileBytes = memoryStream.ToArray();
+        
+        if (byteArray.Length == fileBytes.Length)
+        {
+            for (int i = 0; i < byteArray.Length; i++)
+            {
+                if (byteArray[i] != fileBytes[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

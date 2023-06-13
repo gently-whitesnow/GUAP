@@ -19,7 +19,7 @@ public class CourseRepository
         _db = applicationContext;
     }
 
-    public async Task<OperationResult<CourseDto>> InsertCourseAsync(UpsertCourseRequest request, User user)
+    public async Task<OperationResult<CourseDto>> InsertCourseAsync(UpsertCourseRequest request)
     {
         try
         {
@@ -32,15 +32,7 @@ public class CourseRepository
                 Title = request.Title,
                 Description = request.Description,
                 CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                Contributors = new List<ContributorEntity>
-                {
-                    new()
-                    {
-                        UserId = user.Id,
-                        Name = user.Name
-                    }
-                }
+                UpdatedAt = DateTime.UtcNow
             };
 
             await _db.CourseDtos.AddAsync(dto);
@@ -53,24 +45,17 @@ public class CourseRepository
         }
     }
 
-    public async Task<OperationResult<CourseDto>> UpdateCourseAsync(UpsertCourseRequest request, User user)
+    public async Task<OperationResult<CourseDto>> UpdateCourseAsync(UpsertCourseRequest request)
     {
         try
         {
-            var courseDto = await _db.CourseDtos.Include(d=>d.Contributors)
-                .FirstOrDefaultAsync(c => c.Id == request.CourseId);
+            var courseDto = await _db.CourseDtos.FirstOrDefaultAsync(c => c.Id == request.CourseId);
             if (courseDto == null)
                 return new(Errors.CourseNotFound(request.CourseId!.Value));
 
             courseDto.UpdatedAt = DateTime.UtcNow;
             courseDto.Title = request.Title;
             courseDto.Description = request.Description;
-            if (courseDto.Contributors.All(u => u.UserId != user.Id))
-                courseDto.Contributors.Add(new ContributorEntity
-                {
-                    UserId = user.Id,
-                    Name = user.Name
-                });
 
             await _db.SaveChangesAsync();
             return new(courseDto);
@@ -86,7 +71,6 @@ public class CourseRepository
         try
         {
             var courseDto = await _db.CourseDtos
-                .Include(c => c.Contributors)
                 .Include(c => c.Articles)
                 .ThenInclude(a=>a.Author)
                 .SingleOrDefaultAsync(c => c.Id == courseId);
@@ -106,7 +90,6 @@ public class CourseRepository
         try
         {
             var courseDto = await _db.CourseDtos
-                .Include(d=>d.Contributors)
                 .Include(d=>d.Articles)
                 .ThenInclude(a=>a.Author)
                 .SingleOrDefaultAsync(c => c.Id == courseId);
@@ -133,7 +116,6 @@ public class CourseRepository
         {
             return new(await _db.CourseDtos
                 .Include(d=>d.Articles)
-                .Include(d=>d.Contributors)
                 .ToListAsync());
         }
         catch (Exception ex)

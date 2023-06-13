@@ -1,18 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
 using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors;
 using HowTo.Entities.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace HowTo.DataAccess.Helpers;
 
 public class FileSystemHelper
 {
     private readonly FileSystemOptions _fileSystemOptions;
+    private const int _imageMaxSize = 640;
 
     public FileSystemHelper(IOptions<FileSystemOptions> fileSystemOptions)
     {
@@ -21,7 +23,7 @@ public class FileSystemHelper
 
     public Task<OperationResult> SaveCourseFilesAsync(int courseId, IFormFile files)
     {
-        return SaveFileAsync(courseId.ToString(), files);
+        return SaveImageAsync(courseId.ToString(), files);
     }
 
     public Task<OperationResult> SaveArticleFilesAsync(int courseId, int articleId, IFormFile file)
@@ -38,7 +40,7 @@ public class FileSystemHelper
     {
         return GetFilesAsync($"{courseId}/{articleId}");
     }
-    
+
     public Task<OperationResult> DeleteCourseDirectoryAsync(int courseId)
     {
         return DeleteDirectoryAsync(courseId.ToString());
@@ -75,7 +77,7 @@ public class FileSystemHelper
             var directory = new DirectoryInfo($"{_fileSystemOptions.RootPath}/{path}");
             if (!directory.Exists)
                 return new();
-            
+
             foreach (var file in directory.GetFiles())
             {
                 byte[] fileBytes;
@@ -87,18 +89,19 @@ public class FileSystemHelper
                         fileBytes = memoryStream.ToArray();
                     }
                 }
+
                 files.Add(fileBytes);
             }
 
-            return new (files);
+            return new(files);
         }
         catch (Exception ex)
         {
-            return new (ex);
+            return new(ex);
         }
     }
 
-    
+
     private async Task<OperationResult> DeleteDirectoryAsync(string path)
     {
         try
@@ -108,11 +111,32 @@ public class FileSystemHelper
                 var directory = new DirectoryInfo($"{_fileSystemOptions.RootPath}/{path}");
                 if (!directory.Exists)
                     return ActionStatus.Ok;
-                
+
                 directory.Delete(true);
 
                 return ActionStatus.Ok;
             }));
+        }
+        catch (Exception ex)
+        {
+            return new(ex);
+        }
+    }
+
+    private async Task<OperationResult> SaveImageAsync(string path, IFormFile file)
+    {
+        try
+        {
+            var fileName = Path.GetFileName(file.FileName);
+            var filePath = Path.Combine(_fileSystemOptions.RootPath, path, fileName);
+            new FileInfo(filePath).Directory?.Create();
+            await using var stream = new FileStream(filePath, FileMode.Create);
+            using var image = await Image.LoadAsync(file.OpenReadStream());
+            image.Mutate(c => c.Resize
+                (_imageMaxSize, image.Height * _imageMaxSize / image.Width));
+            await image.SaveAsync(stream, image.Metadata.DecodedImageFormat);
+
+            return OperationResult.Ok;
         }
         catch (Exception ex)
         {
