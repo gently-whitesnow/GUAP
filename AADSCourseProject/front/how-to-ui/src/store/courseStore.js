@@ -1,6 +1,7 @@
 import { makeAutoObservable, configure } from "mobx";
 import { NavigateToAuthorize } from "./navigateHelper";
 import api from "../api/api";
+import { setFile } from "../helpers/IOHelper";
 
 class CourseStore {
   constructor(rootStore) {
@@ -51,24 +52,7 @@ class CourseStore {
     this.updatedAt = course.updated_at;
     this.contributors = course.contributors;
     this.isAuthor = course.is_author;
-    this.image = this.setFile(course.files?.shift());
-  };
-
-  setFile = (file) => {
-    if (!file) return undefined;
-    
-    const fileData = atob(file);
-    const fileByteArray = new Uint8Array(fileData.length);
-    
-    for (let i = 0; i < fileData.length; i++) {
-      fileByteArray[i] = fileData.charCodeAt(i);
-    }
-    
-    const fileBlob = new Blob([fileByteArray], { type: "application/octet-stream" });
-    const fileURL = URL.createObjectURL(fileBlob);
-    
-    console.log("fileURL", fileURL);
-    return fileURL;
+    this.image = setFile(course.files?.shift());
   };
 
   setArticleData = (article) => {
@@ -158,8 +142,9 @@ class CourseStore {
       .upsertCourse(courseId, title, description, image)
       .then(({ data }) => {
         this.rootStore.stateStore.setIsLoading(false);
-        this.setCourseData(data);
-        console.log(data);
+        this.id = data.id;
+        this.createdAt = data.created_at;
+        this.updatedAt = data.updated_at;
         this.setIsCourseEditing(false);
         callback(data.id);
       })

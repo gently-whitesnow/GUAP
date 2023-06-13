@@ -10,6 +10,7 @@ import {
   RightBottomSide,
   LeftSideImage,
   ContinueButton,
+  ImageWrapper,
 } from "./Tracker.styles";
 
 import Image from "react-graceful-image";
@@ -28,14 +29,26 @@ const Tracker = () => {
     navigate(`/${summaryData?.last_course?.id}`);
   };
 
-  let percent = summaryData?.last_course?.articles_count == 0 ? 0 : 
-  Math.round((summaryData?.last_course?.user_approved_views / summaryData?.last_course?.articles_count) * 100);
+  let percent =
+    summaryData?.last_course?.articles_count == 0
+      ? 0
+      : Math.round(
+          (summaryData?.last_course?.user_approved_views /
+            summaryData?.last_course?.articles_count) *
+            100
+        );
 
   return (
     <TrackerWrapper>
       <TrackerBody onClick={onClickHandler}>
         <LeftSide>
-          <LeftSideImage color={currentColorTheme}></LeftSideImage>
+          <LeftSideImage color={currentColorTheme}>
+            <ImageWrapper>
+              {summaryData?.last_course?.image ? (
+                <img src={summaryData?.last_course?.image}></img>
+              ) : null}
+            </ImageWrapper>
+          </LeftSideImage>
         </LeftSide>
         <RightSide>
           <RightUpSide>
@@ -45,13 +58,13 @@ const Tracker = () => {
             <Description>{summaryData?.last_course?.description}</Description>
           </RightUpSide>
           <RightBottomSide>
-            <ContinueButton color={currentColorTheme} className="continue-button">
+            <ContinueButton
+              color={currentColorTheme}
+              className="continue-button"
+            >
               Продолжить
             </ContinueButton>
-            <ProgressBar
-              percents={percent}
-              color={currentColorTheme}
-            />
+            <ProgressBar percents={percent} color={currentColorTheme} />
           </RightBottomSide>
         </RightSide>
       </TrackerBody>

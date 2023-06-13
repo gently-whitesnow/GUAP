@@ -14,7 +14,7 @@ namespace HowTo.DataAccess.Helpers;
 public class FileSystemHelper
 {
     private readonly FileSystemOptions _fileSystemOptions;
-    private const int _imageMaxSize = 640;
+    private const int _imageMaxSize = 864;
 
     public FileSystemHelper(IOptions<FileSystemOptions> fileSystemOptions)
     {
@@ -132,10 +132,15 @@ public class FileSystemHelper
             new FileInfo(filePath).Directory?.Create();
             await using var stream = new FileStream(filePath, FileMode.Create);
             using var image = await Image.LoadAsync(file.OpenReadStream());
-            image.Mutate(c => c.Resize
-                (_imageMaxSize, image.Height * _imageMaxSize / image.Width));
-            await image.SaveAsync(stream, image.Metadata.DecodedImageFormat);
 
+            if (image.Height > image.Width)
+                image.Mutate(c => c.Resize
+                    (_imageMaxSize, image.Height * _imageMaxSize / image.Width));
+            else if (image.Height < image.Width)
+                image.Mutate(c => c.Resize
+                    (image.Width * _imageMaxSize / image.Height, _imageMaxSize));
+
+            await image.SaveAsync(stream, image.Metadata.DecodedImageFormat);
             return OperationResult.Ok;
         }
         catch (Exception ex)

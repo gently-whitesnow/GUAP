@@ -16,9 +16,7 @@ const ImageButton = (props) => {
   };
 
   useEffect(() => {
-    if (props.image) {
-      setImg(props.image);
-    }
+    setImg(props.image);
   }, [props.image]);
 
   const clearImageHandler = () => {
@@ -39,7 +37,7 @@ const ImageButton = (props) => {
     if (props.isAuthor) {
       return (
         <>
-          {img === null ? (
+          {!img ? (
             <>
               <ImageIcon />
               <label for="myimage" className="chous"></label>

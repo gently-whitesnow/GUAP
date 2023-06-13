@@ -53,6 +53,7 @@ const CoursePage = () => {
       setCourseCreate();
       return;
     }
+    clearImageHandler();
     getCourse(courseId);
   }, []);
 

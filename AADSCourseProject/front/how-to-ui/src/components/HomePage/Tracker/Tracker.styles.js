@@ -33,6 +33,14 @@ export const LeftSideImage = styled.div`
   height: 100%;
   background-color: ${(props) => props.color};
 `;
+export const ImageWrapper = styled.div`
+  width: 100%;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
 
 export const RightSide = styled.div`
   flex: 10;
@@ -47,7 +55,7 @@ export const RightUpSide = styled.div``;
 export const RightBottomSide = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: flex-end
+  align-items: flex-end;
 `;
 
 export const Title = styled.div`

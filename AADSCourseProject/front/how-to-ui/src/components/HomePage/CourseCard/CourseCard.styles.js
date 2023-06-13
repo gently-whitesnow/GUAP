@@ -28,8 +28,3 @@ export const CardTitle = styled.div`
   margin-top: 15px;
   margin-bottom: 25px;
 `;
-
-export const CardImage = styled.div`
-  height: 260px;
-  background-color: ${(props) => props.color[2]};
-`;

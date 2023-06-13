@@ -2,10 +2,10 @@ import { observer } from "mobx-react-lite";
 import {
   CourseCardWrapper,
   CardTitle,
-  CardImage,
   CourseCardContent,
 } from "./CourseCard.styles";
 import { useNavigate } from "react-router";
+import ImageDisplay from "../ImageDisplay/ImageDisplay";
 
 const CourseCard = (props) => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const CourseCard = (props) => {
   return (
     <CourseCardWrapper  color={props.color}  onClick={onClickHandler}>
       <CourseCardContent>
-        <CardImage  color={props.color}  className="card-image"></CardImage>
+        <ImageDisplay color={props.color} image={props.image}></ImageDisplay>
         <CardTitle>{props.title}</CardTitle>
       </CourseCardContent>
     </CourseCardWrapper>

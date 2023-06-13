@@ -13,7 +13,7 @@ export const CourseHeaderContent = styled.div`
   display: flex;
   max-width: 1148px;
   width: 100%;
-  min-height: 300px;
+  height: 300px;
 `;
 
 export const CourseLeftSide = styled.div`

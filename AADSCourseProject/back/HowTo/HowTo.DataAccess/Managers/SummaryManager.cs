@@ -13,7 +13,7 @@ public class SummaryManager
 {
     private readonly UserInfoManager _userInfoManager;
     private readonly CourseManager _courseManager;
-    private readonly FileSystemHelper _fileSystemHelper;    
+    private readonly FileSystemHelper _fileSystemHelper;
 
     public SummaryManager(UserInfoManager userInfoManager,
         CourseManager courseManager,
@@ -59,7 +59,7 @@ public class SummaryManager
         var courseFilesOperation = await AddCourseFilesAsync(summaryResponse.Courses);
         if (!courseFilesOperation.Success)
             return new(courseFilesOperation);
-        
+
         return new(summaryResponse);
     }
 
@@ -69,11 +69,12 @@ public class SummaryManager
         await Task.WhenAll(getFilesTasks);
         for (int i = 0; i < getFilesTasks.Length; i++)
         {
-            if (!getFilesTasks[i].Result.Success)
+            if (!getFilesTasks[i].Result.Success && getFilesTasks[i].Result.Errors.Count != 0)
                 return getFilesTasks[i].Result;
-            
+
             courses[i].Files = getFilesTasks[i].Result.Value;
         }
+
         return OperationResult.Ok;
     }
 }
