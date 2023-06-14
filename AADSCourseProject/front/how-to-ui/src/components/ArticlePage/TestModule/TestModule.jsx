@@ -51,7 +51,6 @@ const TestModule = (props) => {
     });
   };
 
-  console.log(getCounterValue(props.testModuleCounterId))
   return (
     <TestModuleWrapper
       complete={getCounterValue(props.testModuleCounterId) === rightsCount}

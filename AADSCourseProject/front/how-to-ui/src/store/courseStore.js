@@ -1,5 +1,4 @@
 import { makeAutoObservable, configure } from "mobx";
-import { NavigateToAuthorize } from "./navigateHelper";
 import api from "../api/api";
 import { setFile } from "../helpers/IOHelper";
 
@@ -78,7 +77,6 @@ class CourseStore {
   newArticle = undefined;
 
   addNewArticle = () => {
-    console.log("click");
     if (this.newArticle !== undefined) {
       return;
     }
@@ -119,7 +117,6 @@ class CourseStore {
       .then(({ data }) => {
         this.rootStore.stateStore.setIsLoading(false);
         this.setCourseData(data);
-        console.log(data);
       })
       .catch((err) => {
         this.rootStore.stateStore.setIsLoading(false);
@@ -187,7 +184,6 @@ class CourseStore {
     isNewArticle,
     errorCallback
   ) => {
-    console.log("file", file);
     if (isNewArticle && file === undefined) {
       errorCallback("Необходимо передать MD файл");
       return;
@@ -202,6 +198,7 @@ class CourseStore {
           this.setNewArticle(undefined);
           this.setArticleData(data);
         }
+        errorCallback();
       })
       .catch((err) => {
         this.rootStore.stateStore.setIsLoading(false);

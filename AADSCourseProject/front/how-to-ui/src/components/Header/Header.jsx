@@ -16,7 +16,7 @@ import { useEffect } from "react";
 const Header = () => {
   const { colorStore, courseStore, stateStore } = useStore();
   const { currentColorTheme, setColorTheme } = colorStore;
-  const { addNewArticle } = courseStore;
+  const { addNewArticle, id } = courseStore;
   const { isAuthorized, isNotFound, setIsNotFound, isLoading } = stateStore;
 
   const navigate = useNavigate();
@@ -63,10 +63,13 @@ const Header = () => {
             content="Назад"
           />
           <ColorimetrWrapper>
-            <Button
-              onClick={() => addNewArticle()}
-              content="Добавить страницу"
-            />
+            {id ? (
+              <Button
+                onClick={() => addNewArticle()}
+                content="Добавить страницу"
+              />
+            ) : null}
+
             <Colorimetr color={currentColorTheme} onClick={setColorTheme} />
           </ColorimetrWrapper>
         </>

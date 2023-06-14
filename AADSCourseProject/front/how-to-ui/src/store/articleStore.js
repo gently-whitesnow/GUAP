@@ -1,5 +1,4 @@
 import { makeAutoObservable, configure } from "mobx";
-import { NavigateToAuthorize } from "./navigateHelper";
 import api from "../api/api";
 
 class ArticleStore {
@@ -45,7 +44,6 @@ class ArticleStore {
   }
 
   setFiles = (files) => {
-    console.log(files)
     if(files === undefined || files.length === 0) return;
     let file = files[0];
     let fileData = atob(file);

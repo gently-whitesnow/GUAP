@@ -7,8 +7,6 @@ export class Api {
     // this.client.defaults.baseURL = "http://localhost:80/gw/";
     // this.client.defaults.baseURL = "http://localhost:1999/";
     this.client.defaults.headers["Access-Control-Allow-Origin"] = "*";
-    // this.client.defaults.headers["Content-Type"] =
-    //   "application/json;charset=UTF-8";
     this.client.defaults.withCredentials = true;
     this.client.timeout = 3000;
   }
@@ -31,7 +29,7 @@ export class Api {
     if (courseId !== undefined) {
       formData.append("CourseId", courseId);
     }
-    console.log(image);
+
     if (image !== undefined) {
       formData.append("File", image);
     }

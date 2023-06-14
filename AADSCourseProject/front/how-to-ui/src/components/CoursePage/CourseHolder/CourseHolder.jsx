@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { useStore } from "../../../store";
 import ArticleButton from "../ArticleButton/ArticleButton";
 import {
@@ -6,15 +7,18 @@ import {
   Course,
 } from "./CourseHolder.styles";
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 
 const CourseHolder = (props) => {
-  const {  courseStore } = useStore();
-  const {
-    articles,
-    upsertArticle,
-    newArticle,
-    deleteArticle
-  } = courseStore;
+  const newArticleRef = useRef();
+
+  const { courseStore, stateStore } = useStore();
+  const {isLoading} = stateStore;
+  const { articles, upsertArticle, newArticle, deleteArticle } = courseStore;
+
+  useEffect(() => {
+    newArticleRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [newArticle]);
 
   return (
     <CourseHolderWrapper>
@@ -26,15 +30,20 @@ const CourseHolder = (props) => {
               article={article}
               upsertArticle={upsertArticle}
               deleteArticle={deleteArticle}
+              isLoading={isLoading}
             />
           );
         })}
-        {newArticle!==undefined?<ArticleButton
-              color={props.color}
-              article={newArticle}
-              upsertArticle={upsertArticle}
-              deleteArticle={deleteArticle}
-            />:null}
+        {newArticle !== undefined ? (
+          <ArticleButton
+            innerRef={newArticleRef}
+            color={props.color}
+            article={newArticle}
+            upsertArticle={upsertArticle}
+            deleteArticle={deleteArticle}
+            isLoading={isLoading}
+          />
+        ) : null}
       </CourseHolderContent>
     </CourseHolderWrapper>
   );

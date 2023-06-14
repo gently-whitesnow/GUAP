@@ -6,7 +6,6 @@ export const adjustFontSize = (ref, offset) => {
   const firstAcceptable = 26;
 
   const threshold = 1;
-  console.log("in", textarea.scrollHeight, textarea.clientHeight);
   while (Math.abs(textarea.scrollHeight - textarea.clientHeight) > threshold) {
     const computedStyle = getComputedStyle(textarea);
     const fontSize = parseInt(computedStyle.fontSize);
@@ -14,7 +13,6 @@ export const adjustFontSize = (ref, offset) => {
       textarea.style.fontSize = firstAcceptable + "px";
       break;
     }
-    console.log("while", textarea.scrollHeight, textarea.clientHeight);
     if (textarea.scrollHeight > textarea.clientHeight) {
       textarea.style.fontSize = fontSize - offset + "px";
     } else if (textarea.scrollHeight < textarea.clientHeight) {

@@ -13,7 +13,6 @@ class StateStore {
   isLoading = false;
 
   setIsLoading = (value) => {
-    console.log(value);
     this.isLoading = value;
   };
 
@@ -21,7 +20,6 @@ class StateStore {
   isAuthorized = true;
 
   setIsAuthorized = (value) => {
-    console.log(value);
     this.isAuthorized = value;
   };
 

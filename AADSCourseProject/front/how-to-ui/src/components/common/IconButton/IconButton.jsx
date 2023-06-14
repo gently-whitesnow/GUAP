@@ -4,7 +4,7 @@ import {
 
 const IconButton = (props) => {
   return (
-    <IconButtonWrapper color={props.color} onClick={props.onClick} active={props.active} size={props.size}>
+    <IconButtonWrapper disabled={props.disabled} color={props.color} onClick={props.onClick} active={props.active} size={props.size}>
       {props.children}
     </IconButtonWrapper>
   );

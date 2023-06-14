@@ -11,6 +11,5 @@ export const setFile = (file) => {
     const fileBlob = new Blob([fileByteArray], { type: "application/octet-stream" });
     const fileURL = URL.createObjectURL(fileBlob);
     
-    console.log("fileURL", fileURL);
     return fileURL;
   };

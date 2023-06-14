@@ -39,6 +39,7 @@ export const ImageButtonWrapper = styled.div`
   }
 `;
 export const ImageWrapper = styled.div`
+  width: 100%;
   img {
     width: 100%;
     height: 100%;

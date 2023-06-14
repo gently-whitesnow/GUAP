@@ -24,8 +24,9 @@ import ImageButton from "./ImageButton/ImageButton";
 
 const CoursePage = () => {
   const imageInputRef = useRef(null);
-  const { colorStore, courseStore } = useStore();
+  const { colorStore, courseStore, stateStore } = useStore();
   const { currentColorTheme } = colorStore;
+  const {isLoading} = stateStore;
   const {
     getCourse,
     isCourseEditing,
@@ -77,7 +78,6 @@ const CoursePage = () => {
   };
 
   const onCourseSaveClickHandler = () => {
-    console.log("onCourseSaveClickHandler", imageInputRef);
     upsertCourse(
       id,
       title,
@@ -85,7 +85,6 @@ const CoursePage = () => {
       imageInputRef.current?.files[0],
       (id) => {
         if (id !== undefined) {
-          console.log(id);
           navigate(`/${id}`);
         }
       }
@@ -140,6 +139,7 @@ const CoursePage = () => {
                             onClick={onCourseSaveClickHandler}
                             active
                             size={"50px"}
+                            disabled={isLoading}
                           >
                             <IconCheck />
                           </IconButton>
@@ -148,6 +148,7 @@ const CoursePage = () => {
                             onClick={onCourseDeleteClickHandler}
                             active
                             size={"50px"}
+                            disabled={isLoading}
                           >
                             <IconTrash />
                           </IconButton>
@@ -156,6 +157,7 @@ const CoursePage = () => {
                           color={currentColorTheme}
                           onClick={onCourseEditClickHandler}
                           size={"50px"}
+                          disabled={isLoading}
                         >
                           <IconEdit />
                         </IconButton>
@@ -165,6 +167,7 @@ const CoursePage = () => {
                         color={currentColorTheme}
                         onClick={onCourseEditClickHandler}
                         size={"50px"}
+                        disabled={isLoading}
                       >
                         <IconEdit />
                       </IconButton>

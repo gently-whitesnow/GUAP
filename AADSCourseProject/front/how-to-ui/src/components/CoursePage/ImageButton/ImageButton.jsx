@@ -11,7 +11,6 @@ const ImageButton = (props) => {
     if (!props.imageRef.current?.files[0]) return;
     let url = URL.createObjectURL(props.imageRef.current?.files[0]);
     setImg(url);
-    console.log(url);
     props.setIsCourseEditing(true);
   };
 

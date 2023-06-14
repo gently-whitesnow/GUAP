@@ -14,15 +14,12 @@ const SearchInput = (props) => {
 
   const onInputHandler = (e) => {
     let search = e.target.value;
-    console.log("search", search);
     if (!search) {
-      console.log("search", false);
       setSummaryCoursesData(summaryStaticData.courses);
       return;
     }
     setSummaryCoursesData(
       summaryStaticData.courses?.filter((e) => {
-        console.log(e.title);
         if (IsSuetableTitle(search.toLowerCase(), e.title.toLowerCase()))
           return e;
       })

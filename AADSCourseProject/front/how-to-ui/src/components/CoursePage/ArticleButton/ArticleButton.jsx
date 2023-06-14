@@ -18,7 +18,7 @@ import { IconButtonsWrapper } from "../CoursePage.styles";
 import Textarea from "../../common/Textarea/Textarea";
 import ErrorLineHandler from "../../common/ErrorLineHandler/ErrorLineHandler";
 import FileUploader from "../FileUploader/FileUploader";
-import { useStore } from "../../../store";
+import { useEffect } from "react";
 
 const ArticleButton = (props) => {
   const fileInputRef = useRef(null);
@@ -28,6 +28,10 @@ const ArticleButton = (props) => {
   );
   const [error, setError] = useState();
   const [title, setTitle] = useState(props.article?.title);
+
+  useEffect(() => {
+    setTitle(props.article?.title);
+  }, [props.article?.title]);
 
   const navigate = useNavigate();
   const onClickHandler = () => {
@@ -44,6 +48,7 @@ const ArticleButton = (props) => {
   const onDeleteClickHandler = () => {
     props.deleteArticle(props.article.courseId, props.article.id, (error) => {
       setError(error);
+      if (!error) setIsArticleEditing(false);
     });
   };
 
@@ -56,14 +61,14 @@ const ArticleButton = (props) => {
       props.article.isNewArticle,
       (error) => {
         setError(error);
-        if (error === "") setIsArticleEditing(false);
+        if (!error) setIsArticleEditing(false);
       }
     );
   };
 
   return (
     <ErrorLineHandler error={error} setActionError={setError}>
-      <ArticleButtonWrapper>
+      <ArticleButtonWrapper ref={props.innerRef}>
         <ArticleButtonContent
           onClick={onClickHandler}
           color={props.color}
@@ -100,6 +105,7 @@ const ArticleButton = (props) => {
                     onClick={onSaveClickHandler}
                     active
                     size={"30px"}
+                    disabled={props.isLoading}
                   >
                     <IconCheck />
                   </IconButton>
@@ -108,6 +114,7 @@ const ArticleButton = (props) => {
                     onClick={onDeleteClickHandler}
                     active
                     size={"30px"}
+                    disabled={props.isLoading}
                   >
                     <IconTrash />
                   </IconButton>
@@ -118,6 +125,7 @@ const ArticleButton = (props) => {
                   color={props.color}
                   onClick={onEditClickHandler}
                   size={"30px"}
+                  disabled={props.isLoading}
                 >
                   <IconEdit />
                 </IconButton>
@@ -129,6 +137,7 @@ const ArticleButton = (props) => {
                 color={props.color}
                 onClick={onEditClickHandler}
                 size={"30px"}
+                disabled={props.isLoading}
               >
                 <IconEdit />
               </IconButton>
