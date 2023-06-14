@@ -13,8 +13,9 @@ const CourseHolder = (props) => {
   const newArticleRef = useRef();
 
   const { courseStore, stateStore } = useStore();
-  const {isLoading} = stateStore;
-  const { articles, upsertArticle, newArticle, deleteArticle } = courseStore;
+  const { isLoading } = stateStore;
+  const { articles, upsertArticle, newArticle, deleteArticle, setNewArticle } =
+    courseStore;
 
   useEffect(() => {
     newArticleRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -40,7 +41,7 @@ const CourseHolder = (props) => {
             color={props.color}
             article={newArticle}
             upsertArticle={upsertArticle}
-            deleteArticle={deleteArticle}
+            deleteArticle={() => setNewArticle(undefined)}
             isLoading={isLoading}
           />
         ) : null}

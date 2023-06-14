@@ -46,6 +46,10 @@ const ArticleButton = (props) => {
   };
 
   const onDeleteClickHandler = () => {
+    if (props.article.isNewArticle) {
+      props.deleteArticle();
+    }
+
     props.deleteArticle(props.article.courseId, props.article.id, (error) => {
       setError(error);
       if (!error) setIsArticleEditing(false);
