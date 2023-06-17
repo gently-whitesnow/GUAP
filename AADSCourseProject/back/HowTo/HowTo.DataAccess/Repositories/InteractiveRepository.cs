@@ -30,10 +30,7 @@ public class InteractiveRepository
             var interactiveDto =  await dbContext.SingleOrDefaultAsync(c => c.Id == request.Id);
             if (interactiveDto == null)
             {
-                var dto = getFunc();
-                await dbContext.AddAsync(dto);
-                await _db.SaveChangesAsync();
-                return new(dto);
+                return await InsertInteractiveAsync(getFunc);
             }
             updateFunc(interactiveDto);
             await _db.SaveChangesAsync();
@@ -45,6 +42,22 @@ public class InteractiveRepository
         }
     }
     
+    public async Task<OperationResult<TDto>> InsertInteractiveAsync<TDto>(
+        Func<TDto> getFunc
+    )  where TDto : class, IHaveId, new() 
+    {
+        try
+        {
+            var dto = getFunc();
+            await _db.Set<TDto>().AddAsync(dto);
+            await _db.SaveChangesAsync();
+            return new(dto);
+        }
+        catch (Exception ex)
+        {
+            return new(ex);
+        }
+    }
 
     public async Task<OperationResult<InteractivePublic>> GetInteractiveAsync(int courseId, int articleId)
     {

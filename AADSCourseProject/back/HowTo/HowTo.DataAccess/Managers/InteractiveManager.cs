@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors;
+using ATI.Services.Common.Extensions;
+using ATI.Services.Common.Extensions.OperationResult;
 using HowTo.DataAccess.Repositories;
 using HowTo.Entities;
 using HowTo.Entities.Interactive;
@@ -47,6 +49,8 @@ public class InteractiveManager
                     dto.Description = request.Description;
                     dto.ClausesJsonStringArray = JsonConvert.SerializeObject(request.UpsertCheckListRequest.Clauses);
                 }),
+            
+            
             Interactive.ChoiceOfAnswer => await _interactiveRepository.UpsertInteractiveAsync(request, () =>
                     new ChoiceOfAnswerDto
                     {
@@ -66,6 +70,8 @@ public class InteractiveManager
                     dto.AnswersJsonBoolArray =
                         JsonConvert.SerializeObject(request.UpsertChoiceOfAnswerRequest.Answers);
                 }),
+            
+            
             Interactive.ProgramWriting => await _interactiveRepository.UpsertInteractiveAsync(request, () =>
                     new ProgramWritingDto
                     {
@@ -82,6 +88,8 @@ public class InteractiveManager
                     dto.Code = request.UpsertProgramWritingRequest.Code;
                     dto.Output = request.UpsertProgramWritingRequest.Output;
                 }),
+            
+            
             Interactive.WritingOfAnswer => await _interactiveRepository.UpsertInteractiveAsync(request, () =>
                     new WritingOfAnswerDto
                     {
@@ -138,7 +146,9 @@ public class InteractiveManager
                 {
                     dto.CheckedClausesJsonBoolArray = JsonConvert.SerializeObject(request.ReplyCheckList.Clauses);
                 }),
-            Interactive.ChoiceOfAnswer => await _interactiveRepository.UpsertInteractiveAsync(request, () =>
+            
+            
+            Interactive.ChoiceOfAnswer => (await _interactiveRepository.UpsertInteractiveAsync(request, () =>
                     new LastChoiceOfAnswerDto
                     {
                         ArticleId = request.ArticleId,
@@ -153,8 +163,10 @@ public class InteractiveManager
                     dto.SuccessAnswersJsonBoolArray = ValidateChoiceOfAnswer(request.ReplyAnswerChoice,
                         interactiveOperation.Value.ChoiceOfAnswer);
                     dto.AnswersJsonBoolArray = JsonConvert.SerializeObject(request.ReplyAnswerChoice.Answers);
-                }),
-            Interactive.ProgramWriting => await _interactiveRepository.UpsertInteractiveAsync(request, () =>
+                })).InvokeOnSuccess(LogChoiceOfAnswerAsync),
+            
+            
+            Interactive.ProgramWriting => (await _interactiveRepository.UpsertInteractiveAsync(request, () =>
                     new LastProgramWritingDto
                     {
                         ArticleId = request.ArticleId,
@@ -167,8 +179,10 @@ public class InteractiveManager
                 {
                     dto.Code = request.ReplyProgramWriting.Code;
                     dto.Success = ValidateProgramWriting(request.ReplyProgramWriting);
-                }),
-            Interactive.WritingOfAnswer => await _interactiveRepository.UpsertInteractiveAsync(request, () =>
+                })).InvokeOnSuccess(LogProgramWritingAsync),
+            
+            
+            Interactive.WritingOfAnswer => (await _interactiveRepository.UpsertInteractiveAsync(request, () =>
                     new LastWritingOfAnswerDto
                     {
                         ArticleId = request.ArticleId,
@@ -182,7 +196,9 @@ public class InteractiveManager
                     dto.Answer = request.ReplyWritingOfAnswer.Answer;
                     dto.Success = ValidateWritingOfAnswer(request.ReplyWritingOfAnswer,
                         interactiveOperation.Value.WritingOfAnswer);
-                }),
+                })).InvokeOnSuccess(LogWritingOfAnswerAsync),
+            
+            
             _ => new OperationResult<InteractivePublic>(new ArgumentException("Invalid interactive type."))
         };
         if (!lastInteractiveOperation.Success)
@@ -223,6 +239,36 @@ public class InteractiveManager
             _ => new (new ArgumentException("Invalid interactive type."))
         };
     }
+    
+     void LogChoiceOfAnswerAsync(LastChoiceOfAnswerDto dto) =>
+         _interactiveRepository.InsertInteractiveAsync(() => new LogChoiceOfAnswerDto
+        {
+            InteractiveId = dto.Id,
+            UserId = dto.UserId,
+            LogDate = DateTimeOffset.Now,
+            SuccessAnswersJsonBoolArray = dto.SuccessAnswersJsonBoolArray,
+            AnswersJsonBoolArray = dto.AnswersJsonBoolArray
+        }).Forget();
+     
+     void LogProgramWritingAsync(LastProgramWritingDto dto) =>
+         _interactiveRepository.InsertInteractiveAsync(() => new LogProgramWritingDto()
+         {
+             InteractiveId = dto.Id,
+             UserId = dto.UserId,
+             LogDate = DateTimeOffset.Now,
+             Code = dto.Code,
+             Success = dto.Success
+         }).Forget();
+     
+     void LogWritingOfAnswerAsync(LastWritingOfAnswerDto dto) =>
+         _interactiveRepository.InsertInteractiveAsync(() => new LogWritingOfAnswerDto()
+         {
+             InteractiveId = dto.Id,
+             UserId = dto.UserId,
+             LogDate = DateTimeOffset.Now,
+             Success = dto.Success,
+             Answer = dto.Answer
+         }).Forget();
     
     private string ValidateChoiceOfAnswer(UpsertReplyAnswerChoiceRequest request, ChoiceOfAnswerDto solve) =>
         JsonConvert.SerializeObject(request.Answers.Zip(
