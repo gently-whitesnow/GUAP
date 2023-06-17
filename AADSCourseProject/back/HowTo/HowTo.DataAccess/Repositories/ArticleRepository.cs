@@ -22,7 +22,7 @@ public class ArticleRepository
     {
         try
         {
-            var courseDto = await _db.CourseDtos
+            var courseDto = await _db.CourseContext
                 .Include(d => d.Articles)
                 .ThenInclude(a => a.Author)
                 .SingleOrDefaultAsync(c => c.Id == request.CourseId);
@@ -70,7 +70,7 @@ public class ArticleRepository
     {
         try
         {
-            var articleDto = await _db.ArticleDtos
+            var articleDto = await _db.ArticleContext
                 .Include(d => d.Author)
                 .SingleOrDefaultAsync(a => a.Id == articleId && a.CourseId == courseId);
             if (articleDto == null)
@@ -89,7 +89,7 @@ public class ArticleRepository
         try
         {
             var articleDto =
-                await _db.ArticleDtos
+                await _db.ArticleContext
                     .Include(d=>d.Author)
                     .SingleOrDefaultAsync(c => c.CourseId == courseId && c.Id == articleId);
             if (articleDto == null)
@@ -97,7 +97,7 @@ public class ArticleRepository
                 return new(Errors.ArticleNotFound(courseId, articleId));
             }
 
-            _db.ArticleDtos.Remove(articleDto);
+            _db.ArticleContext.Remove(articleDto);
             await _db.SaveChangesAsync();
             return new(articleDto);
         }

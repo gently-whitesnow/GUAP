@@ -41,7 +41,7 @@ public class ArticleTests : BaseTests
         Assert.True(getFileOperation.Success);
         Assert.Single(getFileOperation.Value);
 
-        var articleDto = await _dbContext.ArticleDtos.SingleOrDefaultAsync
+        var articleDto = await _dbContext.ArticleContext.SingleOrDefaultAsync
         (a => a.CourseId == articleRequest.CourseId
               && a.Id == articleOperation.Value.Id
               && a.Title == articleRequest.Title
@@ -87,7 +87,7 @@ public class ArticleTests : BaseTests
         Assert.Single(getFileOperation.Value);
         Assert.Equal(_secondFormFileContent, Encoding.UTF8.GetString(getFileOperation.Value.First()));
 
-        var articleDto = await _dbContext.ArticleDtos.SingleOrDefaultAsync
+        var articleDto = await _dbContext.ArticleContext.SingleOrDefaultAsync
         (a => a.CourseId == courseOperation.Value.Id
               && a.Id == insertArticleOperation.Value.Id
               && a.Title == updateArticleRequest.Title);

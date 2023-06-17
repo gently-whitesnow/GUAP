@@ -127,6 +127,7 @@ public static class Startup
         services.AddSingleton<SummaryManager>();
         services.AddSingleton<ViewManager>();
         services.AddSingleton<UserInfoManager>();
+        services.AddSingleton<InteractiveManager>();
         return services;
     }
     public static IServiceCollection WithRepositories(this IServiceCollection services)
@@ -136,6 +137,7 @@ public static class Startup
         services.AddSingleton<CourseRepository>();
         services.AddSingleton<ViewRepository>();
         services.AddSingleton<UserInfoRepository>();
+        services.AddSingleton<InteractiveRepository>();
         return services;
     }
 

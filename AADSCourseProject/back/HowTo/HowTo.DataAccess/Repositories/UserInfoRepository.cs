@@ -23,7 +23,7 @@ public class UserInfoRepository
     {
         try
         {
-            var userInfoDto = await _db.UserUniqueInfoDtos.FirstOrDefaultAsync(v => v.Id == user.Id);
+            var userInfoDto = await _db.UserUniqueInfoContext.FirstOrDefaultAsync(v => v.Id == user.Id);
             if (userInfoDto == null)
             {
                 userInfoDto = new UserUniqueInfoDto
@@ -31,7 +31,7 @@ public class UserInfoRepository
                     Id = user.Id,
                     LastReadCourseId = courseId
                 };
-                await _db.UserUniqueInfoDtos.AddAsync(userInfoDto);
+                await _db.UserUniqueInfoContext.AddAsync(userInfoDto);
             }
             else
             {
@@ -51,7 +51,7 @@ public class UserInfoRepository
     {
         try
         {
-            var userInfoDto = await _db.UserUniqueInfoDtos
+            var userInfoDto = await _db.UserUniqueInfoContext
                 .Include(d=>d.ApprovedViewArticleIds)
                 .SingleOrDefaultAsync(v => v.Id == user.Id);
             
@@ -62,7 +62,7 @@ public class UserInfoRepository
                     Id = user.Id,
                     ApprovedViewArticleIds = new List<ViewedEntity> { new(request.CourseId, request.ArticleId)}
                 };
-                await _db.UserUniqueInfoDtos.AddAsync(userInfoDto);
+                await _db.UserUniqueInfoContext.AddAsync(userInfoDto);
             }
             else
             {
@@ -83,7 +83,7 @@ public class UserInfoRepository
     {
         try
         {
-            var userInfoDto = await _db.UserUniqueInfoDtos
+            var userInfoDto = await _db.UserUniqueInfoContext
                 .Include(d=>d.ApprovedViewArticleIds)
                 .SingleOrDefaultAsync(u => u.Id == user.Id);
             if (userInfoDto == null)

@@ -32,7 +32,7 @@ public class CourseTests : BaseTests
         Assert.True(getFileOperation.Success);
         Assert.Single(getFileOperation.Value);
 
-        var courseDto = await _dbContext.CourseDtos.SingleOrDefaultAsync
+        var courseDto = await _dbContext.CourseContext.SingleOrDefaultAsync
         (c => c.Id == courseOperation.Value.Id
               && c.Title == courseOperation.Value.Title
               && c.Description == courseRequest.Description);
@@ -71,7 +71,7 @@ public class CourseTests : BaseTests
         Assert.Single(getFileOperation.Value);
         Assert.False(CompareByteArrayAndFormFile(getFileOperation.Value.First(), image));
 
-        var courseDto = await _dbContext.CourseDtos.SingleOrDefaultAsync
+        var courseDto = await _dbContext.CourseContext.SingleOrDefaultAsync
         (c => c.Id == updateCourseOperation.Value.Id
               && c.Title == updateCourseRequest.Title
               && c.Description == updateCourseRequest.Description);

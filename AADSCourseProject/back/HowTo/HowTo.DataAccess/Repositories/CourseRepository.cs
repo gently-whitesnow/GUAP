@@ -23,7 +23,7 @@ public class CourseRepository
     {
         try
         {
-            var courseDto = await _db.CourseDtos.SingleOrDefaultAsync(c => c.Title == request.Title);
+            var courseDto = await _db.CourseContext.SingleOrDefaultAsync(c => c.Title == request.Title);
             if (courseDto != null)
                 return new (Errors.CourseTitleAlreadyExist(courseDto.Title));
 
@@ -35,7 +35,7 @@ public class CourseRepository
                 UpdatedAt = DateTime.UtcNow
             };
 
-            await _db.CourseDtos.AddAsync(dto);
+            await _db.CourseContext.AddAsync(dto);
             await _db.SaveChangesAsync();
             return new (dto);
         }
@@ -49,7 +49,7 @@ public class CourseRepository
     {
         try
         {
-            var courseDto = await _db.CourseDtos.FirstOrDefaultAsync(c => c.Id == request.CourseId);
+            var courseDto = await _db.CourseContext.FirstOrDefaultAsync(c => c.Id == request.CourseId);
             if (courseDto == null)
                 return new(Errors.CourseNotFound(request.CourseId!.Value));
 
@@ -70,7 +70,7 @@ public class CourseRepository
     {
         try
         {
-            var courseDto = await _db.CourseDtos
+            var courseDto = await _db.CourseContext
                 .Include(c => c.Articles)
                 .ThenInclude(a=>a.Author)
                 .SingleOrDefaultAsync(c => c.Id == courseId);
@@ -89,17 +89,17 @@ public class CourseRepository
     {
         try
         {
-            var courseDto = await _db.CourseDtos
+            var courseDto = await _db.CourseContext
                 .Include(d=>d.Articles)
                 .ThenInclude(a=>a.Author)
                 .SingleOrDefaultAsync(c => c.Id == courseId);
             if (courseDto == null)
                 return new(Errors.CourseNotFound(courseId));
 
-            _db.CourseDtos.Remove(courseDto);
+            _db.CourseContext.Remove(courseDto);
             foreach (var articleDto in courseDto.Articles)
             {
-                _db.ArticleDtos.Remove(articleDto);
+                _db.ArticleContext.Remove(articleDto);
             }
             await _db.SaveChangesAsync();
             return new(courseDto);
@@ -114,7 +114,7 @@ public class CourseRepository
     {
         try
         {
-            return new(await _db.CourseDtos
+            return new(await _db.CourseContext
                 .Include(d=>d.Articles)
                 .ToListAsync());
         }

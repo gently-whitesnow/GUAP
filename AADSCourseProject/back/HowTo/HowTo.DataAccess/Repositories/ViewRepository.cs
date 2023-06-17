@@ -24,7 +24,7 @@ public class ViewRepository
     {
         try
         {
-            var viewDto = await _db.ViewDtos
+            var viewDto = await _db.ViewContext
                 .Include(d=>d.Viewers)
                 .SingleOrDefaultAsync(v => v.CourseId == courseId && v.ArticleId == articleId);
             if (viewDto == null)
@@ -35,7 +35,7 @@ public class ViewRepository
                     ArticleId = articleId,
                     Viewers = new List<UserGuid> { new(user.Id) }
                 };
-                await _db.ViewDtos.AddAsync(viewDto);
+                await _db.ViewContext.AddAsync(viewDto);
             }
             else
             {
@@ -56,7 +56,7 @@ public class ViewRepository
     {
         try
         {
-            return new(await _db.ViewDtos
+            return new(await _db.ViewContext
                 .Include(d=>d.Viewers)
                 .Where(v => v.CourseId == courseId 
                             && (articleId == null || v.ArticleId == articleId))

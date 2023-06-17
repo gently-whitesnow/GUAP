@@ -20,4 +20,8 @@ public static class Errors
     public static readonly Func<int, int, OperationResult> ArticleFileNotFound = (courseId, articleId)  =>
         new(ActionStatus.BadRequest,
             $"article with id: [{courseId}:{articleId}] file not found", "article_file_not_found");
+    
+    public static readonly Func<int, OperationResult> InteractiveNotFound = (interactiveId) =>
+        new(ActionStatus.BadRequest,
+            $"interactive with id: [{interactiveId}] not found", "interactive_not_found");
 }
