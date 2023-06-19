@@ -2,6 +2,7 @@ using System.Text;
 using HowTo.DataAccess.Helpers;
 using HowTo.DataAccess.Managers;
 using HowTo.DataAccess.Repositories;
+using HowTo.Entities;
 using HowTo.Entities.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ using SixLabors.ImageSharp.Processing;
 
 namespace HowTo.Tests;
 
-public class BaseTests : IDisposable
+public abstract class BaseTests : IDisposable
 {
     protected readonly ArticleManager _articleManager;
     protected readonly CourseManager _courseManager;
@@ -22,6 +23,7 @@ public class BaseTests : IDisposable
     protected readonly ApplicationContext _dbContext;
     protected readonly FileSystemHelper _fileSystemHelper;
     protected readonly SummaryManager _summaryManager;
+    protected readonly InteractiveManager _interactiveManager;
 
     protected const string _firstFormFileContent = "#first content form file";
     protected const string _secondFormFileContent = "#second content form file";
@@ -57,6 +59,9 @@ public class BaseTests : IDisposable
         _courseManager = new CourseManager(courseRepository, _fileSystemHelper, _userInfoManager);
 
         _summaryManager = new SummaryManager(_userInfoManager, _courseManager, _fileSystemHelper);
+
+        var interactiveRepository = new InteractiveRepository(_dbContext);
+        _interactiveManager = new InteractiveManager(interactiveRepository, articleRepository);
     }
 
     public IFormFile GetFormFile(string content)
@@ -81,8 +86,10 @@ public class BaseTests : IDisposable
         int height = 200;
         
         using var image = new Image<Rgba32>(width, height);
-        // Apply image processing operations
-        image.Mutate(ctx => ctx.BackgroundColor(Rgba32.ParseHex("#6cadfe")));
+        image.Mutate(ctx =>
+        {
+            ctx.Resize(new Size(Random.Shared.Next(250),Random.Shared.Next(250)));
+        });
 
         var memoryStream = new MemoryStream();
         

@@ -26,6 +26,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\HowTo\HowTo.csproj" />
+        <ProjectReference Include="..\ATI.Services.Common.Extensions.OperationResult\ATI.Services.Common.Extensions.OperationResult.fsproj" />
     </ItemGroup>
 
 </Project>

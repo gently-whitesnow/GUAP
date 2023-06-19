@@ -7,6 +7,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\HowTo.Entities\HowTo.Entities.csproj" />
+        <ProjectReference Include="..\ATI.Services.Common.Extensions.OperationResult\ATI.Services.Common.Extensions.OperationResult.fsproj" />
     </ItemGroup>
 
     <ItemGroup>

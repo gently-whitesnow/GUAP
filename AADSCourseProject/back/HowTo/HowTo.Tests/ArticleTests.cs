@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HowTo.Tests;
 
-public class ArticleTests : BaseTests
+public class ArticleTests : BaseTestsWithArtefacts
 {
     public ArticleTests() : base("/Users/gently/Temp/ArticleTests-howto-test-content")
     {
@@ -16,15 +16,7 @@ public class ArticleTests : BaseTests
     [Fact]
     private async void CreateArticleAsync()
     {
-        var userId = Guid.NewGuid();
-        var user = new User(userId, "TestUserName");
-        var courseRequest = new UpsertCourseRequest
-        {
-            Title = "TestCourseTitle",
-            Description = "TestCourseDescription"
-        };
-        var courseOperation = await _courseManager.UpsertCourseAsync(courseRequest, user);
-        Assert.True(courseOperation.Success);
+        var courseOperation = await InitCourseAsync(user: FirstUser);
 
         var articleRequest = new UpsertArticleRequest
         {
@@ -33,7 +25,7 @@ public class ArticleTests : BaseTests
             File = GetFormFile(_firstFormFileContent)
         };
 
-        var articleOperation = await _articleManager.UpsertArticleAsync(articleRequest, user);
+        var articleOperation = await _articleManager.UpsertArticleAsync(articleRequest, FirstUser);
         Assert.True(articleOperation.Success);
 
         var getFileOperation =
@@ -45,7 +37,7 @@ public class ArticleTests : BaseTests
         (a => a.CourseId == articleRequest.CourseId
               && a.Id == articleOperation.Value.Id
               && a.Title == articleRequest.Title
-              && a.Author.UserId == user.Id);
+              && a.Author.UserId == FirstUser.Id);
 
         Assert.NotNull(articleDto);
     }
@@ -53,22 +45,14 @@ public class ArticleTests : BaseTests
     [Fact]
     private async void UpdateArticleAsync()
     {
-        var userId = Guid.NewGuid();
-        var user = new User(userId, "TestUserName");
-        var courseRequest = new UpsertCourseRequest
-        {
-            Title = "TestCourseTitle",
-            Description = "TestCourseDescription"
-        };
-        var courseOperation = await _courseManager.UpsertCourseAsync(courseRequest, user);
-        Assert.True(courseOperation.Success);
+        var courseOperation = await InitCourseAsync(user: FirstUser);
 
         var insertArticleOperation = await _articleManager.UpsertArticleAsync(new UpsertArticleRequest
         {
             CourseId = courseOperation.Value.Id,
             Title = "TestArticleTitle",
             File = GetFormFile(_firstFormFileContent)
-        }, user);
+        }, FirstUser);
         Assert.True(insertArticleOperation.Success);
 
         var updateArticleRequest = new UpsertArticleRequest
@@ -78,7 +62,7 @@ public class ArticleTests : BaseTests
             Title = "TestArticleSecondTitle",
             File = GetFormFile(_secondFormFileContent)
         };
-        var updateArticleOperation = await _articleManager.UpsertArticleAsync(updateArticleRequest, user);
+        var updateArticleOperation = await _articleManager.UpsertArticleAsync(updateArticleRequest, FirstUser);
         Assert.True(updateArticleOperation.Success);
 
         var getFileOperation =
@@ -98,23 +82,9 @@ public class ArticleTests : BaseTests
     [Fact]
     private async void GetArticleAsync()
     {
-        var userId = Guid.NewGuid();
-        var user = new User(userId, "TestUserName");
-        var courseRequest = new UpsertCourseRequest
-        {
-            Title = "TestCourseTitle",
-            Description = "TestCourseDescription"
-        };
-        var courseOperation = await _courseManager.UpsertCourseAsync(courseRequest, user);
-        Assert.True(courseOperation.Success, courseOperation.DumpAllErrors());
-
-        var forCheckingLastCourseRequest = new UpsertCourseRequest
-        {
-            Title = "TestCourseTitleSecond",
-            Description = "TestCourseDescription"
-        };
-        var forCheckingLastCourseOperation = await _courseManager.UpsertCourseAsync(forCheckingLastCourseRequest, user);
-        Assert.True(forCheckingLastCourseOperation.Success, forCheckingLastCourseOperation.DumpAllErrors());
+        await InitCourseAsync(user: FirstUser, courseTitle: "FirstCourseTitle");
+        
+        var forCheckingLastCourseOperation = await InitCourseAsync(user: FirstUser, courseTitle: "SecondCourseTitle");
 
         var articleRequest = new UpsertArticleRequest
         {
@@ -123,7 +93,7 @@ public class ArticleTests : BaseTests
             File = GetFormFile(_firstFormFileContent)
         };
 
-        var upsertArticleOperation = await _articleManager.UpsertArticleAsync(articleRequest, user);
+        var upsertArticleOperation = await _articleManager.UpsertArticleAsync(articleRequest, FirstUser);
         Assert.True(upsertArticleOperation.Success, upsertArticleOperation.DumpAllErrors());
         var requesterUserId = Guid.NewGuid();
         var requesterUser = new User(requesterUserId, "RequesterTestUserName");
@@ -140,17 +110,7 @@ public class ArticleTests : BaseTests
     [Fact]
     private async void DeleteArticleAfterDeleteCourseAsync()
     {
-        var firstUserId = Guid.NewGuid();
-        var secondUserId = Guid.NewGuid();
-        var firstUser = new User(firstUserId, "FirstTestUserName");
-        var secondUser = new User(secondUserId, "SecondTestUserName");
-        var courseRequest = new UpsertCourseRequest
-        {
-            Title = "TestCourseTitle",
-            Description = "TestCourseDescription"
-        };
-        var courseOperation = await _courseManager.UpsertCourseAsync(courseRequest, firstUser);
-        Assert.True(courseOperation.Success, courseOperation.DumpAllErrors());
+        var courseOperation = await InitCourseAsync(user: FirstUser);
         
         var articleRequest = new UpsertArticleRequest
         {
@@ -159,19 +119,19 @@ public class ArticleTests : BaseTests
             File = GetFormFile(_firstFormFileContent)
         };
 
-        var firstArticleOperation = await _articleManager.UpsertArticleAsync(articleRequest, firstUser);
+        var firstArticleOperation = await _articleManager.UpsertArticleAsync(articleRequest, FirstUser);
         Assert.True(firstArticleOperation.Success, firstArticleOperation.DumpAllErrors());
-        var secondArticleOperation = await _articleManager.UpsertArticleAsync(articleRequest, secondUser);
+        var secondArticleOperation = await _articleManager.UpsertArticleAsync(articleRequest, SecondUser);
         Assert.True(secondArticleOperation.Success, secondArticleOperation.DumpAllErrors());
         
         var firstGetBySecondArticleOperation =
             await _articleManager.GetArticleWithFileByIdAsync(firstArticleOperation.Value.CourseId,
-                firstArticleOperation.Value.Id, secondUser);
+                firstArticleOperation.Value.Id, SecondUser);
         Assert.True(firstGetBySecondArticleOperation.Success, firstGetBySecondArticleOperation.DumpAllErrors());
         
         var secondGetByFirstArticleOperation =
             await _articleManager.GetArticleWithFileByIdAsync(firstArticleOperation.Value.CourseId,
-                firstArticleOperation.Value.Id, firstUser);
+                firstArticleOperation.Value.Id, FirstUser);
         Assert.True(secondGetByFirstArticleOperation.Success, secondGetByFirstArticleOperation.DumpAllErrors());
         
         var deleteOperation = await _courseManager.DeleteCourseAsync(firstArticleOperation.Value.CourseId);
@@ -179,12 +139,12 @@ public class ArticleTests : BaseTests
         
         var getAfterDeleteFirstArticleOperation =
             await _articleManager.GetArticleWithFileByIdAsync(firstArticleOperation.Value.CourseId,
-                firstArticleOperation.Value.Id, secondUser);
+                firstArticleOperation.Value.Id, SecondUser);
         Assert.Equal(ActionStatus.BadRequest, getAfterDeleteFirstArticleOperation.ActionStatus);
         
         var getAfterDeleteSecondArticleOperation =
             await _articleManager.GetArticleWithFileByIdAsync(firstArticleOperation.Value.CourseId,
-                firstArticleOperation.Value.Id, firstUser);
+                firstArticleOperation.Value.Id, FirstUser);
         Assert.Equal(ActionStatus.BadRequest, getAfterDeleteSecondArticleOperation.ActionStatus);
 
         var getFileAfterDeleteFirstArticleOperation = await _fileSystemHelper.GetArticleFilesAsync(
@@ -204,16 +164,7 @@ public class ArticleTests : BaseTests
     [Fact]
     private async void DeleteArticleAsync()
     {
-        var userId = Guid.NewGuid();
-       
-        var user = new User(userId, "TestUserName");
-        var courseRequest = new UpsertCourseRequest
-        {
-            Title = "TestCourseTitle",
-            Description = "TestCourseDescription"
-        };
-        var courseOperation = await _courseManager.UpsertCourseAsync(courseRequest, user);
-        Assert.True(courseOperation.Success, courseOperation.DumpAllErrors());
+        var courseOperation = await InitCourseAsync(user: FirstUser);
         
         var articleRequest = new UpsertArticleRequest
         {
@@ -222,12 +173,12 @@ public class ArticleTests : BaseTests
             File = GetFormFile(_firstFormFileContent)
         };
 
-        var upsertArticleOperation = await _articleManager.UpsertArticleAsync(articleRequest, user);
+        var upsertArticleOperation = await _articleManager.UpsertArticleAsync(articleRequest, FirstUser);
         Assert.True(upsertArticleOperation.Success, upsertArticleOperation.DumpAllErrors());
         
         var getArticleOperation =
             await _articleManager.GetArticleWithFileByIdAsync(upsertArticleOperation.Value.CourseId,
-                upsertArticleOperation.Value.Id, user);
+                upsertArticleOperation.Value.Id, FirstUser);
         Assert.True(getArticleOperation.Success, getArticleOperation.DumpAllErrors());
         
         var deleteOperation = await _articleManager.DeleteArticleAsync(getArticleOperation.Value.Article.CourseId, getArticleOperation.Value.Article.Id);
@@ -235,7 +186,7 @@ public class ArticleTests : BaseTests
         
         var getAfterDeleteSecondArticleOperation =
             await _articleManager.GetArticleWithFileByIdAsync(deleteOperation.Value.CourseId,
-                deleteOperation.Value.Id, user);
+                deleteOperation.Value.Id, FirstUser);
         Assert.Equal(ActionStatus.BadRequest, getAfterDeleteSecondArticleOperation.ActionStatus);
         
         var getFileAfterDeleteFirstArticleOperation = await _fileSystemHelper.GetArticleFilesAsync(

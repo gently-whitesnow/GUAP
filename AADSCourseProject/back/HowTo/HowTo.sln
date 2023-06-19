@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HowTo.Entities", "HowTo.Ent
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HowTo.Tests", "HowTo.Tests\HowTo.Tests.csproj", "{A9B35F5A-D268-420C-AD6B-F12653864B20}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ATI.Services.Common.Extensions.OperationResult", "ATI.Services.Common.Extensions.OperationResult\ATI.Services.Common.Extensions.OperationResult.fsproj", "{A0DB6695-D3DD-4C09-B9CF-FDE03C84BC94}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{A9B35F5A-D268-420C-AD6B-F12653864B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9B35F5A-D268-420C-AD6B-F12653864B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9B35F5A-D268-420C-AD6B-F12653864B20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0DB6695-D3DD-4C09-B9CF-FDE03C84BC94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0DB6695-D3DD-4C09-B9CF-FDE03C84BC94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0DB6695-D3DD-4C09-B9CF-FDE03C84BC94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0DB6695-D3DD-4C09-B9CF-FDE03C84BC94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

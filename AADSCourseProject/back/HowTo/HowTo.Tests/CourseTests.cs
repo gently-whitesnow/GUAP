@@ -1,5 +1,6 @@
 using System.Text;
 using ATI.Services.Common.Behaviors;
+using ATI.Services.Common.Extensions.OperationResult;
 using HowTo.Entities;
 using HowTo.Entities.Article;
 using HowTo.Entities.Course;
@@ -24,20 +25,17 @@ public class CourseTests : BaseTests
             Description = "TestCourseDescription",
             File = GetFormImage()
         };
-        var courseOperation = await _courseManager.UpsertCourseAsync(courseRequest, user);
-        Assert.True(courseOperation.Success);
-
-        var getFileOperation =
-            await _fileSystemHelper.GetCourseFilesAsync(courseOperation.Value.Id);
-        Assert.True(getFileOperation.Success);
-        Assert.Single(getFileOperation.Value);
-
-        var courseDto = await _dbContext.CourseContext.SingleOrDefaultAsync
-        (c => c.Id == courseOperation.Value.Id
-              && c.Title == courseOperation.Value.Title
-              && c.Description == courseRequest.Description);
-
-        Assert.NotNull(courseDto);
+        await _courseManager.UpsertCourseAsync(courseRequest, user)
+            .InvokeOnSuccessAsync(course => _courseManager.GetCourseWithFilesByIdAsync(course.Id, user)
+                .InvokeOnSuccessAsync(coursePublic =>
+                {
+                    Assert.Equal(courseRequest.Title, coursePublic.Title);
+                    Assert.Equal(courseRequest.Description, coursePublic.Description);
+                    Assert.Single(coursePublic.Files);
+                })
+                .InvokeOnErrorAsync(operation => Assert.Fail(operation.DumpAllErrors()))
+            )
+            .InvokeOnErrorAsync(operation => Assert.Fail(operation.DumpAllErrors()));
     }
 
     [Fact]
@@ -137,4 +135,6 @@ public class CourseTests : BaseTests
         Assert.True(getCourseOperation.Success, secondArticleOperation.DumpAllErrors());
         Assert.Equal(2, getCourseOperation.Value.Contributors.Count());
     }
+    
+    
 }
