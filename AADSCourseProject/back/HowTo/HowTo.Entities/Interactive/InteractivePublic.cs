@@ -1,18 +1,25 @@
+using HowTo.Entities.Interactive.CheckList;
+using HowTo.Entities.Interactive.ChoiceOfAnswer;
 using HowTo.Entities.Interactive.ChoiceOfAnswers;
+using HowTo.Entities.Interactive.ProgramWriting;
+using HowTo.Entities.Interactive.WritingOfAnswer;
 
 namespace HowTo.Entities.Interactive;
 
 public class InteractivePublic
 {
-    public InteractivePublic(CheckList.CheckListDto[] checkList, ChoiceOfAnswerDto[] choiceOfAnswer, ProgramWriting.ProgramWritingDto[] programWriting, WritingOfAnswer.WritingOfAnswerDto[] writingOfAnswer)
+    public InteractivePublic(CheckListPublic[] checkList,
+        ChoiceOfAnswerPublic[] choiceOfAnswer,
+        ProgramWritingPublic[] programWriting,
+        WritingOfAnswerPublic[] writingOfAnswer)
     {
         CheckList = checkList;
         ChoiceOfAnswer = choiceOfAnswer;
         ProgramWriting = programWriting;
         WritingOfAnswer = writingOfAnswer;
     }
-    public CheckList.CheckListDto[] CheckList { get; set; }
-    public ChoiceOfAnswerDto[] ChoiceOfAnswer { get; set; }
-    public ProgramWriting.ProgramWritingDto[] ProgramWriting { get; set; }
-    public WritingOfAnswer.WritingOfAnswerDto[] WritingOfAnswer { get; set; }
+    public CheckListPublic[] CheckList { get; set; }
+    public ChoiceOfAnswerPublic[] ChoiceOfAnswer { get; set; }
+    public ProgramWritingPublic[] ProgramWriting { get; set; }
+    public WritingOfAnswerPublic[] WritingOfAnswer { get; set; }
 }

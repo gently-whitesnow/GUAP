@@ -1,4 +1,5 @@
 using HowTo.Entities.Interactive.CheckList;
+using HowTo.Entities.Interactive.ChoiceOfAnswer;
 using HowTo.Entities.Interactive.ChoiceOfAnswers;
 using HowTo.Entities.Interactive.ProgramWriting;
 using HowTo.Entities.Interactive.WritingOfAnswer;
@@ -9,33 +10,36 @@ public class LastInteractivePublic
 {
     public LastInteractivePublic(LastCheckListDto dto)
     {
-        LastCheckList = dto;
+        LastCheckList = new LastCheckListPublic(dto);
     }
 
     public LastInteractivePublic(LastChoiceOfAnswerDto dto)
     {
-        LastChoiceOfAnswer = dto;
+        LastChoiceOfAnswer = new LastChoiceOfAnswerPublic(dto);
     }
 
     public LastInteractivePublic(LastProgramWritingDto dto)
     {
-        LastProgramWriting = dto;
+        LastProgramWriting = new LastProgramWritingPublic(dto);
     }
 
     public LastInteractivePublic(LastWritingOfAnswerDto dto)
     {
-        LastWritingOfAnswer = dto;
+        LastWritingOfAnswer = new LastWritingOfAnswerPublic(dto);
     }
 
-    public LastInteractivePublic(LastCheckListDto lastCheckList, LastChoiceOfAnswerDto lastChoiceOfAnswer, LastProgramWritingDto lastProgramWriting, LastWritingOfAnswerDto lastWritingOfAnswer)
+    public LastInteractivePublic(LastCheckListPublic? lastCheckList,
+        LastChoiceOfAnswerPublic? lastChoiceOfAnswer,
+        LastProgramWritingPublic? lastProgramWriting,
+        LastWritingOfAnswerPublic? lastWritingOfAnswer)
     {
         LastCheckList = lastCheckList;
         LastChoiceOfAnswer = lastChoiceOfAnswer;
         LastProgramWriting = lastProgramWriting;
         LastWritingOfAnswer = lastWritingOfAnswer;
     }
-    public LastCheckListDto LastCheckList { get; set; }
-    public LastChoiceOfAnswerDto LastChoiceOfAnswer { get; set; }
-    public LastProgramWritingDto LastProgramWriting { get; set; }
-    public LastWritingOfAnswerDto LastWritingOfAnswer { get; set; }
+    public LastCheckListPublic? LastCheckList { get; init; }
+    public LastChoiceOfAnswerPublic? LastChoiceOfAnswer { get; init; }
+    public LastProgramWritingPublic? LastProgramWriting { get; init; }
+    public LastWritingOfAnswerPublic? LastWritingOfAnswer { get; init; }
 }

@@ -1,4 +1,5 @@
 using HowTo.Entities.Interactive.CheckList;
+using HowTo.Entities.Interactive.ChoiceOfAnswer;
 using HowTo.Entities.Interactive.ChoiceOfAnswers;
 using HowTo.Entities.Interactive.ProgramWriting;
 using HowTo.Entities.Interactive.WritingOfAnswer;
@@ -9,25 +10,25 @@ public class InteractiveByIdPublic
 {
     public InteractiveByIdPublic(CheckListDto dto)
     {
-        CheckList = dto;
+        CheckList = new CheckListPublic(dto);
     }
 
     public InteractiveByIdPublic(ChoiceOfAnswerDto dto)
     {
-        ChoiceOfAnswer = dto;
+        ChoiceOfAnswer = new ChoiceOfAnswerPublic(dto);
     }
 
     public InteractiveByIdPublic(ProgramWritingDto dto)
     {
-        ProgramWriting = dto;
+        ProgramWriting = new ProgramWritingPublic(dto);
     }
 
     public InteractiveByIdPublic(WritingOfAnswerDto dto)
     {
-        WritingOfAnswer = dto;
+        WritingOfAnswer = new WritingOfAnswerPublic(dto);
     }
-    public CheckListDto CheckList { get; set; }
-    public ChoiceOfAnswerDto ChoiceOfAnswer { get; set; }
-    public ProgramWritingDto ProgramWriting { get; set; }
-    public WritingOfAnswerDto WritingOfAnswer { get; set; }
+    public CheckListPublic CheckList { get; init; }
+    public ChoiceOfAnswerPublic ChoiceOfAnswer { get; init; }
+    public ProgramWritingPublic ProgramWriting { get; init; }
+    public WritingOfAnswerPublic WritingOfAnswer { get; init; }
 }

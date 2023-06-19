@@ -75,23 +75,43 @@ public abstract class BaseTestsWithArtefacts : BaseTests
 
     protected Task<OperationResult<InteractiveByIdPublic>> InitInteractiveAsync(
         ArticlePublic articlePublic,
-        Interactive interactive,
         int? id = null,
         UpsertCheckListRequest? checkListRequest = null,
         UpsertChoiceOfAnswerRequest? choiceOfAnswerRequest = null,
         UpsertProgramWritingRequest? programWritingRequest = null,
-        UpsertWritingOfAnswerRequest? writingOfAnswerRequest = null
+        UpsertWritingOfAnswerRequest? writingOfAnswerRequest = null,
+        string? description = null
     ) =>
         _interactiveManager.UpsertInteractiveAsync(new UpsertInteractiveRequest
         {
             Id = id,
             ArticleId = articlePublic.Id,
             CourseId = articlePublic.CourseId,
-            Description = "TestDescription",
-            Interactive = interactive,
+            Description = description ?? "TestDescription",
             UpsertCheckListRequest = checkListRequest,
             UpsertChoiceOfAnswerRequest = choiceOfAnswerRequest,
             UpsertProgramWritingRequest = programWritingRequest,
             UpsertWritingOfAnswerRequest = writingOfAnswerRequest
         }).InvokeOnErrorAsync(operationResult => Assert.Fail(operationResult.DumpAllErrors()));
+    
+    protected Task<OperationResult<LastInteractivePublic>> InitInteractiveReplyAsync(
+        int courseId,
+        int articleId,
+        int interactiveId,
+        User? user = null,
+        UpsertReplyCheckListRequest? checkListRequest = null,
+        UpsertReplyAnswerChoiceRequest? choiceOfAnswerRequest = null,
+        UpsertReplyProgramWritingRequest? programWritingRequest = null,
+        UpsertReplyWritingOfAnswerRequest? writingOfAnswerRequest = null) =>
+        _interactiveManager.UpsertInteractiveReplyAsync(new UpsertInteractiveReplyRequest
+        {
+            InteractiveId = interactiveId,
+            ArticleId = articleId,
+            CourseId = courseId,
+            ReplyCheckList = checkListRequest,
+            ReplyAnswerChoice = choiceOfAnswerRequest,
+            ReplyProgramWriting = programWritingRequest,
+            ReplyWritingOfAnswer = writingOfAnswerRequest
+        },
+            user ?? FirstUser).InvokeOnErrorAsync(operationResult => Assert.Fail(operationResult.DumpAllErrors()));
 }

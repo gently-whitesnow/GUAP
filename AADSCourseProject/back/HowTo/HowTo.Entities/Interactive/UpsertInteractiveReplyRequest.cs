@@ -7,18 +7,15 @@ using HowTo.Entities.Interactive.WritingOfAnswer;
 
 namespace HowTo.Entities.Interactive;
 
-public class UpsertInteractiveReplyRequest : IHaveNullableId
+public class UpsertInteractiveReplyRequest
 {
-    public int? Id { get; set; }
     [Required] 
     public int InteractiveId { get; set; }
     [Required] 
     public int CourseId { get; set; }
     [Required] 
     public int ArticleId { get; set; }
-
-    public Interactive Interactive { get; set; }
-
+    
     public UpsertReplyCheckListRequest ReplyCheckList { get; set; }
     public UpsertReplyAnswerChoiceRequest ReplyAnswerChoice { get; set; }
     public UpsertReplyProgramWritingRequest ReplyProgramWriting { get; set; }

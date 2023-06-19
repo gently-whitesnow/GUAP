@@ -1,10 +1,16 @@
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ATI.Services.Common.Behaviors;
 using HowTo.Entities;
 using HowTo.Entities.Interactive;
 using HowTo.Entities.Interactive.Base;
+using HowTo.Entities.Interactive.CheckList;
+using HowTo.Entities.Interactive.ChoiceOfAnswer;
+using HowTo.Entities.Interactive.ChoiceOfAnswers;
+using HowTo.Entities.Interactive.ProgramWriting;
+using HowTo.Entities.Interactive.WritingOfAnswer;
 using Microsoft.EntityFrameworkCore;
 
 namespace HowTo.DataAccess.Repositories;
@@ -17,21 +23,22 @@ public class InteractiveRepository
     {
         _db = applicationContext;
     }
-    
+
     public async Task<OperationResult<TDto>> UpsertInteractiveAsync<TDto>(
-        IHaveNullableId request,
+        Expression<Func<TDto, bool>> upsertCondition,
         Func<TDto> getFunc,
         Action<TDto> updateFunc
-    )  where TDto : class, IHaveId, new() 
+    ) where TDto : class, new()
     {
         try
         {
             var dbContext = _db.Set<TDto>();
-            var interactiveDto =  await dbContext.SingleOrDefaultAsync(c => c.Id == request.Id);
+            var interactiveDto = await dbContext.SingleOrDefaultAsync(upsertCondition);
             if (interactiveDto == null)
             {
                 return await InsertInteractiveAsync(getFunc);
             }
+
             updateFunc(interactiveDto);
             await _db.SaveChangesAsync();
             return new(interactiveDto);
@@ -41,10 +48,10 @@ public class InteractiveRepository
             return new(ex);
         }
     }
-    
+
     public async Task<OperationResult<TDto>> InsertInteractiveAsync<TDto>(
         Func<TDto> getFunc
-    )  where TDto : class, IHaveId, new() 
+    ) where TDto : class, new()
     {
         try
         {
@@ -59,7 +66,7 @@ public class InteractiveRepository
         }
     }
 
-    public async Task<OperationResult<InteractivePublic>> GetInteractiveAsync(int courseId, int articleId)
+    public async Task<OperationResult<InteractivePublic>> GetInteractiveAsync(int courseId, int articleId, bool isAuthor)
     {
         try
         {
@@ -72,15 +79,20 @@ public class InteractiveRepository
             var writingOfAnswerDto = await _db.WritingOfAnswerContext.AsQueryable()
                 .Where(a => a.CourseId == courseId && a.ArticleId == articleId).ToArrayAsync();
 
-            return new(new InteractivePublic(checkListDto, choiceOfAnswerDto, programWritingDto, writingOfAnswerDto));
+            return new(new InteractivePublic(
+                checkListDto.Select(dto => new CheckListPublic(dto)).ToArray(),
+                choiceOfAnswerDto.Select(dto => new ChoiceOfAnswerPublic(dto, isAuthor)).ToArray(),
+                programWritingDto.Select(dto => new ProgramWritingPublic(dto, isAuthor)).ToArray(),
+                writingOfAnswerDto.Select(dto => new WritingOfAnswerPublic(dto, isAuthor)).ToArray()));
         }
         catch (Exception ex)
         {
             return new(ex);
         }
     }
-    
-    public async Task<OperationResult<LastInteractivePublic>> GetLastInteractiveAsync(int courseId, int articleId, User user)
+
+    public async Task<OperationResult<LastInteractivePublic>> GetLastInteractiveAsync(int courseId, int articleId,
+        User user)
     {
         try
         {
@@ -93,7 +105,11 @@ public class InteractiveRepository
             var writingOfAnswerDto = await _db.LastWritingOfAnswerContext.SingleOrDefaultAsync
                 (a => a.CourseId == courseId && a.ArticleId == articleId && a.UserId == user.Id);
 
-            return new(new LastInteractivePublic(checkListDto, choiceOfAnswerDto, programWritingDto, writingOfAnswerDto));
+            return new(new LastInteractivePublic(
+                checkListDto != null ? new LastCheckListPublic(checkListDto) : null,
+                choiceOfAnswerDto != null ? new LastChoiceOfAnswerPublic(choiceOfAnswerDto) : null,
+                programWritingDto != null ? new LastProgramWritingPublic(programWritingDto) : null,
+                writingOfAnswerDto != null ? new LastWritingOfAnswerPublic(writingOfAnswerDto) : null));
         }
         catch (Exception ex)
         {
@@ -101,8 +117,8 @@ public class InteractiveRepository
         }
     }
 
-    public async Task<OperationResult<InteractiveByIdPublic>> GetInteractiveByIdAsync<TDto>(Interactive interactive,
-        int interactiveId) where TDto: class, IHaveId
+    public async Task<OperationResult<InteractiveByIdPublic>> GetInteractiveByIdAsync<TDto>(int interactiveId)
+        where TDto : class, IHaveId
     {
         try
         {
@@ -110,8 +126,8 @@ public class InteractiveRepository
             dynamic interactiveDto = await dbContext.SingleOrDefaultAsync(c => c.Id == interactiveId);
 
             return interactiveDto != null
-                ? new (new InteractiveByIdPublic(interactiveDto))
-                : new (Errors.InteractiveNotFound(interactiveId));
+                ? new(new InteractiveByIdPublic(interactiveDto))
+                : new(Errors.InteractiveNotFound(interactiveId));
         }
         catch (Exception ex)
         {
@@ -120,7 +136,7 @@ public class InteractiveRepository
     }
 
     public async Task<OperationResult<InteractiveByIdPublic>> DeleteInteractiveByIdAsync<TDto>(int interactiveId)
-        where TDto: class, IHaveId
+        where TDto : class, IHaveId
     {
         try
         {
@@ -128,11 +144,11 @@ public class InteractiveRepository
             dynamic interactiveDto = await dbContext.SingleOrDefaultAsync(c => c.Id == interactiveId);
 
             if (interactiveDto == null)
-                return new (Errors.InteractiveNotFound(interactiveId));
+                return new(Errors.InteractiveNotFound(interactiveId));
 
             dbContext.Remove(interactiveDto);
             await _db.SaveChangesAsync();
-            return new (new InteractiveByIdPublic(interactiveDto));
+            return new(new InteractiveByIdPublic(interactiveDto));
         }
         catch (Exception ex)
         {

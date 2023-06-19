@@ -6,14 +6,12 @@ using HowTo.Entities.Interactive.WritingOfAnswer;
 
 namespace HowTo.Entities.Interactive;
 
-public class UpsertInteractiveRequest : IHaveNullableId
+public class UpsertInteractiveRequest
 {
     public int? Id { get; set; }
     public int ArticleId { get; set; }
     public int CourseId { get; set; }
     public string Description { get; set; }
-    
-    public Interactive Interactive { get; set; }
     public UpsertCheckListRequest UpsertCheckListRequest { get; set; }
     public UpsertChoiceOfAnswerRequest UpsertChoiceOfAnswerRequest { get; set; }
     public UpsertProgramWritingRequest UpsertProgramWritingRequest { get; set; }
