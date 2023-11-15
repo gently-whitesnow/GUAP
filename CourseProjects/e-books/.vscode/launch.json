@@ -5,9 +5,9 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch rat",
+      "name": "Launch e-books",
       "type": "lldb",
-      "program": "${workspaceFolder}/build/src/rat",
+      "program": "${workspaceFolder}/build/src/e-books",
       "stopOnEntry": false,
       "args": [],
       "request": "launch"
