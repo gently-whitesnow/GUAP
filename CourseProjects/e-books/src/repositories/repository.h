@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <lib/nlohmann/json.hpp>
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <typeinfo>
 
@@ -18,11 +18,11 @@ class FileRepository {
         Read();
     }
 
-    const std::map<int, TDto> GetAll() {
+    const std::unordered_map<int, TDto> GetAll() {
         return _context.Data;
     };
 
-    const std::map<int, TDto> Add(TDto& dto) {
+    const std::unordered_map<int, TDto> Add(TDto& dto) {
         auto id = _context.GetId();
         dto.id = id;
         _context.Data[id] = dto;
@@ -30,7 +30,7 @@ class FileRepository {
         return _context.Data;
     }
 
-    const std::map<int, TDto> Update(int id, void(modificationAction)(TDto)) {
+    const std::unordered_map<int, TDto> Update(int id, void(modificationAction)(TDto)) {
         if (!_context.Data.contains(id)) {
             throw "not found exception";
         }
@@ -39,7 +39,7 @@ class FileRepository {
         return _context.Data;
     }
 
-    const std::map<int, TDto> Delete(int id) {
+    const std::unordered_map<int, TDto> Delete(int id) {
         if (!_context.Data.contains(id)) {
             throw "not found exception";
         }
@@ -65,7 +65,7 @@ class FileRepository {
         if (sourceFile.good()) {
             json data;
             sourceFile >> data;
-            _context = data;  // Implicit conversion from json
+            _context = RepositoryContext<TDto>::from_json(data); 
         }
     }
 };
