@@ -10,4 +10,5 @@
       <ProjectReference Include="..\EBooks.Core\EBooks.Core.csproj" />
     </ItemGroup>
 
+
 </Project>

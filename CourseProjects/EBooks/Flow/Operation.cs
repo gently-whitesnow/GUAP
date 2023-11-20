@@ -7,7 +7,7 @@ public record struct Operation<T>
     public T Value { get; private init; }
     public IOperationError Error { get; private set; }
     
-    internal static Operation<T> Failed(IOperationError error)
+    public static Operation<T> Failed(IOperationError error)
     {
         if (error == null)
         {
