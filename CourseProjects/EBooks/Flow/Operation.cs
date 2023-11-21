@@ -63,7 +63,7 @@ public record struct Operation
         return this;
     }
 
-    internal static Operation Failed(IOperationError error)
+    public static Operation Failed(IOperationError error)
     {
         if (error == null)
         {
@@ -77,7 +77,7 @@ public record struct Operation
         };
     }
 
-    internal static Operation Success()
+    public static Operation Success()
     {
         return new Operation
         {

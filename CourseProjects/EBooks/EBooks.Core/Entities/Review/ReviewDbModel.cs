@@ -5,5 +5,4 @@ public class ReviewDbModel : DbModel
     public uint BookId { get; init; }
     public uint UserId { get; init; }
     public string Content { get; init; }
-    public DateTimeOffset AddDate { get; init; }
 }

@@ -1,4 +1,6 @@
 using EBooks.Core.Entities.Book;
+using EBooks.Core.Entities.User;
+using EBooks.Core.Mappers;
 using EBooks.DA.Repositories;
 using Flow;
 
@@ -8,17 +10,56 @@ public class BooksService
 {
     private readonly BooksRepository _booksRepository;
     private readonly ReservationsRepository _reservationsRepository;
+    private readonly UsersRepository _usersRepository;
 
     public BooksService(BooksRepository booksRepository,
-        ReservationsRepository reservationsRepository)
+        ReservationsRepository reservationsRepository,
+        UsersRepository usersRepository)
     {
         _booksRepository = booksRepository;
         _reservationsRepository = reservationsRepository;
+        _usersRepository = usersRepository;
     }
     
-    public Operation<BookDbModel> GetBookById(uint id)
+    public Operation<BookView> GetBookById(uint id, uint? requesterUserId = null)
     {
-        return _booksRepository.GetById(id);
+        var bookDbModelOperation = _booksRepository.GetById(id);
+        if (bookDbModelOperation.IsNotSuccess)
+            return bookDbModelOperation.FlowError<BookView>();
+
+        var reservations = _reservationsRepository.GetAll()
+            .Where(r => r.BookId == id).ToArray();
+
+        var users = _usersRepository.GetAll();
+        
+        var userReservationViews = new List<UserReservationView>(reservations.Length);
+        foreach (var user in users)
+        {
+            foreach (var reservation in reservations)
+            {
+                if (reservation.UserId != user.Id)
+                    continue;
+                
+                userReservationViews.Add(new UserReservationView
+                {
+                    ReservationId = reservation.Id,
+                    AddDate = reservation.AddDate,
+                    Email = user.Email,
+                    FullName = user.FullName,
+                    IsOwner = reservation.UserId == requesterUserId
+                });
+                break;
+            }
+            
+            if(userReservationViews.Count == reservations.Length)
+                break;
+        }
+
+        return bookDbModelOperation.Value.ToBookView(new UsersReservationView
+        {
+            Users = userReservationViews.ToArray(),
+            Count = userReservationViews.Count
+        });
     }
     
     public BooksSearchView GetBooksSummary(BookSummaryDto bookSummaryDto)
@@ -57,6 +98,11 @@ public class BooksService
         };
         
         return _booksRepository.Upsert(book);
+    }
+    
+    public void DeleteBook(uint bookId)
+    {
+        _booksRepository.Delete(bookId);
     }
     
     private void SetBooksCountAvailability(BookSummaryView[] books)

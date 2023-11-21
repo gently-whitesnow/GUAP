@@ -12,53 +12,55 @@ public class FileRepository<TDbModel> where TDbModel : DbModel
     private readonly RWLock _rwLock = new();
     private readonly string _fileName = $"{typeof(TDbModel).FullName}.json";
 
-    public List<TDbModel> GetAll() 
+    public List<TDbModel> GetAll()
     {
         return Read().Data;
     }
-    
-    public Operation<TDbModel> GetById(uint id) 
+
+    public Operation<TDbModel> GetById(uint id)
     {
-        var data =  Read().Data;
+        var data = Read().Data;
         var dbModelIndex = data.BinarySearch(id);
-        if(dbModelIndex >= 0)
+        if (dbModelIndex >= 0)
         {
             return data[dbModelIndex];
         }
-        
+
         return Operation<TDbModel>.Failed(Errors.BookNotFoundOperationError);
     }
 
-    public TDbModel Upsert(TDbModel dbModel) {
-
+    public TDbModel Upsert(TDbModel dbModel)
+    {
         Save((context) =>
         {
             var dbModelIndex = ListExtensions.BinarySearch(context.Data, dbModel);
-            if(dbModelIndex >= 0)
+            if (dbModelIndex >= 0)
             {
                 context.Data[dbModelIndex] = dbModel;
             }
             else
             {
                 dbModel.Id = context.Counter++;
-                // todo add data
-                // dbModel.
+                dbModel.AddDate = DateTimeOffset.MaxValue;
                 context.Data.Add(dbModel);
             }
         });
         return dbModel;
     }
 
-    public List<TDbModel> Delete(uint id) {
-
-        return Save((context) =>
+    public Operation Delete(uint id)
+    {
+        Operation? operation = null;
+        Save((context) =>
         {
             var dbModelIndex = context.Data.BinarySearch(id);
-            if(dbModelIndex >= 0)
+            if (dbModelIndex >= 0)
             {
                 context.Data.RemoveAt(dbModelIndex);
             }
+            operation = Operation.Failed(Errors.BookNotFoundOperationError);
         });
+        return operation ?? Operation.Success();
     }
 
     private List<TDbModel> Save(Action<RepositoryContext<TDbModel>> modificationAction)
@@ -78,7 +80,7 @@ public class FileRepository<TDbModel> where TDbModel : DbModel
         {
             if (!File.Exists(_fileName))
                 return new RepositoryContext<TDbModel>();
-            
+
             return JsonSerializer.Deserialize<RepositoryContext<TDbModel>>(
                 File.ReadAllText(_fileName)) ?? new RepositoryContext<TDbModel>();
         }
