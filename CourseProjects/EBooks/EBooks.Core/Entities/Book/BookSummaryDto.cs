@@ -1,6 +1,6 @@
 namespace EBooks.Core.Entities.Book;
 
-public class SummaryBookDto
+public class BookSummaryDto
 {
     public string SearchQuery { get; init; }
     public bool IsAvailable { get; init; }

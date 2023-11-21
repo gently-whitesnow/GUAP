@@ -29,9 +29,9 @@ public class FileRepository<TDbModel> where TDbModel : DbModel
         return Operation<TDbModel>.Failed(Errors.BookNotFoundOperationError);
     }
 
-    public List<TDbModel> Upsert(TDbModel dbModel) {
+    public TDbModel Upsert(TDbModel dbModel) {
 
-        return Save((context) =>
+        Save((context) =>
         {
             var dbModelIndex = ListExtensions.BinarySearch(context.Data, dbModel);
             if(dbModelIndex >= 0)
@@ -41,9 +41,12 @@ public class FileRepository<TDbModel> where TDbModel : DbModel
             else
             {
                 dbModel.Id = context.Counter++;
+                // todo add data
+                // dbModel.
                 context.Data.Add(dbModel);
             }
         });
+        return dbModel;
     }
 
     public List<TDbModel> Delete(uint id) {
