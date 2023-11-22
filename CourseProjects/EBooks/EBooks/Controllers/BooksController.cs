@@ -17,6 +17,7 @@ public class BooksController : Controller
     [HttpGet("{id}")]
     public IActionResult GetBookByIdAsync(uint id)
     {
-        return _booksService.GetBookById(id).AsActionResult();
+        // todo user
+        return _booksService.GetBookById(id, 1).AsActionResult();
     }
 }

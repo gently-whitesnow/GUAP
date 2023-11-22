@@ -1,6 +1,7 @@
 using EBooks.Core.Entities;
 using EBooks.Core.Entities.Reservation;
 using EBooks.Core.Entities.User;
+using EBooks.Core.Mappers;
 using EBooks.DA.Repositories;
 using Flow;
 
@@ -55,14 +56,7 @@ public class ReservationsService
                 if (reservation.UserId != user.Id)
                     continue;
                 
-                userReservationViews.Add(new UserReservationView
-                {
-                    ReservationId = reservation.Id,
-                    AddDate = reservation.AddDate,
-                    Email = user.Email,
-                    FullName = user.FullName,
-                    IsOwner = reservation.UserId == requesterUserId
-                });
+                userReservationViews.Add(user.ToUserReservationView(reservation, requesterUserId));
                 break;
             }
             

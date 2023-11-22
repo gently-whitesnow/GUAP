@@ -19,4 +19,27 @@ public static class BookMapper
             Reservations = reservations
         };
     }
+    
+    public static BookSummaryView ToBookSummaryView(this BookDbModel bookDbModel)
+    {
+        return new BookSummaryView
+        {
+            Id = bookDbModel.Id,
+            Title = bookDbModel.Title,
+            Author = bookDbModel.Author,
+            Count = bookDbModel.Count
+        };
+    }
+    
+    public static BookDbModel ToBookDbModel(this BookUpsertDto bookUpsertDto)
+    {
+        return new BookDbModel
+        {
+            Id = bookUpsertDto.Id,
+            Title = bookUpsertDto.Title,
+            Description = bookUpsertDto.Description,
+            Author = bookUpsertDto.Author,
+            Count = bookUpsertDto.Count
+        };
+    }
 }

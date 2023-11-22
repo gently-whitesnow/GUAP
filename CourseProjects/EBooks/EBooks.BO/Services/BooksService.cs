@@ -21,7 +21,7 @@ public class BooksService
         _usersRepository = usersRepository;
     }
     
-    public Operation<BookView> GetBookById(uint id, uint? requesterUserId = null)
+    public Operation<BookView> GetBookById(uint id, uint requesterUserId)
     {
         var bookDbModelOperation = _booksRepository.GetById(id);
         if (bookDbModelOperation.IsNotSuccess)
@@ -40,14 +40,7 @@ public class BooksService
                 if (reservation.UserId != user.Id)
                     continue;
                 
-                userReservationViews.Add(new UserReservationView
-                {
-                    ReservationId = reservation.Id,
-                    AddDate = reservation.AddDate,
-                    Email = user.Email,
-                    FullName = user.FullName,
-                    IsOwner = reservation.UserId == requesterUserId
-                });
+                userReservationViews.Add(user.ToUserReservationView(reservation, requesterUserId));
                 break;
             }
             
@@ -69,13 +62,7 @@ public class BooksService
                       || b.Author.Contains(bookSummaryDto.SearchQuery))
             .Skip(bookSummaryDto.Skip)
             .Take(bookSummaryDto.Take)
-            .Select(b=>new BookSummaryView
-            {
-                Id = b.Id,
-                Title = b.Title,
-                Author = b.Author,
-                Count = b.Count
-            }).ToArray();
+            .Select(b=>b.ToBookSummaryView()).ToArray();
 
         SetBooksCountAvailability(books);
 
@@ -86,18 +73,40 @@ public class BooksService
         };
     }
     
+    public List<YourBookView> GetYourBooks(uint requesterUserId)
+    {
+        var reservations = _reservationsRepository.GetAll()
+            .Where(r => r.UserId == requesterUserId).ToArray();
+
+        var books = _booksRepository.GetAll();
+        
+        var userBooks = new List<YourBookView>(reservations.Length);
+        foreach (var book in books)
+        {
+            foreach (var reservation in reservations)
+            {
+                if (reservation.BookId != book.Id)
+                    continue;
+                
+                userBooks.Add(new YourBookView
+                {
+                    Title = book.Title,
+                    Author = book.Author,
+                    ReservationId = reservation.Id
+                });
+                break;
+            }
+            
+            if(userBooks.Count == reservations.Length)
+                break;
+        }
+
+        return userBooks;
+    }
+    
     public BookDbModel UpsertBook(BookUpsertDto bookUpsertDto)
     {
-        var book = new BookDbModel
-        {
-            Id = bookUpsertDto.Id,
-            Title = bookUpsertDto.Title,
-            Description = bookUpsertDto.Description,
-            Author = bookUpsertDto.Author,
-            Count = bookUpsertDto.Count
-        };
-        
-        return _booksRepository.Upsert(book);
+        return _booksRepository.Upsert(bookUpsertDto.ToBookDbModel());
     }
     
     public void DeleteBook(uint bookId)
