@@ -51,6 +51,7 @@ public static class Startup
     public static IServiceCollection WithServices(this IServiceCollection services)
     {
         services.AddSingleton<BooksService>();
+        services.AddSingleton<ReservationsService>();
         return services;
     }
     
