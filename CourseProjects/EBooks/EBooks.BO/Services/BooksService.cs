@@ -21,11 +21,11 @@ public class BooksService
         _usersRepository = usersRepository;
     }
     
-    public Operation<BookView> GetBookById(uint id, uint requesterUserId)
+    public Result<BookView> GetBookById(uint id, uint requesterUserId)
     {
         var bookDbModelOperation = _booksRepository.GetById(id);
-        if (bookDbModelOperation.IsNotSuccess)
-            return bookDbModelOperation.FlowError<BookView>();
+        if (bookDbModelOperation.HasError)
+            return bookDbModelOperation.Error;
 
         var reservations = _reservationsRepository.GetAll()
             .Where(r => r.BookId == id).ToArray();
@@ -58,13 +58,18 @@ public class BooksService
     public BooksSearchView GetBooksSummary(BookSummaryDto bookSummaryDto)
     {
         var books = _booksRepository.GetAll()
-            .Where(b=>b.Title.Contains(bookSummaryDto.SearchQuery) 
+            .Where(b=>string.IsNullOrEmpty(bookSummaryDto.SearchQuery) 
+                      || b.Title.Contains(bookSummaryDto.SearchQuery) 
                       || b.Author.Contains(bookSummaryDto.SearchQuery))
+            .OrderByDescending(b=>b.AddDate)
             .Skip(bookSummaryDto.Skip)
             .Take(bookSummaryDto.Take)
             .Select(b=>b.ToBookSummaryView()).ToArray();
 
         SetBooksCountAvailability(books);
+
+        if (bookSummaryDto.IsAvailable)
+            books = books.Where(b => b.AvailableCount != 0).ToArray();
 
         return new BooksSearchView
         {
