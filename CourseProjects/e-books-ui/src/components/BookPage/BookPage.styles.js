@@ -31,6 +31,7 @@ export const Description = styled.div`
   height: 350px;
   overflow-y: scroll;
 `;
+
 export const Footer = styled.div`
   margin-top: 20px;
   display: flex;
