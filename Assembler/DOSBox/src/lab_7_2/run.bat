@@ -1,0 +1,2 @@
+echo RUNNING
+MAIN.exe
