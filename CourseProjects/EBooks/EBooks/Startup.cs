@@ -43,7 +43,6 @@ public static class Startup
     public static IServiceCollection WithRepositories(this IServiceCollection services)
     {
         services.AddSingleton<BooksRepository>();
-        services.AddSingleton<ReviewsRepository>();
         services.AddSingleton<ReservationsRepository>();
         services.AddSingleton<UsersRepository>();
         return services;
@@ -52,18 +51,22 @@ public static class Startup
     public static IServiceCollection WithServices(this IServiceCollection services)
     {
         services.AddSingleton<BooksService>();
+        services.AddSingleton<ReservationsService>();
         return services;
     }
     
     public static IServiceCollection WithPackages(this IServiceCollection services)
     {
         services.AddHealthChecks();
+        services.AddSingleton<ExceptionHandlerMiddleware>();
+
         services
             .AddControllers(options =>
             {
                 options.SuppressInputFormatterBuffering = true;
                 options.SuppressOutputFormatterBuffering = true;
-            });
+            })
+            .AddControllersAsServices();
 
         return services;
     }
@@ -74,6 +77,7 @@ public static class Startup
         
         app.UseRouting();
         app.UseCors(DefaultCorsPolicyName);
+        app.UseMiddleware<ExceptionHandlerMiddleware>();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();

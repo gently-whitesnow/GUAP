@@ -3,7 +3,6 @@ using EBooks.Core.Entities;
 using EBooks.Core.Entities.RwLock;
 using EBooks.Core.Extensions;
 using Flow;
-using Flow.StandardOperationError;
 
 namespace EBooks.DA.Repositories;
 
@@ -17,7 +16,7 @@ public class FileRepository<TDbModel> where TDbModel : DbModel
         return Read().Data;
     }
 
-    public Operation<TDbModel> GetById(uint id)
+    public Result<TDbModel> GetById(uint id)
     {
         var data = Read().Data;
         var dbModelIndex = data.BinarySearch(id);
@@ -26,7 +25,7 @@ public class FileRepository<TDbModel> where TDbModel : DbModel
             return data[dbModelIndex];
         }
 
-        return Operation<TDbModel>.Failed(Errors.BookNotFoundOperationError);
+        return Errors.BookNotFoundError;
     }
 
     public TDbModel Upsert(TDbModel dbModel)
@@ -48,9 +47,9 @@ public class FileRepository<TDbModel> where TDbModel : DbModel
         return dbModel;
     }
 
-    public Operation Delete(uint id)
+    public Result Delete(uint id)
     {
-        Operation? operation = null;
+        Result? operation = null;
         Save((context) =>
         {
             var dbModelIndex = context.Data.BinarySearch(id);
@@ -58,9 +57,9 @@ public class FileRepository<TDbModel> where TDbModel : DbModel
             {
                 context.Data.RemoveAt(dbModelIndex);
             }
-            operation = Operation.Failed(Errors.BookNotFoundOperationError);
+            operation = Errors.BookNotFoundError;
         });
-        return operation ?? Operation.Success();
+        return operation ?? Result.Success;
     }
 
     private List<TDbModel> Save(Action<RepositoryContext<TDbModel>> modificationAction)

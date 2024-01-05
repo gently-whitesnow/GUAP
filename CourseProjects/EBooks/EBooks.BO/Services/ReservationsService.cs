@@ -22,21 +22,21 @@ public class ReservationsService
         _usersRepository = usersRepository;
     }
     
-    public Operation<UsersReservationView> Reserve(uint bookId, uint requesterUserId)
+    public Result<UsersReservationView> Reserve(uint bookId, uint requesterUserId)
     {
         var bookDbModelOperation = _booksRepository.GetById(bookId);
-        if (bookDbModelOperation.IsNotSuccess)
-            return bookDbModelOperation.FlowError<UsersReservationView>();
+        if (bookDbModelOperation.HasError)
+            return bookDbModelOperation.Error;
 
         var reservations = _reservationsRepository.GetAll()
             .Where(r => r.BookId == bookId).ToList();
 
         if(bookDbModelOperation.Value.Count <= reservations.Count)
-            return Operation<UsersReservationView>.Failed(Errors.NotAvailableBooksError);
+            return Errors.NotAvailableBooksError;
         
         if (reservations.Any(reservation => reservation.UserId == requesterUserId))
         {
-            return Operation<UsersReservationView>.Failed(Errors.AlreadyReserveByUserError);
+            return Errors.AlreadyReserveByUserError;
         }
         
         var reservationDbModel = new ReservationDbModel
@@ -71,14 +71,14 @@ public class ReservationsService
         };
     }
     
-    public Operation UnReserve(uint reservationId, uint requesterUserId)
+    public Result UnReserve(uint reservationId, uint requesterUserId)
     {
         var reservationOperation = _reservationsRepository.GetById(reservationId);
-        if(reservationOperation.IsNotSuccess)
-            return reservationOperation.FlowError();
+        if(reservationOperation.HasError)
+            return reservationOperation.Error;
 
         if (reservationOperation.Value.UserId != requesterUserId)
-            return Operation.Failed(Errors.NotOwnerOfReservationError);
+            return Errors.NotOwnerOfReservationError;
 
         return _reservationsRepository.Delete(reservationId);
     }
