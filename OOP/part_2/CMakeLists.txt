@@ -1,7 +1,2 @@
 set(CMAKE_CXX_STANDARD 20)
-add_subdirectory(1_lab)
-add_subdirectory(2_lab)
-add_subdirectory(3_lab)
-add_subdirectory(4_lab)
-add_subdirectory(5_lab)
-add_subdirectory(6_lab)
+add_subdirectory(lab_1)
