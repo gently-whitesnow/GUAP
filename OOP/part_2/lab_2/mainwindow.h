@@ -12,15 +12,19 @@
 #include <QtSql>
 #include <iostream>
 #include <map>
+#include "views/root.h"
 
 class MainWindow : public QMainWindow {
    public:
     MainWindow() : QMainWindow() {
+        QGroupBox* group = new QGroupBox("Зайцев Александр Сергеевич Z1431");
         db.setDatabaseName("my_db.sqlite");
         if (!db.open()) {
             qDebug() << "Что-то пошло не так!";
         }
-        
+        auto root = new Root();
+        group->setLayout(root);
+        setCentralWidget(group);
     }
 
    private:
