@@ -4,13 +4,34 @@
 
 class Book {
    public:
-    Book(int id, QString name, QString author) {
-        this->id = id;
-        this->name = name;
-        this->author = author;
-    }
-
     uint32_t id;
     QString name;
     QString author;
+
+    QString makeCreateTableQuery() const {
+        return "CREATE TABLE IF NOT EXISTS books ("
+               "id integer PRIMARY KEY NOT NULL, "
+               "name VARCHAR(255), "
+               "author VARCHAR(255)"
+               ");";
+    }
+
+    QString makeSelectAllQuery() const { return "SELECT * FROM books"; }
+
+    QString makeSelectQuery(decltype(id) book_id) const {
+        return QString("SELECT * FROM books WHERE id = %1").arg(book_id);
+    }
+
+    QString makeInsertQuery() const {
+        return QString(
+                   "INSERT INTO books(id, name, author) "
+                   "VALUES (%1, '%2', '%3');")
+            .arg(id)
+            .arg(name, author);
+    }
+
+    QString makeDeleteQuery() const {
+        static QString kInsertQuery = "DELETE FROM books WHERE id = %1;";
+        return kInsertQuery.arg(id);
+    }
 };

@@ -16,10 +16,10 @@ class Content : public QVBoxLayout {
         auto values = new QList<Book>;
 
         std::vector<Book> data;
-        data.emplace_back(Book(1, "1", "1"));
-        data.emplace_back(Book(2, "2", "2"));
-        data.emplace_back(Book(3, "3", "3"));
-        data.emplace_back(Book(4, "4", "4"));
+        data.emplace_back(Book{1, "1", "1"});
+        data.emplace_back(Book{2, "2", "2"});
+        data.emplace_back(Book{3, "3", "3"});
+        data.emplace_back(Book{4, "4", "4"});
         Table* table = new Table(data);
         addLayout(table);
     }

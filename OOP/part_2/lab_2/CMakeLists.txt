@@ -13,6 +13,8 @@ set(CMAKE_AUTORCC ON)
 
 add_executable(lab_2 ${all_headers} main.cpp service/repository.cpp)
 
+target_include_directories(lab_2 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
 target_link_libraries(lab_2 Qt5::Widgets Qt5::Sql)
 
 
