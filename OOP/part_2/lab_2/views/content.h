@@ -21,6 +21,10 @@ class Content : public QVBoxLayout {
         auto values = new QList<Book>;
 
         Table* table = new Table(repo.getBooks());
+        table->setRemoveCallback([table, this](Book book) {
+            repo.removeBook(book);
+            table->updateData(repo.getBooks());
+        });
 
         QObject::connect(
             addButton, QOverload<bool>::of(&QPushButton::clicked),

@@ -2,14 +2,13 @@
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <functional>
 
 #include "../models/book.h"
 
 class Table : public QHBoxLayout {
    public:
-    Table(std::vector<Book>&& data) {
-        data_ = std::move(data);
-
+    Table(std::vector<Book>&& data) : data_(std::move(data)) {
         initColumns();
 
         fillColumns();
@@ -18,6 +17,10 @@ class Table : public QHBoxLayout {
         addLayout(nameLayout_);
         addLayout(authorLayout_);
         addLayout(deleteLayout_);
+    }
+
+    void setRemoveCallback(std::function<void(Book)> removeRowCallback) {
+        removeRowCallback_ = removeRowCallback;
     }
 
     void updateData(std::vector<Book>&& data) {
@@ -72,10 +75,18 @@ class Table : public QHBoxLayout {
             authorLayout_->addWidget(author);
             QPushButton* deleteButton = new QPushButton("X");
             deleteLayout_->addWidget(deleteButton);
+            QObject::connect(deleteButton,
+                             QOverload<bool>::of(&QPushButton::clicked),
+                             [book, this](bool) {
+                                 if (removeRowCallback_) {
+                                     removeRowCallback_(book);
+                                 }
+                             });
         }
     }
 
     std::vector<Book> data_;
+    std::function<void(Book)> removeRowCallback_;
     QVBoxLayout* idLayout_ = new QVBoxLayout();
     QVBoxLayout* nameLayout_ = new QVBoxLayout();
     QVBoxLayout* authorLayout_ = new QVBoxLayout();
