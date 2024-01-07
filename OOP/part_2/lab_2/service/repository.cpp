@@ -30,7 +30,7 @@ void Repository::removeBook(const Book& book) {
     }
 }
 
-std::vector<Book> getBooks() {
+std::vector<Book> Repository::getBooks() {
     QSqlQuery query;
     if (!query.exec(Book().makeSelectAllQuery())) {
         throw std::runtime_error("Не удается получить список книг");

@@ -24,9 +24,8 @@ class Book {
 
     QString makeInsertQuery() const {
         return QString(
-                   "INSERT INTO books(id, name, author) "
-                   "VALUES (%1, '%2', '%3');")
-            .arg(id)
+                   "INSERT INTO books(name, author) "
+                   "VALUES ('%1', '%2');")
             .arg(name, author);
     }
 

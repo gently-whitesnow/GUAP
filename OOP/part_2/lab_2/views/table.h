@@ -7,39 +7,77 @@
 
 class Table : public QHBoxLayout {
    public:
-    Table(std::vector<Book>& data) {
-        _data = data;
+    Table(std::vector<Book>&& data) {
+        data_ = std::move(data);
 
-        QVBoxLayout* idLayout = new QVBoxLayout();
-        QLabel* idLabel = new QLabel("Ид");
-        idLayout->addWidget(idLabel);
-        QVBoxLayout* nameLayout = new QVBoxLayout();
-        QLabel* nameLabel = new QLabel("Название");
-        nameLayout->addWidget(nameLabel);
-        QVBoxLayout* authorLayout = new QVBoxLayout();
-        QLabel* authorLabel = new QLabel("Автор");
-        authorLayout->addWidget(authorLabel);
-        QVBoxLayout* deleteLayout = new QVBoxLayout();
-        QLabel* deleteLabel = new QLabel("Удалить");
-        deleteLayout->addWidget(deleteLabel);
+        initColumns();
 
-        for (const auto book : _data) {
-            QLabel* id = new QLabel(QString::number(book.id));
-            idLayout->addWidget(id);
-            QLabel* name = new QLabel(book.name);
-            nameLayout->addWidget(name);
-            QLabel* author = new QLabel(book.author);
-            authorLayout->addWidget(author);
-            QPushButton* deleteButton = new QPushButton("X");
-            deleteLayout->addWidget(deleteButton);
-        }
+        fillColumns();
 
-        addLayout(idLayout);
-        addLayout(nameLayout);
-        addLayout(authorLayout);
-        addLayout(deleteLayout);
+        addLayout(idLayout_);
+        addLayout(nameLayout_);
+        addLayout(authorLayout_);
+        addLayout(deleteLayout_);
+    }
+
+    void updateData(std::vector<Book>&& data) {
+        data_ = std::move(data);
+        clearColumns();
+        initColumns();
+        fillColumns();
+        update();
     }
 
    private:
-    std::vector<Book> _data;
+    void clearLayout(QLayout* layout) {
+        if (layout == NULL) return;
+        QLayoutItem* item;
+        while ((item = layout->takeAt(0))) {
+            if (item->layout()) {
+                clearLayout(item->layout());
+                delete item->layout();
+            }
+            if (item->widget()) {
+                delete item->widget();
+            }
+            delete item;
+        }
+    }
+
+    void clearColumns() {
+        clearLayout(idLayout_);
+        clearLayout(nameLayout_);
+        clearLayout(authorLayout_);
+        clearLayout(deleteLayout_);
+    }
+
+    void initColumns() {
+        QLabel* idLabel = new QLabel("Ид");
+        idLayout_->addWidget(idLabel);
+        QLabel* nameLabel = new QLabel("Название");
+        nameLayout_->addWidget(nameLabel);
+        QLabel* authorLabel = new QLabel("Автор");
+        authorLayout_->addWidget(authorLabel);
+        QLabel* deleteLabel = new QLabel("Удалить");
+        deleteLayout_->addWidget(deleteLabel);
+    }
+
+    void fillColumns() {
+        for (const auto book : data_) {
+            QLabel* id = new QLabel(QString::number(book.id));
+            idLayout_->addWidget(id);
+            QLabel* name = new QLabel(book.name);
+            nameLayout_->addWidget(name);
+            QLabel* author = new QLabel(book.author);
+            authorLayout_->addWidget(author);
+            QPushButton* deleteButton = new QPushButton("X");
+            deleteLayout_->addWidget(deleteButton);
+        }
+    }
+
+    std::vector<Book> data_;
+    QVBoxLayout* idLayout_ = new QVBoxLayout();
+    QVBoxLayout* nameLayout_ = new QVBoxLayout();
+    QVBoxLayout* authorLayout_ = new QVBoxLayout();
+    QVBoxLayout* deleteLayout_ = new QVBoxLayout();
 };
