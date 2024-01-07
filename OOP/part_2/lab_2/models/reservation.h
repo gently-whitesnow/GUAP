@@ -9,18 +9,19 @@ struct Reservation {
 
     QString makeCreateTableQuery() const {
         return "CREATE TABLE IF NOT EXISTS reservations ("
+               "id integer PRIMARY KEY NOT NULL, "
                "user_id integer, "
                "book_id integer"
                ");";
     }
 
-    QString makeSelectAllQuery() const { return "SELECT * FROM reservations"; }
+    QString makeSelectAllQuery() const { return "SELECT user_id, book_id FROM reservations"; }
 
     QString makeInsertQuery() const {
         return QString(
                    "INSERT INTO reservations(user_id, book_id) "
                    "VALUES (%1, %2);")
-            .arg(user.id, book.id);
+            .arg(user.id).arg(book.id);
     }
 
     QString makeDeleteQuery() const {

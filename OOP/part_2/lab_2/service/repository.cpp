@@ -74,8 +74,8 @@ std::vector<Reservation> Repository::getReservations() {
     while (query.next()) {
         Reservation reservation;
 
-        uint32_t bookId = query.value(rec.indexOf("book_id")).toInt();
         uint32_t userId = query.value(rec.indexOf("user_id")).toInt();
+        uint32_t bookId = query.value(rec.indexOf("book_id")).toInt();
 
         Book book;
         {
@@ -83,11 +83,11 @@ std::vector<Reservation> Repository::getReservations() {
             if (!book_query.exec(Book().makeSelectQuery(bookId))) {
                 continue;
             }
-            QSqlRecord rec = book_query.record();
-            query.next();
-            book.id = query.value(rec.indexOf("id")).toInt();
-            book.name = query.value(rec.indexOf("name")).toString();
-            book.author = query.value(rec.indexOf("author")).toString();
+            QSqlRecord bookRec = book_query.record();
+            book_query.next();
+            book.id = book_query.value(bookRec.indexOf("id")).toInt();
+            book.name = book_query.value(bookRec.indexOf("name")).toString();
+            book.author = book_query.value(bookRec.indexOf("author")).toString();
         }
         reservation.book = std::move(book);
         reservation.user = User{.id = userId};

@@ -13,17 +13,23 @@
 
 class Content : public QVBoxLayout {
    public:
-    Content() : QVBoxLayout() {
+    Content(int userId) : QVBoxLayout() {
         QPushButton* addButton = new QPushButton("Добавить книгу");
 
         addWidget(addButton);
 
         auto values = new QList<Book>;
 
-        Table* table = new Table(repo.getBooks());
+        Table* table = new Table(repo.getBooks(), repo.getReservations(), userId);
         table->setRemoveCallback([table, this](Book book) {
             repo.removeBook(book);
-            table->updateData(repo.getBooks());
+            table->updateData(repo.getBooks(), repo.getReservations());
+        }).setRemoveReservationCallback([table, this](Reservation reservation) {
+            repo.freeReservation(reservation);
+            table->updateData(repo.getBooks(), repo.getReservations());
+        }).setAddReservationCallback([table, this](User user, Book book) {
+            repo.makeReservation(user, book);
+            table->updateData(repo.getBooks(), repo.getReservations());
         });
 
         QObject::connect(
@@ -58,7 +64,7 @@ class Content : public QVBoxLayout {
                     return;
                 }
                 repo.addBook(Book{.name = bookName, .author = bookAuthor});
-                table->updateData(repo.getBooks());
+                table->updateData(repo.getBooks(), repo.getReservations());
             });
 
         addLayout(table);

@@ -19,7 +19,7 @@ class Book {
     QString makeSelectAllQuery() const { return "SELECT * FROM books"; }
 
     QString makeSelectQuery(decltype(id) book_id) const {
-        return QString("SELECT * FROM books WHERE id = %1").arg(book_id);
+        return QString("SELECT id, name, author FROM books WHERE id = %1").arg(book_id);
     }
 
     QString makeInsertQuery() const {

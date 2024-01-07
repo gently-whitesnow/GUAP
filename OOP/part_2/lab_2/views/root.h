@@ -1,15 +1,23 @@
 #pragma once
 
 #include <QVBoxLayout>
-#include "current_user.h"
+
 #include "content.h"
+#include "current_user.h"
 
 class Root : public QVBoxLayout {
    public:
     Root() : QVBoxLayout() {
-        CurrentUser* currentUser = new CurrentUser(15);
+        bool ok = false;
+        int id = 0;
+        while (!ok) {
+            id = QInputDialog::getInt(nullptr, "Авторизация",
+                                      "Введите номер пользователя:", 0, 0, 1024,
+                                      1, &ok, Qt::WindowFlags());
+        }
+        CurrentUser* currentUser = new CurrentUser(id);
         addLayout(currentUser);
-        Content* content = new Content();
+        Content* content = new Content(id);
         addLayout(content);
     }
 };
