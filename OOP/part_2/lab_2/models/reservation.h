@@ -7,26 +7,15 @@ struct Reservation {
     User user;
     Book book;
 
-    QString makeCreateTableQuery() const {
-        return "CREATE TABLE IF NOT EXISTS reservations ("
-               "id integer PRIMARY KEY NOT NULL, "
-               "user_id integer, "
-               "book_id integer"
-               ");";
-    }
+    // запрос на создание таблицы
+    QString makeCreateTableQuery() const;
 
-    QString makeSelectAllQuery() const { return "SELECT user_id, book_id FROM reservations"; }
+    // запрос на получение всех данных
+    QString makeSelectAllQuery() const;
 
-    QString makeInsertQuery() const {
-        return QString(
-                   "INSERT INTO reservations(user_id, book_id) "
-                   "VALUES (%1, %2);")
-            .arg(user.id).arg(book.id);
-    }
+    // запрос на добавление данных
+    QString makeInsertQuery() const;
 
-    QString makeDeleteQuery() const {
-        static QString kInsertQuery =
-            "DELETE FROM reservations WHERE user_id = %1 AND book_id = %2;";
-        return kInsertQuery.arg(user.id).arg(book.id);
-    }
+    // запрос на удаление данных
+    QString makeDeleteQuery() const;
 };

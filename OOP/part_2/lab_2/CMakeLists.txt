@@ -1,4 +1,4 @@
-project(1_lab)
+project(lab_2)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -11,7 +11,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-add_executable(lab_2 ${all_headers} main.cpp service/repository.cpp)
+add_executable(lab_2 ${all_headers} main.cpp service/repository.cpp models/book.cpp models/reservation.cpp views/content.cpp views/current_user.cpp views/root.cpp views/table.cpp)
 
 target_include_directories(lab_2 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

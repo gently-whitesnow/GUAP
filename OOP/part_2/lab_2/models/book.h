@@ -8,29 +8,18 @@ class Book {
     QString name;
     QString author;
 
-    QString makeCreateTableQuery() const {
-        return "CREATE TABLE IF NOT EXISTS books ("
-               "id integer PRIMARY KEY NOT NULL, "
-               "name VARCHAR(255), "
-               "author VARCHAR(255)"
-               ");";
-    }
+    // запрос на создание таблицы
+    QString makeCreateTableQuery() const;
 
-    QString makeSelectAllQuery() const { return "SELECT * FROM books"; }
+    // запрос на получение всех данных
+    QString makeSelectAllQuery() const;
 
-    QString makeSelectQuery(decltype(id) book_id) const {
-        return QString("SELECT id, name, author FROM books WHERE id = %1").arg(book_id);
-    }
+    // запрос на получение данного по id книги
+    QString makeSelectQuery(decltype(id) book_id) const;
 
-    QString makeInsertQuery() const {
-        return QString(
-                   "INSERT INTO books(name, author) "
-                   "VALUES ('%1', '%2');")
-            .arg(name, author);
-    }
+    // запрос на добавление данных
+    QString makeInsertQuery() const;
 
-    QString makeDeleteQuery() const {
-        static QString kInsertQuery = "DELETE FROM books WHERE id = %1;";
-        return kInsertQuery.arg(id);
-    }
+    // запрос на удаление данных
+    QString makeDeleteQuery() const;
 };

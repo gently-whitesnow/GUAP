@@ -75,12 +75,15 @@ class MainWindow : public QMainWindow {
             button, QOverload<bool>::of(&QPushButton::clicked), [&](bool) {
                 uint32_t price = baseAutoPrice;
                 price += 30000;  // color radio button
+                short checked = 0;
                 for (const auto* staffItem : staff) {
                     if (staffItem->isChecked()) {
                         price += staffProperties.at(staffItem->text());
+                        checked++;
                     }
                 }
-                showResult(price);
+
+                showResult(price, checked == staff.size());
             });
 
         sumLayout->addWidget(button);
@@ -99,11 +102,15 @@ class MainWindow : public QMainWindow {
         picture->setPixmap(pixmap.scaled(250, 250, Qt::KeepAspectRatio));
     }
 
-    void showResult(uint32_t price) {
+    void showResult(uint32_t price, bool discount = false) {
         if (price == 0) {
             result->setText("");
         } else {
-            result->setText(QString("С вас %1 рублей").arg(price));
+            auto resultText = QString("С вас %1 рублей").arg(price);
+            if (discount) {
+                resultText.append(" (скидка 10%)");
+            }
+            result->setText(resultText);
         }
     }
 
