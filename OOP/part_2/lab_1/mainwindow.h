@@ -76,14 +76,23 @@ class MainWindow : public QMainWindow {
                 uint32_t price = baseAutoPrice;
                 price += 30000;  // color radio button
                 short checked = 0;
+                QString staffInfo;
                 for (const auto* staffItem : staff) {
                     if (staffItem->isChecked()) {
-                        price += staffProperties.at(staffItem->text());
+                        auto staffName = staffItem->text();
+                        auto staffPrice = staffProperties.at(staffName);
+                        price += staffPrice;
                         checked++;
+                        staffInfo += staffItem->text() + QString(" - ") +
+                                     QString(QString::number(staffPrice)) +
+                                     QString("\n");
                     }
                 }
+                if (checked == staff.size()) {
+                    price *= 0.9;
+                }
 
-                showResult(price, checked == staff.size());
+                showResult(price, staffInfo, checked == staff.size());
             });
 
         sumLayout->addWidget(button);
@@ -102,19 +111,28 @@ class MainWindow : public QMainWindow {
         picture->setPixmap(pixmap.scaled(250, 250, Qt::KeepAspectRatio));
     }
 
-    void showResult(uint32_t price, bool discount = false) {
+    void showResult(uint32_t price, QString staffInfo = QString(),
+                    bool discount = false) {
         if (price == 0) {
             result->setText("");
         } else {
-            auto resultText = QString("С вас %1 рублей").arg(price);
+            QString resultText;
+            resultText.append(
+                QString("Машина - %1 \n").arg(QString::number(baseAutoPrice)));
+            resultText.append(
+                QString("Цвет - %1\n").arg(QString::number(3000)));
+            if (staffInfo.size() != 0) {
+                resultText.append(staffInfo).append(QString("\n"));
+            }
+            resultText.append(QString("С вас %1 рублей").arg(price));
             if (discount) {
-                resultText.append(" (скидка 10%)");
+                resultText.append("\n(со скидкой 10%)");
             }
             result->setText(resultText);
         }
     }
 
-    uint32_t baseAutoPrice = 0;
+    uint32_t baseAutoPrice = 100000 + 0 * 100000;
     QLabel* result = new QLabel();
     QLabel* picture = new QLabel();
     std::vector<QCheckBox*> staff;
