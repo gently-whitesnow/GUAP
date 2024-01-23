@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace EBooks.Core.Entities.Book;
 
 public class BookUpsertDto
@@ -7,4 +9,6 @@ public class BookUpsertDto
     public string Description { get; init; }
     public string Author { get; init; }
     public ushort Count { get; init; }
+    
+    public IFormFile File { get; set; }
 }

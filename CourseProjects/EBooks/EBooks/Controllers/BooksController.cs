@@ -33,21 +33,20 @@ public class BooksController : Controller
     }
     
     [HttpGet("your")]
-    public List<YourBookView> GetYourBooks()
+    public Task<List<YourBookView>> GetYourBooks()
     {
         return _booksService.GetYourBooks(HttpContext.GetUser().Id);
     }
     
     [HttpPost]
-    public BookDbModel UpsertBook([FromBody][Required] BookUpsertDto bookUpsertDto)
+    public Task<BookDbModel> UpsertBookAsync([FromForm][Required] BookUpsertDto bookUpsertDto)
     {
-        return _booksService.UpsertBook(bookUpsertDto);
+        return _booksService.UpsertBookAsync(bookUpsertDto);
     }
     
     [HttpDelete("{id}")]
-    public IActionResult DeleteBook(uint id)
+    public Task DeleteBook(uint id)
     {
-        _booksService.DeleteBook(id);
-        return Ok();
+        return _booksService.DeleteBook(id);
     }
 }

@@ -1,6 +1,7 @@
 using EBooks.Core.Entities.Book;
 using EBooks.Core.Entities.User;
 using EBooks.Core.Mappers;
+using EBooks.DA;
 using EBooks.DA.Repositories;
 using Flow;
 
@@ -11,14 +12,17 @@ public class BooksService
     private readonly BooksRepository _booksRepository;
     private readonly ReservationsRepository _reservationsRepository;
     private readonly UsersRepository _usersRepository;
+    private readonly FileSystemHelper _fileSystemHelper;
 
     public BooksService(BooksRepository booksRepository,
         ReservationsRepository reservationsRepository,
-        UsersRepository usersRepository)
+        UsersRepository usersRepository,
+        FileSystemHelper fileSystemHelper)
     {
         _booksRepository = booksRepository;
         _reservationsRepository = reservationsRepository;
         _usersRepository = usersRepository;
+        _fileSystemHelper = fileSystemHelper;
     }
     
     public Result<BookView> GetBookById(uint id, uint requesterUserId)
@@ -78,7 +82,7 @@ public class BooksService
         };
     }
     
-    public List<YourBookView> GetYourBooks(uint requesterUserId)
+    public async Task<List<YourBookView>> GetYourBooks(uint requesterUserId)
     {
         var reservations = _reservationsRepository.GetAll()
             .Where(r => r.UserId == requesterUserId).ToArray();
@@ -92,12 +96,13 @@ public class BooksService
             {
                 if (reservation.BookId != book.Id)
                     continue;
-                
+                var bookFiles = await _fileSystemHelper.GetBookFilesAsync(book.Id);
                 userBooks.Add(new YourBookView
                 {
                     Title = book.Title,
                     Author = book.Author,
-                    ReservationId = reservation.Id
+                    ReservationId = reservation.Id,
+                    Files = bookFiles
                 });
                 break;
             }
@@ -109,14 +114,17 @@ public class BooksService
         return userBooks;
     }
     
-    public BookDbModel UpsertBook(BookUpsertDto bookUpsertDto)
+    public async Task<BookDbModel> UpsertBookAsync(BookUpsertDto bookUpsertDto)
     {
-        return _booksRepository.Upsert(bookUpsertDto.ToBookDbModel());
+        var bookDbModel =  _booksRepository.Upsert(bookUpsertDto.ToBookDbModel());
+        await _fileSystemHelper.SaveBookFilesAsync(bookDbModel.Id, bookUpsertDto.File);
+        return bookDbModel;
     }
     
-    public void DeleteBook(uint bookId)
+    public  Task DeleteBook(uint bookId)
     {
         _booksRepository.Delete(bookId);
+        return _fileSystemHelper.DeleteBookDirectoryAsync(bookId);
     }
     
     private void SetBooksCountAvailability(BookSummaryView[] books)

@@ -10,5 +10,9 @@
       <ProjectReference Include="..\EBooks.Core\EBooks.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
+    </ItemGroup>
+
 
 </Project>

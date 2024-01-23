@@ -21,13 +21,13 @@ public class ReservationsController : Controller
 
 
     [HttpPost("{bookId}")]
-    public IActionResult GetBookById(uint bookId)
+    public IActionResult Reserve(uint bookId)
     {
         return _reservationsService.Reserve(bookId, HttpContext.GetUser().Id).AsActionResult();
     }
 
     [HttpDelete("{bookId}")]
-    public IActionResult GetBooksSummary(uint bookId)
+    public IActionResult UnReserve(uint bookId)
     {
         return _reservationsService.UnReserve(bookId, HttpContext.GetUser().Id).AsActionResult();
     }

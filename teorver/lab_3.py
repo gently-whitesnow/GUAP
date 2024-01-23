@@ -12,13 +12,13 @@ def getValues(size, func, arg1, arg2, title):
 
     # Проверка наличия данных
     if os.path.isfile(file_path):
-        # Если данные уже сгенерированы, загружаем их
+    # Если данные уже сгенерированы, загружаем их
         data = np.loadtxt(file_path, delimiter=',')
     else:
-        # Генерация данных
+    # Генерация данных
         data = func(arg1, arg2)
 
-        # Запись данных в файл
+    # Запись данных в файл
         np.savetxt(file_path, data, delimiter=',')
     return data
 
@@ -26,7 +26,8 @@ def getValues(size, func, arg1, arg2, title):
 # равномерное распределение
 def getRandValues(a, b, size):
     def func(a, b):
-        # Формирование выборок для интервала (0, 1)
+
+    # Формирование выборок для интервала (0, 1)
         noise_01 = np.random.rand(size)
 
         # Преобразование выборок к интервалу (a, b)
@@ -48,7 +49,7 @@ def plot_samples(datas, labels, title):
         plt.subplot(1, len(datas), i + 1)
         plt.hist(data, bins=20, edgecolor='black', alpha=0.7)
         plt.title(labels[i])
-    plt.suptitle(title)
+        plt.suptitle(title)
     plt.show()
 
 
@@ -141,9 +142,16 @@ def case(func, arg1, arg2, title):
     error_x3 = np.abs((mean_case100 - 100) / 100)
     error_x4 = np.abs((mean_case1000 - 1000) / 1000)
 
+    print(f"Оценка среднего для x1: {mean_case15}")
     print(f"Относительная ошибка для x1: {error_x1}")
+
+    print(f"Оценка среднего для x2: {mean_case30}")
     print(f"Относительная ошибка для x2: {error_x2}")
+
+    print(f"Оценка среднего для x3: {mean_case100}")
     print(f"Относительная ошибка для x3: {error_x3}")
+
+    print(f"Оценка среднего для x4: {mean_case1000}")
     print(f"Относительная ошибка для x4: {error_x4}")
 
 
@@ -151,11 +159,13 @@ def case(func, arg1, arg2, title):
 print('A')
 case(getGausValues, 0, c / 100, 'A')
 # B
-print('\nB')
+print('B')
 case(getGausValues, 0, c / 20, 'B')
 # C
-print('\nC')
+print('C')
 case(getRandValues, -c / 100, c / 100, 'C')
 # D
-print('\nD')
+print('D')
 case(getRandValues, -c / 20, c / 20, 'D')
+
+
