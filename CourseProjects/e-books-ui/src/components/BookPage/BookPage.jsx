@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import Button from "../common/Button";
 import {
   About,
@@ -16,6 +17,8 @@ import {
 import { observer } from "mobx-react-lite";
 
 const BookPage = () => {
+  const { bookId } = useParams();
+  console.log(bookId)
   return (
     <BookPageWrapper>
       <AboutWrapper>

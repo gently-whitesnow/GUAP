@@ -1,93 +1,88 @@
-# Реализация на ЭВМ модели случайной величины и определение ее числовых характеристик.
-# Вариант 8 а = 1,7
-
 import numpy as np
 from scipy import integrate, optimize
-from utils import plot
 import math
+import matplotlib.pyplot as plt
 
+
+def plot(x_values, y_values, label):
+    plt.plot(x_values, y_values, label=label)
+    plt.axhline(0, color='black', linewidth=0.5)
+    plt.axvline(0, color='black', linewidth=0.5)
+    plt.grid(color='gray', linestyle='--', linewidth=0.5)
+    plt.xlabel('x')
+    plt.ylabel('CDF(x)')
+    plt.legend()
 
 
 def run():
-
-    # Задаем параметры
     a = 1.7
 
-    # Определение функции F(x) = c * (x + a)
     def func_by_x(x, c):
         return c * (x + a) if 0 <= x <= 1 else 0
 
-    # 1) находим значение константы "с"
-
-    # Уравнение для интеграла
     equation = lambda c: integrate.quad(func_by_x, 0, 1, args=(c))[0] - 1
+    c_solution = optimize.fsolve(equation, 1.0)[0]
 
-    # Найти значение c (где 1.0, наше началное предположение)
-    c_solution = optimize.fsolve(equation, 1.0)
+    print("Значение c:", c_solution)
 
-    print("Значение c:", c_solution[0])
-
-    # 2) Построение графика
-
-    # Создаем массив значений x от -0.1 до 1.1
-    x_values = np.linspace(0, 1, 1200)
+    x_values = np.linspace(0, 1, 1000)
     y_values = [func_by_x(x, c_solution) for x in x_values]
 
+    # 2) Построение графика
+    plt.figure(figsize=(10, 5))
     plot(x_values, y_values, 'f(x)')
 
-    # 3) нахождение функции распределения
-
-    # функция с учетом константы
+    # 3) Нахождение функции распределения
     c = c_solution
+
     def func_by_x_with_c(x):
         return c * (x + a) if 0 <= x <= 1 else 0
 
-    # Функция распределения F(x)
     def distribution_func_by_x(x):
-        # от -1 чтобы много не интегрировать
-        result, _ = integrate.quad(func_by_x_with_c, -1, x)
+        result, _ = integrate.quad(func_by_x_with_c, 0, x)
         return result
 
-    # Получение значений функций распределения
     distrib_y_values = [distribution_func_by_x(x) for x in x_values]
 
-    # 4) построение функции распределения
-    plot(x_values, distrib_y_values, "distribution_func")
+    # 4) Построение функции распределения
+    plt.figure(figsize=(10, 5))
+    plot(x_values, distrib_y_values, "Функция распределения")
 
-    # 5) вычисление значений
+    # 5) Вычисление значений
+    math_expectation_func = lambda x: x * func_by_x_with_c(x)
+    math_expectation, _ = integrate.quad(math_expectation_func, 0, 1)
 
-    ### мат ожидание - (среднее значение) - интеграл от произведения текущего значения х на плотность вероятности f(x)
+    print("Мат. ожидание:", math_expectation)
 
-    def math_expectation_func(x):
-        return x * func_by_x_with_c(x)
-
-    math_expectation, _  = integrate.quad(math_expectation_func, 0, 1)
-
-    print("Мат. ожидание", math_expectation)
-
-    ### медиана - 50-процентный квантиль
     median_equation = lambda x: distribution_func_by_x(x) - 0.5
-    median = optimize.fsolve(median_equation, 0.5)
+    median = optimize.fsolve(median_equation, 0.5)[0]
 
-    print("Медиана:", median[0])
-
-    ### Мода - наиболее вероятное значение (пиковое значение на графике плотности распределения)
+    print("Медиана:", median)
 
     max_y = max(y_values)
-    for index, y in enumerate(y_values):
-        if y == max_y:
-            print("Мода:", x_values[index])
-            break
+    mode = [x for x, y in zip(x_values, y_values) if y == max_y][0]
 
-    ### Дисперсия - мера разброса значений случайной величины относительно её математического ожидания
+    print("Мода:", mode)
 
     variance_equation = lambda x: ((x - math_expectation) ** 2) * func_by_x_with_c(x)
-    variance, _ = integrate.quad(variance_equation, -np.inf, np.inf)
+    variance, _ = integrate.quad(variance_equation, 0, 1)
 
     print("Дисперсия:", variance)
 
-    ### Среднее квадратическое отклонение - корень квадратный из дисперсии
-
     standard_deviation = math.sqrt(variance)
-
     print("Среднее квадратическое отклонение:", standard_deviation)
+
+    # Отмечаем моду, медиану и среднее значение на графике
+    plt.scatter([mode, median, math_expectation], [distribution_func_by_x(mode), distribution_func_by_x(median),
+                                                   distribution_func_by_x(math_expectation)], color='red')
+    plt.annotate('Mode', (mode, distribution_func_by_x(mode)), textcoords="offset points", xytext=(0, 10), ha='center',
+                 fontsize=8, color='red')
+    plt.annotate('Median', (median, distribution_func_by_x(median)), textcoords="offset points", xytext=(0, 10),
+                 ha='center', fontsize=8, color='red')
+    plt.annotate('Mean', (math_expectation, distribution_func_by_x(math_expectation)), textcoords="offset points",
+                 xytext=(0, 10), ha='center', fontsize=8, color='red')
+
+    # Выводим графики
+    plt.show()
+
+run()
