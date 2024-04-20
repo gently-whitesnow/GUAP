@@ -16,3 +16,6 @@ OOP/part_2/.vscode/c_cpp_properties.json
 OOP/part_2/.vscode/settings.json
 OOP/part_2/lab_2/my_db.sqlite
 OOP/part_2/build
+
+*.txt
+teorver/.idea
