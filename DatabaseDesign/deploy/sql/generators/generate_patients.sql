@@ -2,10 +2,18 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 INSERT INTO patients (name, surname, patronymic)
 SELECT
-    substr(md5(random()::text), 1, 10) AS name,
-    substr(md5(random()::text), 1, 15) AS surname,
-    substr(md5(random()::text), 1, 13) AS patronymic
+    generate_random_name() AS name,
+    generate_random_surname() AS surname,
+    generate_random_patronymic() AS patronymic
+
+-- count of
 FROM generate_series(1, 10000);
+
+INSERT INTO patients (name, surname, patronymic)
+SELECT
+    'Петр' AS name,
+    'Иванов' AS surname,
+    'Иванович' AS patronymic;
 
 SELECT setval('patients_id_seq', (SELECT max(id) FROM patients));
 
