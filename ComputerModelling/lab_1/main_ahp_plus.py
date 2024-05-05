@@ -52,9 +52,3 @@ goal_weights = ahp.dot(criteria_weight, alternative_weights)
 print("веса альтернатив с точки зрения достижения цели")
 print(goal_weights)
 print("Контрольная сумма весов", sum(goal_weights))
-
-print("Нормализация ahp plus")
-sum_goals_weights = sum(goal_weights)
-normalized_goal_weights = [weight / sum_goals_weights for weight in goal_weights]
-print(normalized_goal_weights)
-print("Контрольная сумма весов после нормализации", sum(normalized_goal_weights))

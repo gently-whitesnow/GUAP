@@ -34,7 +34,7 @@ def normalize(matrix):
             res[j][i] = matrix[j][i] / cs[i]
     return res
 
-# Среднее значение в строке
+# Вычисление весов по среднему значению
 def middle_value_weigth_rows(matrix):
     res = []
     normalized = normalize(matrix)
