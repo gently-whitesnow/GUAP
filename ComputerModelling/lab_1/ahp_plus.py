@@ -10,12 +10,9 @@ def ahp_plus_weigth_rows(matrix):
             s += normalized[i][j]
         res.append(s / len(normalized[0]))
     
+    
     max_weight = max(res)
     for i in range(len(res)):
         res[i] = res[i] / max_weight
 
-    # нормализуем
-    sum_weights = sum(res)
-    normalized_res = [r / sum_weights for r in res]
-    
-    return normalized_res
+    return res
