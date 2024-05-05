@@ -68,7 +68,7 @@ def listToMatrix(matrix):
     return matrix
 
 # умножение матриц
-def multiply(lmatrix, rmatrix):
+def dot(lmatrix, rmatrix):
     lmatrix = listToMatrix(lmatrix)
     rmatrix = listToMatrix(rmatrix)
     N = len(lmatrix)
@@ -91,4 +91,4 @@ def least_squares_func(x, y):
     A = transpose(vstack([ones(n), x, pow(x, 2)]))
     b = y
 
-    return multiply(multiply(inverse(multiply(transpose(A), A)), transpose(A)), b)
+    return dot(dot(inverse(dot(transpose(A), A)), transpose(A)), b)
