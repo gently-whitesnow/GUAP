@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import Button from "../common/Button";
 import { ButtonsWrapper, HeaderWrapper, ProductName } from "./Header.styles";
@@ -6,33 +6,57 @@ import { observer } from "mobx-react-lite";
 import colorThemes from "../../colorThemes";
 import { useState } from "react";
 import BookPopup from "../common/BookPopup";
+import { useStore } from "../../store";
 
 const Header = () => {
-  const [openPopup, setOpenPopup] = useState(false);
+  const { popupStore, bookStore } = useStore();
+  const { setIsOpen, isOpen, clearStore, setPopupData } = popupStore;
+  const { book } = bookStore;
+
   const navigate = useNavigate();
 
-  const { bookId } = useParams();
+  const location = useLocation();
+  let path = location.pathname;
+  let maybeIsBook = path.length > 1 && !isNaN(path.substring(1, path.length));
 
-  console.log(bookId);
+  const openPopupHandler = () => {
+    if (!maybeIsBook) {
+      setIsOpen(true);
+      return;
+    }
+    setPopupData(
+      book.id,
+      book.title,
+      book.author,
+      book.description,
+      book.count,
+      book.image
+    );
+    setIsOpen(true);
+  };
+
   return (
     <HeaderWrapper>
       <ProductName onClick={() => navigate(`/`)}>
         Корпоративна библиотека
       </ProductName>
       <ButtonsWrapper>
-        {!openPopup ? (
+        {!isOpen ? (
           <Button
-            content={bookId ? "Изменить книгу" : "Добавить книгу"}
+            content={maybeIsBook ? "Изменить книгу" : "Добавить книгу"}
             color={colorThemes.colors.green}
-            onClick={() => setOpenPopup(true)}
+            onClick={openPopupHandler}
           />
         ) : null}
 
         <Button content="Мои книги" onClick={() => navigate(`/your`)} />
       </ButtonsWrapper>
       <BookPopup
-        open={openPopup}
-        onCloseHandler={() => setOpenPopup(false)}
+        open={isOpen}
+        onCloseHandler={() => {
+          setIsOpen(false);
+          clearStore();
+        }}
         // close={() => setOpenPopup(false)}
       />
     </HeaderWrapper>

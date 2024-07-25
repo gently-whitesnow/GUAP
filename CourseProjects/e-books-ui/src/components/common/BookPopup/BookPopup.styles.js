@@ -17,7 +17,7 @@ export const StyledPopup = styled(Popup)`
 
 export const BookContentWrapper = styled.div`
   width: 1024px;
-  height: 600px;
+  height: 800px;
   background-color: white;
 `;
 

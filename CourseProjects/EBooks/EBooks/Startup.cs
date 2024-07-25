@@ -1,5 +1,7 @@
 using System.Net;
 using EBooks.BO.Services;
+using EBooks.Core.Entities.Options;
+using EBooks.DA;
 using EBooks.DA.Repositories;
 
 namespace EBooks;
@@ -52,6 +54,29 @@ public static class Startup
     {
         services.AddSingleton<BooksService>();
         services.AddSingleton<ReservationsService>();
+        return services;
+    }
+    
+    public static IServiceCollection WithHelpers(this IServiceCollection services)
+    {
+        services.AddSingleton<FileSystemHelper>();
+        return services;
+    }
+    public static IServiceCollection WithCors(this IServiceCollection services)
+    {
+        services.AddCors(options =>
+            options.AddPolicy(DefaultCorsPolicyName,
+                corsPolicyBuilder => corsPolicyBuilder
+                    .WithOrigins("http://127.0.0.1:5173", "http://localhost:5173") // TODO
+                    .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                    .AllowAnyHeader()
+                    .AllowCredentials()));
+        return services;
+    }
+    
+    public static IServiceCollection WithOptions(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<FileSystemOptions>(configuration.GetSection("FileSystemOptions"));
         return services;
     }
     

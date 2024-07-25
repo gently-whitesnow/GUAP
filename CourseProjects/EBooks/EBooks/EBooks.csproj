@@ -17,6 +17,10 @@
       <ProjectReference Include="..\EBooks.BO\EBooks.BO.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="System.Text.Json" Version="8.0.1" />
+    </ItemGroup>
+
 
 
 </Project>

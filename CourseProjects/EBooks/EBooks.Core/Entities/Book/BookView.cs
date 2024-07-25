@@ -12,4 +12,6 @@ public class BookView
     public DateTimeOffset AddDate { get; set; }
 
     public UsersReservationView Reservations { get; set; }
+
+    public IReadOnlyCollection<byte[]> Files { get; set; }
 }

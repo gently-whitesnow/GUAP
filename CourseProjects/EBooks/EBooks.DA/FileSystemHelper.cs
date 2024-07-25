@@ -79,12 +79,12 @@ public class FileSystemHelper
             await using var stream = new FileStream(filePath, FileMode.Create);
             using var image = await Image.LoadAsync(file.OpenReadStream());
 
-            if (image.Height > image.Width)
-                image.Mutate(c => c.Resize
-                    (_imageMaxSize, image.Height * _imageMaxSize / image.Width));
-            else if (image.Height < image.Width)
-                image.Mutate(c => c.Resize
-                    (image.Width * _imageMaxSize / image.Height, _imageMaxSize));
+            // if (image.Height > image.Width)
+            //     image.Mutate(c => c.Resize
+            //         (_imageMaxSize, image.Height * _imageMaxSize / image.Width));
+            // else if (image.Height < image.Width)
+            //     image.Mutate(c => c.Resize
+            //         (image.Width * _imageMaxSize / image.Height, _imageMaxSize));
 
             await image.SaveAsync(stream, image.Metadata.DecodedImageFormat);
     }

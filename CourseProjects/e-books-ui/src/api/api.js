@@ -5,7 +5,7 @@ export class Api {
   constructor() {
     this.client = axios.create();
     // this.client.defaults.baseURL = "https://nginx-proxy-server.ru/gw/";
-    this.client.defaults.baseURL = "http://localhost:1999/";
+    this.client.defaults.baseURL = "http://localhost:1234/";
     this.client.defaults.headers["Access-Control-Allow-Origin"] = "*";
     this.client.defaults.withCredentials = true;
     this.client.timeout = 3000;
@@ -43,8 +43,30 @@ export class Api {
     return clientResult;
   };
 
+  upsertBook = (id, title, description, author, count, image) => {
+    const formData = new FormData();
+    if (id !== undefined) {
+      formData.append("Id", id);
+    }
+
+    if (image !== undefined) {
+      formData.append("File", image);
+    }
+
+    formData.append("Title", title);
+    formData.append("Description", description);
+    formData.append("Author", author);
+    formData.append("Count", count);
+
+    return this.clientWrapper("post", "v1/books", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  };
+
   // auth
-  // http://localhost:3000/auth?userId=69550bf7-e7e1-4650-801d-e9159530decb&userName=testSanya&userRole=1
+  // http://localhost:5173/auth?userId=1&userName=testSanya&userRole=1
   getFakeAuth = (userId, userName, userRole) =>
     this.clientWrapper(
       "get",
@@ -59,8 +81,16 @@ export class Api {
 
   // books
 
-  getSummaryBooks = () =>
-    this.clientWrapper("get", `v1/books`);
+  getSummaryBooks = (searchQuery, isAvailable, skip, take) =>
+    this.clientWrapper("post", `v1/books/search`,{
+      searchQuery,
+      isAvailable,
+      skip,
+      take
+    });
+
+    getBook = (bookId) =>
+    this.clientWrapper("get", `v1/books/${bookId}`);
 
 }
 const api = new Api();

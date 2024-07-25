@@ -7,4 +7,6 @@ public class BookSummaryView
     public string Author { get; init; }
     public int Count { get; init; }
     public int AvailableCount { get; set; }
+
+    public IReadOnlyCollection<byte[]> Files { get; set; }
 }

@@ -18,8 +18,35 @@ import { observer } from "mobx-react-lite";
 
 import Button from "../Button";
 import colorThemes from "../../../colorThemes";
+import Textarea from "../Textarea/Textarea";
+import { useStore } from "../../../store";
+import InputNumber from "../InputNumber/InputNumber";
+import { useRef } from "react";
+import ImageButton from "../ImageButton/ImageButton";
 
 const BookPopup = ({ open, onCloseHandler }) => {
+  const imageInputRef = useRef(null);
+  const { popupStore } = useStore();
+  const {
+    setTitle,
+    title,
+    setDescription,
+    description,
+    setAuthor,
+    author,
+    setCount,
+    count,
+    upsertBook,
+    image,
+    setImage,
+    isNew,
+  } = popupStore;
+
+  const onUpsertClichHandler = () => {
+    setImage(imageInputRef.current?.files[0]);
+    upsertBook();
+  };
+
   return (
     <BookPopupWrapper>
       <StyledPopup
@@ -31,53 +58,53 @@ const BookPopup = ({ open, onCloseHandler }) => {
       >
         <BookContentWrapper>
           <HeaderWrapper>
-            <HeaderTitle>Добавление книги</HeaderTitle>
+            <HeaderTitle>
+              {isNew ? "Добавление книги" : "Изменение книги"}
+            </HeaderTitle>
             <img src={CrossIcon} onClick={onCloseHandler} />
           </HeaderWrapper>
           <BodyWrapper>
             <AboutWrapper>
-              <Image></Image>
+              <ImageButton imageRef={imageInputRef} image={image} />
               <About>
-                <Title>
-                  Все закончится, а ты нет. Книга силы, утешения и поддержки
-                </Title>
-                <Author>
-                  Все закончится, а ты нет. Книга силы, утешения и поддержки
-                </Author>
-                <Description>
-                  Даже если вы никогда не имели дела с программированием, эта
-                  книга поможет вам освоить язык C# и научиться писать на нем
-                  программы любой сложности. Для читателей, которые уже знакомы
-                  с каким-либо языком программирования, процесс изучения C#
-                  только упростится, но иметь опыт программирования для чтения
-                  книги совершенно необязательно. .Из этой книги вы узнаете не
-                  только о типах, конструкциях и операторах языка C#, но и о
-                  ключевых концепциях объектно-ориентированного
-                  программирования, реализованных в этом языке, который в
-                  настоящее время представляет собой один из наиболее
-                  приспособленных для создания программ для Windows
-                  инструментов. Если вы в начале большого пути в
-                  программирование, смелее покупайте эту книгу: она послужит вам
-                  отличным путеводителем, который облегчит ваши первые шаги на
-                  этом длинном, но очень увлекательном пути. .Узнайте, как
-                  создать консольное приложение и что такое делегаты, события и
-                  интерфейсы! .C# - мощный язык программирования, который стал
-                  любимым инструментом программистов, работающих с Visual
-                  Studio, и эта книга поможет вам быстро и безболезненно освоить
-                  новейшую его версию. Вы научитесь создавать приложения для
-                  Windows, использовать графику, потоки, контейнеры, базы данных
-                  и многое другое, узнаете, что такое .NET Framework,
-                  полиморфизм, наследование и обобщенное программирование, а
-                  также изучите множество других важных и интересных вещей. .
-                </Description>
+                <Textarea
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  maxLength={100}
+                  height={"80px"}
+                  placeholder={"Название книги"}
+                  fontsize={"30px"}
+                ></Textarea>
+                <Textarea
+                  value={author}
+                  onChange={(e) => setAuthor(e.target.value)}
+                  maxLength={100}
+                  height={"60px"}
+                  placeholder={"Автор книги"}
+                  fontsize={"24px"}
+                ></Textarea>
+                <Textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  maxLength={500}
+                  height={"300px"}
+                  placeholder={"Описание книги"}
+                  fontsize={"20px"}
+                ></Textarea>
+
+                <InputNumber
+                  placeholder={"Кол-во книг"}
+                  value={count}
+                  onChange={(e) => setCount(e.target.value)}
+                ></InputNumber>
               </About>
             </AboutWrapper>
           </BodyWrapper>
           <PopupFooterWrapper>
             <Button
-              content="Добавить книгу"
+              content={isNew ? "Добавить книгу" : "Изменить книгу"}
               color={colorThemes.colors.green}
-              onClick={onCloseHandler}
+              onClick={onUpsertClichHandler}
             />
           </PopupFooterWrapper>
         </BookContentWrapper>

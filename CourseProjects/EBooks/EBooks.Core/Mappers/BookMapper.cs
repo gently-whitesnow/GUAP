@@ -35,7 +35,7 @@ public static class BookMapper
     {
         return new BookDbModel
         {
-            Id = bookUpsertDto.Id,
+            Id = bookUpsertDto.Id ?? 0,
             Title = bookUpsertDto.Title,
             Description = bookUpsertDto.Description,
             Author = bookUpsertDto.Author,

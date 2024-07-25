@@ -21,13 +21,14 @@ public class BooksController : Controller
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetBookById(uint id)
+    public Task<IResult> GetBookById(uint id)
     {
-        return _booksService.GetBookById(id, HttpContext.GetUser().Id).AsActionResult();
+        var user = HttpContext.GetUser();
+        return _booksService.GetBookById(id, user.Id).AsResultAsync();
     }
     
-    [HttpGet]
-    public BooksSearchView GetBooksSummary([FromBody][Required] BookSummaryDto bookSummaryDto)
+    [HttpPost("search")]
+    public Task<BooksSearchView> GetBooksSummary([FromBody][Required] BookSummaryDto bookSummaryDto)
     {
         return _booksService.GetBooksSummary(bookSummaryDto);
     }
@@ -39,9 +40,9 @@ public class BooksController : Controller
     }
     
     [HttpPost]
-    public Task<BookDbModel> UpsertBookAsync([FromForm][Required] BookUpsertDto bookUpsertDto)
+    public Task<IResult> UpsertBookAsync([FromForm][Required] BookUpsertDto bookUpsertDto)
     {
-        return _booksService.UpsertBookAsync(bookUpsertDto);
+        return _booksService.UpsertBookAsync(bookUpsertDto).AsResultAsync();
     }
     
     [HttpDelete("{id}")]

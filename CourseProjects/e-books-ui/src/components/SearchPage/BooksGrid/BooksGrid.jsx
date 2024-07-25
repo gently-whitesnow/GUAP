@@ -1,11 +1,10 @@
-import booksSummaryMock from "../../../mocks/books_summary_mock";
 import BookCard from "../../common/BookCard";
 import { BooksGridWrapper } from "./BooksGrid.styles";
 import { observer } from "mobx-react-lite";
 
 import { useNavigate } from "react-router-dom";
 
-const BooksGrid = () => {
+const BooksGrid = ({data}) => {
   const navigate = useNavigate();
   const onBookClickHandler = (id) => {
     navigate(`/${id}`);
@@ -13,11 +12,11 @@ const BooksGrid = () => {
 
   return (
     <BooksGridWrapper>
-      {booksSummaryMock?.books?.map((data) => {
+      {data?.books?.map((book) => {
         return (
           <BookCard
-            title={data.title}
-            id={data.id}
+            title={book.title}
+            id={book.id}
             onClick={onBookClickHandler}
           />
         );

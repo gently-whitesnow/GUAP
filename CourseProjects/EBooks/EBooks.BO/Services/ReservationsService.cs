@@ -44,7 +44,7 @@ public class ReservationsService
             BookId = bookId,
             UserId = requesterUserId
         };
-        reservations.Add(_reservationsRepository.Upsert(reservationDbModel));
+        reservations.Add(_reservationsRepository.Insert(reservationDbModel));
 
         var users = _usersRepository.GetAll();
         

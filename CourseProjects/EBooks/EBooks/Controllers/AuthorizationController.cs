@@ -12,7 +12,7 @@ public class FakeAuthorizationController : Controller
     /// Временная авторизация для тестирования сервиса
     /// </summary>
     [HttpGet]
-    [Route("api/fakeauth")]
+    [Route("fakeauth")]
     [ValidateModelState]
     public IActionResult GetAuth([Required] [FromQuery] uint userId,
         [Required] [FromQuery] string userName, [FromQuery] string userRole)
@@ -29,7 +29,7 @@ public class FakeAuthorizationController : Controller
     }
     
     [HttpGet]
-    [Route("api/auth")]
+    [Route("auth")]
     [FakeAuthorizationRequired]
     public IActionResult GetAuth()
     {

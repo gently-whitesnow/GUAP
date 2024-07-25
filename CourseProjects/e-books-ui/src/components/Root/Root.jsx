@@ -1,6 +1,7 @@
 import BookPage from "../BookPage";
 import SearchPage from "../SearchPage";
 import YourPage from "../YourPage";
+import AuthPage from "../AuthPage";
 import ScrollToTop from "../common/ScrollToTop";
 
 import { observer } from "mobx-react-lite";
@@ -25,6 +26,7 @@ const Root = () => {
           /> */}
             <Route path="/:bookId" element={<BookPage />} />
             <Route path="/your" element={<YourPage />} />
+            <Route path="/auth" element={<AuthPage />} />
           </Routes>
         </RootLimiter>
       </RootWrapper>

@@ -1,7 +1,8 @@
 import { BookCardWrapper, ImageWrapper, TitleWrapper } from "./BookCard.styles";
 import { observer } from "mobx-react-lite";
+import ImageDisplay from "./ImageDisplay/ImageDisplay";
 
-const BookCard = ({ id, title, onClick }) => {
+const BookCard = ({ id, title, image, onClick }) => {
   const maxTitleLength = 43;
   const getLimitedTitle = () => {
     let lastSpace = maxTitleLength;
@@ -15,7 +16,7 @@ const BookCard = ({ id, title, onClick }) => {
 
   return (
     <BookCardWrapper className="book-card" onClick={() => onClick(id)}>
-      <ImageWrapper />
+      <ImageDisplay image={image}/>
       <TitleWrapper>{getLimitedTitle()}</TitleWrapper>
     </BookCardWrapper>
   );

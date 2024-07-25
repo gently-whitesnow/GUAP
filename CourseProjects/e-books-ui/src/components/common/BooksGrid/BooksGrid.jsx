@@ -9,7 +9,7 @@ const BooksGrid = ({data}) => {
   const onBookClickHandler = (id) => {
     navigate(`/${id}`);
   };
-
+console.log(data)
   return (
     <BooksGridWrapper>
       {data?.books?.map((data) => {
@@ -17,6 +17,7 @@ const BooksGrid = ({data}) => {
           <BookCard
             title={data.title}
             id={data.id}
+            image = {data.image}
             onClick={onBookClickHandler}
           />
         );
