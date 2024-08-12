@@ -1,17 +1,21 @@
 create table procedure_history
 (
-    id                  serial primary key,
-    visit_id        INTEGER NOT NULL CONSTRAINT procedure_history_visit_id_fk
-                    REFERENCES visits (id)
-                    ON DELETE CASCADE
-                    ON UPDATE CASCADE ,
-    procedure_id           integer constraint procedure_history_procedure_id_fk
-            REFERENCES procedures (id)
-                    ON DELETE SET NULL
-                    ON UPDATE CASCADE,
-    cabinet_id           integer constraint procedure_history_cabinet_id_fk
+    id           serial primary key,
+    visit_id     INTEGER NOT NULL,
+    procedure_id integer,
+    cabinet_id   integer,
+    price        numeric(10, 2) not null,
+
+    foreign key (procedure_id) 
+        references procedures (id) 
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+    foreign key (cabinet_id)
         REFERENCES cabinets (id)
         ON DELETE SET NULL
         ON UPDATE CASCADE,
-    price               numeric          not null
+    foreign key (visit_id)
+        REFERENCES visits (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );

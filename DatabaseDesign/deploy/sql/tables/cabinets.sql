@@ -1,5 +1,5 @@
 create table cabinets
 (
     id    serial primary key,
-    room  varchar not null
+    room  varchar(10) not null
 );
