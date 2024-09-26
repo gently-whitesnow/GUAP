@@ -9,19 +9,19 @@ AS
 $$
 BEGIN
     -- количество процедур
-    count_of_procedures := (select count(id) from procedures_history);
+    count_of_procedures := (select count(id) from procedure_history);
     
     -- сколько заработала клиника
-    total_price := (select sum(price) from procedures_history);
+    total_price := (select sum(price) from procedure_history);
     
     -- сколько в среднем приносит процедура
-    avg_price := (select avg(price) from procedures_history);
+    avg_price := (select avg(price) from procedure_history);
     
     -- самая дешевая процедура
-    min_price := (select min(price) from procedures_history);
+    min_price := (select min(price) from procedure_history);
     
     -- самая дорогая процедура
-    max_price := (select max(price) from procedures_history);
+    max_price := (select max(price) from procedure_history);
 
 END;
 $$ LANGUAGE plpgsql;
