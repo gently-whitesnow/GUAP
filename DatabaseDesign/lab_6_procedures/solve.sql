@@ -1,29 +1,3 @@
--- Каскадное удаление
-CREATE
-    OR REPLACE PROCEDURE cascade_delete_patient(
-    in_patient_id int
-)
-AS
-$$
-
-BEGIN
-    -- Сначала удаляем историю процедур данного пациента
-    DELETE
-    FROM procedure_history
-    WHERE visit_id IN (SELECT id FROM visits WHERE patient_id = in_patient_id);
-
--- Теперь удаляем визиты пациента
-    DELETE FROM visits WHERE patient_id = in_patient_id;
-
--- И, наконец, удаляем самого пациента
-    DELETE FROM patients WHERE id = in_patient_id;
-
-END;
-$$
-    LANGUAGE plpgsql;
-
-call cascade_delete_patient(in_patient_id := 20);
-
 -- Вставка с пополнение справочников
 CREATE
     OR REPLACE PROCEDURE p_create_visit(
@@ -64,12 +38,13 @@ $$
     LANGUAGE plpgsql;
 
 call p_create_visit(
-        in_patient_name := 'Иван',
-        in_patient_surname := 'Иванов',
-        in_patient_patronymic := 'Иванович',
+        in_patient_name := 'Сергей',
+        in_patient_surname := 'Сергеев',
+        in_patient_patronymic := 'Сергеевич',
         in_doctor_id := 1,
         in_cabinet_id := 2
     );
+
 
 -- любая функция
 CREATE
@@ -105,7 +80,33 @@ END;
 $$
     LANGUAGE plpgsql;
 
-select * from public.f_get_patient_visits(in_patient_id := 1)
+select * from public.f_get_patient_visits(in_patient_id := 1);
+
+-- Каскадное удаление
+CREATE
+    OR REPLACE PROCEDURE cascade_delete_patient(
+    in_patient_id int
+)
+AS
+$$
+
+BEGIN
+    -- Сначала удаляем историю процедур данного пациента
+    DELETE
+    FROM procedure_history
+    WHERE visit_id IN (SELECT id FROM visits WHERE patient_id = in_patient_id);
+
+-- Теперь удаляем визиты пациента
+    DELETE FROM visits WHERE patient_id = in_patient_id;
+
+-- И, наконец, удаляем самого пациента
+    DELETE FROM patients WHERE id = in_patient_id;
+
+END;
+$$
+    LANGUAGE plpgsql;
+
+call cascade_delete_patient(in_patient_id := 1);
 
 -- удаление доктора, если визитов у него больше не остается
 CREATE
@@ -118,17 +119,17 @@ DECLARE
     local_doctor_id integer;
 BEGIN
 
-    DELETE FROM visits WHERE id = in_visit_id RETURNING doctor_id INTO local_doctor_id;
+    DELETE FROM visits as v WHERE v.id = in_visit_id RETURNING v.doctor_id INTO local_doctor_id;
 
-    DELETE FROM doctors
-    WHERE id = local_doctor_id
-      AND NOT EXISTS (SELECT 1 FROM visits WHERE doctor_id = local_doctor_id);
+    DELETE FROM doctors as d
+    WHERE d.id = local_doctor_id
+      AND NOT EXISTS (SELECT 1 FROM visits as v WHERE v.doctor_id = local_doctor_id);
 
 END;
 $$
     LANGUAGE plpgsql;
 
-call remove_doctor_with_empty_visits(in_visit_id := 1);
+call remove_doctor_with_empty_visits(in_visit_id := 3);
 
 -- Роль для пользователей с правами на запись
 CREATE ROLE writer_role;
@@ -149,11 +150,29 @@ GRANT EXECUTE ON PROCEDURE cascade_delete_patient(int) TO writer_role;
 GRANT EXECUTE ON PROCEDURE p_create_visit(varchar, varchar, varchar, integer, integer) TO writer_role;
 GRANT EXECUTE ON PROCEDURE remove_doctor_visits(int) TO writer_role;
 
+-- необходимые таблицы
+GRANT INSERT, SELECT, DELETE ON patients TO writer_role;
+GRANT INSERT, SELECT, DELETE ON visits TO writer_role;
+GRANT DELETE, SELECT ON procedure_history TO writer_role;
+GRANT SELECT, DELETE ON doctors TO writer_role;
+GRANT SELECT ON cabinets TO writer_role;
+GRANT SELECT ON procedures TO writer_role;
+
+
 -- Назначение прав на выполнение функции пользователям с ролью reader_role
 GRANT EXECUTE ON FUNCTION f_get_patient_visits(integer) TO reader_role;
 
+-- необходимые таблицы
+GRANT SELECT ON TABLE visits TO reader_role;
+GRANT SELECT ON TABLE patients TO reader_role;
+GRANT SELECT ON TABLE doctors TO reader_role;
+GRANT SELECT ON TABLE cabinets TO reader_role;
+GRANT SELECT ON TABLE procedure_history TO reader_role;
+GRANT SELECT ON TABLE procedures TO reader_role;
+
+
 -- Вход в систему от имени пользователя с правами на запись
-SET ROLE writer_user;
+SET ROLE writer_role;
 
 -- Выполнение процедуры
 CALL p_create_visit('Иван', 'Иванов', 'Иванович', 1, 2);
@@ -163,3 +182,27 @@ SET ROLE reader_user;
 
 -- Выполнение функции для получения данных
 SELECT * FROM f_get_patient_visits(1);
+
+SELECT rolname
+FROM pg_roles;
+
+SET ROLE dev_user;
+
+CREATE FUNCTION sum_numbers(VARIADIC numbers INTEGER[])
+    RETURNS INTEGER AS $$
+BEGIN
+    RETURN (SELECT SUM(num) FROM unnest(numbers) AS num);
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT sum_numbers(1, 2, 3, 4);
+
+SELECT pg_get_serial_sequence('cabinets', 'id') AS sequence_name;
+SELECT nextval('public.cabinets_id_seq');
+
+
+SELECT grantee
+FROM information_schema.routine_privileges
+WHERE routine_name = 'f_get_patient_visits';
+
+
