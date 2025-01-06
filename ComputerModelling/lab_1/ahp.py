@@ -5,15 +5,28 @@ import numpy as np
 # Выход - массив матриц попарных сравнений (1 - как относятся квартиры друг к другу по цене, 2 как относятся по площади и т.д.)
 # Сколько критериев, столько и матриц на выходе
 def get_alternative_comparison(matrix):
+
+    # Количество критериев (число столбцов)
     criteria_count = len(matrix[0])
+    # Список для хранения матриц парных сравнений
     matrices = []
+
+    # Для каждого критерия создаем матрицу парных сравнений
     for i in range(criteria_count):
-        cm = [[0 for _ in range(len(matrix))] for _ in range(len(matrix))]
-        for j in range(len(matrix)):
-            for k in range(len(matrix)):
-                cm[j][k] = matrix[j][i] / matrix[k][i]
-        matrices.append(cm)
+        # Инициализация пустой матрицы для парных сравнений текущего критерия
+        comparison_matrix = [[0 for _ in range(len(matrix))] for _ in range(len(matrix))]
+
+        # Заполнение матрицы парных сравнений для альтернатив
+        for j in range(len(matrix)):  # Проходим по строкам
+            for k in range(len(matrix)):  # Проходим по столбцам
+                # Элемент матрицы — отношение значений j-й и k-й альтернатив по i-му критерию
+                comparison_matrix[j][k] = matrix[j][i] / matrix[k][i]
+
+        # Добавляем текущую матрицу в список
+        matrices.append(comparison_matrix)
+
     return matrices
+
 
 # Сумма по столбцам
 def col_sum(matrix):

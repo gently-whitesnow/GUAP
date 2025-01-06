@@ -57,3 +57,4 @@ print("Нормализация")
 sum_weights = sum(goal_weights)
 normalized_res = [r / sum_weights for r in goal_weights]
 print(normalized_res)
+print("Контрольная сумма после нормализации", sum(normalized_res))
