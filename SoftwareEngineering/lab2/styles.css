@@ -1,0 +1,54 @@
+html,
+body {
+  font-family: Roboto;
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f0f0f0; /* Optional: set background color */
+}
+
+.window {
+  width: 100%;
+  height: auto;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px; /* Optional: rounded corners */
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+input[type="text"] {
+  padding: 10px;
+  margin-right: 10px;
+
+  width: calc(100% - 22px);
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+button {
+  padding: 10px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+button:hover {
+  background: #218838;
+}
+
+.aquarium {
+  position: relative;
+  width: 800px; /* Задайте размер аквариума */
+  height: 500px;
+  border: 2px solid #ccc;
+  overflow: hidden; /* Чтобы рыбки не выходили за границы */
+  background-color: #e0f7fa; /* Цвет фона аквариума */
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+}
