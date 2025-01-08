@@ -3,21 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aquarium of words</title>
+    <title>Система автобусного вокзала</title>
     <link rel="stylesheet" href="styles.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
   </head>
   <body>
-    <div class="window">
-      <h2>Aquarium of words</h1>
-      <div class="input-wrapper">
-        <input type="text" id="wordInput" placeholder="Enter a word" />
-        <button onclick="submitWord()">Submit</button>
-      </div>
+    <h1>Информационная система автобусного вокзала</h1>
+    <div id="schedule">
+      <h2>Расписание автобусов</h2>
+      <table id="busTable">
+        <thead>
+          <tr>
+            <th>Номер автобуса</th>
+            <th>Маршрут</th>
+            <th>Время отправления</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
-    <div class="aquarium"></div>
+
+    <h2>Добавить новую запись</h2>
+    <div id="addBusForm">
+      <input type="text" id="busNumber" placeholder="Номер автобуса" required />
+      <input type="text" id="busRoute" placeholder="Маршрут" required />
+      <input
+        type="text"
+        id="busDeparture"
+        placeholder="Время отправления"
+        required
+      />
+      <button id="addBtn">Добавить запись</button>
+    </div>
+
+    <script src="scripts.js"></script>
   </body>
-  <script src="scripts.js"></script>
 </html>

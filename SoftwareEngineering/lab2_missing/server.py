@@ -11,6 +11,13 @@ words = set()
 def get_words():
     return jsonify(list(words))
 
+@app.route('/words/<string:word>', methods=['DELETE'])
+def delete_word(word):
+    if word in words:
+        words.remove(word)
+        return jsonify({"message": f"Word '{word}' deleted successfully"}), 200
+    return jsonify({"error": "Word not found"}), 404
+
 @app.route('/words', methods=['POST'])
 def add_word():
     data = request.get_json()
