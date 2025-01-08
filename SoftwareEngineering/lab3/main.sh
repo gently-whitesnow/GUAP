@@ -19,7 +19,7 @@ Options:
   -h, --help                 Show this help message and exit.
   -i, --install              Install PostgreSQL.
   -u, --uninstall            Uninstall PostgreSQL completely.
-  -c, --config <path>        Configure pg_hba.conf with the specified file path.
+  -c, --config <path> <db-name>        Configure pg_hba.conf with the specified file path.
   -d, --db-name <name>       Create a database with the specified name.
   -b, --backup <db> <path>   Backup the specified database to the given path.
   -s, --schema <db> <schema> Create a schema in the specified database.
@@ -32,7 +32,7 @@ Options:
 
 Examples:
   $(basename "${BASH_SOURCE[0]}") --install
-  $(basename "${BASH_SOURCE[0]}") --config ./pg_hba.default.conf
+  $(basename "${BASH_SOURCE[0]}") --config ./pg_hba.default.conf my_database
   $(basename "${BASH_SOURCE[0]}") --db-name my_database
   $(basename "${BASH_SOURCE[0]}") --schema my_database public
   $(basename "${BASH_SOURCE[0]}") --table my_database public my_table 'id SERIAL, name VARCHAR(255)'
@@ -50,6 +50,7 @@ parse_params() {
     uninstall_flag=false
     config_path=''
     db_name=''
+    has_create_db_flag=false
     backup_path=''
     schema_name=''
     has_role_flag=false
@@ -67,9 +68,11 @@ parse_params() {
         -u | --uninstall) uninstall_flag=true ;;
         -c | --config)
             config_path="${2-}"
-            shift
+            db_name="${3-}"
+            shift 2
             ;;
         -d | --db-name)
+            has_create_db_flag=true
             db_name="${2-}"
             shift
             ;;
@@ -125,11 +128,11 @@ main() {
         uninstall_postgresql
     fi
 
-    if [[ -n "$config_path" ]]; then
-        configure_pg_hba "$config_path"
+    if [[ -n "$config_path" && -n "$db_name" ]]; then
+        configure_pg_hba "$config_path" "$db_name"
     fi
 
-    if [[ -n "$db_name" ]]; then
+    if [[ $has_create_db_flag == true && -n "$db_name" ]]; then
         create_database "$db_name"
     fi
 
