@@ -31,8 +31,13 @@ ahp.print_matrix(criteria_matrix)
 # матрица попарных сравнений для исходных данных
 print("матрица попарных сравнений для исходных данных")
 comparison = ahp.get_alternative_comparison(alternatives_matrix)
-criteria_names = ["цена", "размер", "команты",
-                  "близость", "категория"]
+criteria_names = ["Запрашиваемая сумма",
+                   "Масштабируемость",
+                     "Надежность исполнителя",
+                  "Количество предоставляемых рабочих мест",
+                    "Степень экологичности",
+                      "Срок внедрения завода",
+                        "Способность к сопровождению в процессе работы завода"]
 for i in range(len(criteria_names)):
     print(criteria_names[i])
     ahp.print_matrix(comparison[i])
