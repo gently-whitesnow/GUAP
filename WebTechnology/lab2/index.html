@@ -19,6 +19,8 @@
     <meta property="og:image" content="logo.png" />
     <meta property="og:type" content="website" />
     <title>Антивирусные программы - Главная</title>
+    <!-- Подключение внешней таблицы стилей -->
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div id="header">
@@ -74,14 +76,14 @@
       </p>
 
       <h3>Основные типы угроз:</h3>
-      <ol>
+      <ol class="custom-list">
         <li>Вирусы</li>
         <li>
           Трояны
-          <ul>
+          <ol>
             <li>Банковские трояны</li>
             <li>Руткиты</li>
-          </ul>
+          </ol>
         </li>
         <li>Черви</li>
         <li>Шпионское ПО</li>
@@ -91,14 +93,14 @@
       <hr />
 
       <h3>Сравнительная таблица антивирусов</h3>
-      <table border="1">
+      <table>
         <caption>
-          Таблица сравнения популярных антивирусов с объединением строк
+          Таблица сравнения популярных антивирусов
         </caption>
         <colgroup>
-          <col style="background-color: #f9f9f9; width: 30%" />
-          <col style="background-color: #e6f7ff; width: 20%" />
-          <col style="background-color: #e6ffe6; width: 50%" />
+          <col class="program-column" />
+          <col class="price-column" />
+          <col />
         </colgroup>
         <thead>
           <tr>
@@ -109,27 +111,33 @@
         </thead>
         <tbody>
           <tr>
-            <td rowspan="2">Kaspersky</td>
-            <td>2000 руб./год</td>
-            <td>Высокий уровень защиты, защита от фишинга</td>
+            <td rowspan="2">
+              <img src="kaspersky_logo.png" alt="Логотип Kas" width="50" />
+              Kaspersky
+            </td>
+            <td rowspan="2">2000 руб./год</td>
+            <td>Высокий уровень защиты</td>
           </tr>
           <tr>
-            <td>3000 руб./год</td>
-            <td>Дополнительная защита банковских данных</td>
+            <td>Защита от фишинга</td>
           </tr>
           <tr>
-            <td>Avast</td>
+            <td>
+              <img src="avast_logo.png" alt="Логотип Avast" width="50" /> Avast
+            </td>
             <td>Бесплатно</td>
-            <td>Доступная версия, базовая защита</td>
+            <td>Базовая защита</td>
           </tr>
           <tr>
-            <td rowspan="2">SecureList</td>
-            <td>2500 руб./год</td>
-            <td>Эвристический анализ, минимальная нагрузка на систему</td>
+            <td rowspan="2">
+              <img src="securelist_logo.png" alt="Логотип sec" width="50" />
+              SecureList
+            </td>
+            <td rowspan="2">2500 руб./год</td>
+            <td>Эвристический анализ</td>
           </tr>
           <tr>
-            <td>3500 руб./год</td>
-            <td>Расширенная защита сети и родительский контроль</td>
+            <td>Минимальная нагрузка на систему</td>
           </tr>
         </tbody>
         <tfoot>
