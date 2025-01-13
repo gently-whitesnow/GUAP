@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Сайт об антивирусных программах" />
+    <meta name="keywords" content="антивирусы, безопасность, программы" />
+    <title>Антивирусные программы - HTML5</title>
+
+    <!-- Глобальная таблица стилей -->
+    <style>
+      /* Селектор тега */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f9fa;
+      }
+
+      /* Селектор идентификатора */
+      #main-header {
+        background-color: #343a40;
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+
+      /* Селектор класса */
+      .title {
+        font-size: 24px;
+      }
+
+      /* Стили для main */
+      main {
+        padding: 20px;
+        background-color: white;
+        margin: 20px;
+        border: 1px solid #dee2e6;
+        width: 90%;
+        font-size: 14px;
+      }
+
+      h2,
+      h3,
+      h4 {
+        color: #495057;
+      }
+
+      /* Размеры в миллиметрах */
+      h2 {
+        font-size: 5mm;
+      }
+
+      /* Цвет в шестнадцатеричном формате */
+      p {
+        line-height: 1.6;
+        color: #212529;
+      }
+
+      /* Цвет в десятичном формате */
+      aside {
+        background-color: rgb(233, 236, 239);
+        padding: 15px;
+        margin: 10px 0;
+        border-left: 4px solid navy; /* Цвет в виде слова */
+      }
+
+      /* Псевдокласс hover для выделения текста */
+      aside p:hover {
+        background-color: #fce8b2;
+      }
+
+      /* Стили для цитаты */
+      blockquote {
+        font-style: italic;
+        background-color: #f1f3f5;
+        padding: 10px;
+        border-left: 5px solid #adb5bd;
+      }
+
+      /* Стили для footer */
+      footer {
+        background-color: #343a40;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        position: relative;
+        bottom: 0;
+        width: 100%;
+      }
+
+      /* Стили для навигации остаются без изменений */
+      nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        background-color: #495057;
+        overflow: hidden;
+      }
+
+      nav ul li {
+        float: left;
+      }
+
+      nav ul li a {
+        display: block;
+        color: white;
+        text-decoration: none;
+        padding: 10px 15px;
+      }
+
+      nav ul li a:hover {
+        background-color: #212529;
+      }
+    </style>
+  </head>
+  <body>
+    <header id="main-header">
+      <h1 class="title">Антивирусные программы</h1>
+      <img src="logo.png" alt="Логотип сайта" width="100" />
+    </header>
+
+    <nav>
+      <ul>
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="html5.html">HTML5 версия</a></li>
+        <li><a href="sources.html">Использованные источники</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <section>
+        <h2>Популярные антивирусные программы</h2>
+        <p>
+          В сфере кибербезопасности часто встречаются сокращения, например,
+          <abbr title="Malicious Software">Malware</abbr> — вредоносное
+          программное обеспечение, которое угрожает вашей системе.
+        </p>
+        <p>
+          В исследовании <cite>Касперского</cite> указано, что использование
+          антивирусов на 70% снижает вероятность заражения вирусами.
+        </p>
+        <p>
+          Для проверки файлов в системе можно использовать команду:
+          <code>sudo clamscan /home</code>. Этот инструмент подходит для Linux.
+        </p>
+      </section>
+
+      <article>
+        <h3>Платные версии антивирусов: за и против</h3>
+        <p>
+          Одним из ключевых преимуществ платных версий является защита от
+          сложных угроз, таких как <dfn>фишинг</dfn>, когда злоумышленники
+          пытаются получить доступ к вашим личным данным.
+        </p>
+        <p>
+          Кроме того, <strong>платные антивирусы</strong> предоставляют
+          расширенные инструменты, такие как шифрование данных и резервное
+          копирование, что критически важно для бизнеса.
+        </p>
+      </article>
+
+      <aside>
+        <h4>Полезные советы по безопасности</h4>
+        <p>
+          1. <mark>Регулярно обновляйте антивирусные базы</mark>, чтобы защитить
+          устройство от новых угроз.
+        </p>
+        <p>
+          2. Используйте сложные пароли и вводите их с клавиатуры
+          <kbd>Ctrl + Shift + P</kbd>, чтобы избежать их автоматического
+          сохранения.
+        </p>
+        <p>
+          3. "Лучший способ защиты — это профилактика." —
+          <q>анонимный эксперт по безопасности</q>.
+        </p>
+      </aside>
+
+      <blockquote>
+        "Постоянное внимание к кибербезопасности — залог защиты ваших данных." —
+        Компания ESET
+      </blockquote>
+    </main>
+
+    <footer>
+      <p>© 2025, Все права защищены. Контакты: info@example.com</p>
+    </footer>
+  </body>
+</html>

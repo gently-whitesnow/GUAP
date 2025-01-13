@@ -1,0 +1,202 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+#header {
+  background-color: #343a40;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+#menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #495057;
+}
+
+#menu li {
+  float: left;
+}
+
+#menu li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+#menu li a:hover {
+  background-color: #111;
+}
+
+#content {
+  padding: 20px;
+  background-color: white;
+  margin: 20px;
+  border: 1px solid #ddd;
+}
+
+#footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Общие стили для таблицы */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+  text-align: left;
+  font-family: Arial, sans-serif;
+}
+
+caption {
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
+}
+
+thead th {
+  background-color: #343a40;
+  color: white;
+  padding: 10px;
+  border: 1px solid #333;
+}
+
+tbody td {
+  padding: 10px;
+  border: 1px solid #333;
+}
+
+tfoot td {
+  padding: 10px;
+  text-align: center;
+  font-style: italic;
+  background-color: #f1f1f1;
+  border: 1px solid #333;
+}
+
+/* Стили для групп столбцов */
+.program-column {
+  background-color: #f9f9f9;
+  width: 30%;
+  background-color: #e6ffe6;
+}
+
+.price-column {
+  background-color: #e6f7ff;
+  width: 20%;
+}
+
+/* Стили для изображения в ячейке */
+img {
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+/* Эффект при наведении на ячейку */
+tbody td:hover {
+  background-color: #ffeeba; /* Цвет фона при наведении */
+  border-color: #ffdd57; /* Цвет границы при наведении */
+}
+
+/* Стили для основного списка */
+.custom-list {
+  counter-reset: list-counter; /* Сбрасываем счетчик */
+  padding-left: 20px;
+}
+
+.custom-list > li {
+  list-style: none; /* Убираем стандартные маркеры */
+  counter-increment: list-counter; /* Увеличиваем счетчик */
+}
+
+.custom-list > li::before {
+  content: counter(list-counter) ". "; /* Добавляем номер перед пунктом */
+  font-weight: bold;
+}
+
+/* Стили для вложенного списка */
+.custom-list ol {
+  counter-reset: sub-list-counter; /* Сбрасываем вложенный счетчик */
+  padding-left: 20px;
+}
+
+.custom-list ol > li {
+  list-style: none; /* Убираем стандартные маркеры */
+  counter-increment: sub-list-counter; /* Увеличиваем счетчик */
+}
+
+.custom-list ol > li::before {
+  content: counter(list-counter) "." counter(sub-list-counter) " "; /* Формат: 2.1, 2.2 */
+  font-weight: bold;
+}
+
+#author-btn {
+  border: solid 1px #343a40;
+  cursor: pointer;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  transition: width 0.5s ease;
+  border-radius: 10px;
+}
+
+#header-text {
+  transition: color 0.5s ease, font-size 0.5s ease; /* Плавные изменения цвета и размера */
+}
+
+@keyframes slide-up {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(0px, 5px);
+  }
+  50% {
+    transform: translate(0px, 10px);
+  }
+  75% {
+    transform: translate(0px, 5px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes slide-down {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(0px, -5px);
+  }
+  50% {
+    transform: translate(0px, -10px);
+  }
+  75% {
+    transform: translate(0px, -5px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.slide-down {
+  animation: slide-down 0.3s ease-in-out;
+}
+
+.slide-up {
+  animation: slide-up 0.3s ease-in-out;
+}
