@@ -12,6 +12,10 @@ swipl --help
 
 swipl -f hello.pl
 
+```pl
+solve(YanoshName, YanoshRank, YanoshBranch,                                                                                                                FerencName, FerencRank, FerencBranch,                                                                                                                BelaName, BelaRank, BelaBranch,                                                                                                                      LaioshName, LaioshRank, LaioshBranch,                                                                                                                AndrashName, AndrashRank, AndrashBranch).
+```
+
 ## база
 
 ### Основы синтаксиса Prolog
