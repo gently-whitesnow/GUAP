@@ -16,7 +16,13 @@ docker volume create livegrep-data
 
 баш скрипт для замера времени
 
+#
+
 docker run -v livegrep-data:/data ghcr.io/livegrep/livegrep/indexer /livegrep/bin/livegrep-github-reindex -repo livegrep/livegrep -repo dotnet/runtime -repo dotnet/aspnetcore -http -dir /data
+
+docker run -v livegrep-data:/data ghcr.io/livegrep/livegrep/indexer /livegrep/bin/livegrep-github-reindex -repo livegrep/livegrep -http -dir /data
+
+#
 
 docker run -d --rm -v livegrep-data:/data --network livegrep --name livegrep-backend ghcr.io/livegrep/livegrep/base /livegrep/bin/codesearch -load_index /data/livegrep.idx -grpc 0.0.0.0:9999
 
@@ -26,7 +32,7 @@ python3 -m venv default
 source default/bin/activate  
 deactivate
 
-# большой индекс
+# 100mb индекс
 
 python3 indexer.py /Users/gently/Projects/livegrep
 python3 searcher.py get
@@ -34,14 +40,14 @@ python3 searcher.py get
 bash test_1.sh /Users/gently/Projects/livegrep get
 bash test_100.sh /Users/gently/Projects/livegrep get
 
-# малый
+# 10mb индекс
 
 python3 indexer.py /Users/gently/Projects/GUAP/Practice
 python3 searcher.py get
 
 bash test_1.sh /Users/gently/Projects/GUAP/Practice фронт
 
-# огромный индекс
+# 0.5gb индекс
 
 python3 indexer.py /Users/gently/Projects/aspnetcore
 python3 searcher.py get

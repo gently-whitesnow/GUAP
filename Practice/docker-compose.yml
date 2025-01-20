@@ -1,80 +1,22 @@
-version: "3.9"
-
 services:
-  livegrep-indexer:
-    image: "gently4005/livegrep-base:latest"
-    command:
-      - "/livegrep/bin/livegrep-github-reindex"
-      - "-repo"
-      - "livegrep/livegrep"
-      - "-http"
-      - "-dir"
-      - "/data"
+  backend:
+    image: ghcr.io/livegrep/livegrep/base
+    networks:
+      - livegrep
     volumes:
       - livegrep-data:/data
-    logging:
-      driver: json-file
-      options:
-        max-file: 10
-        max-size: 10m
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-          cpus: "2"
-    networks:
-      - livegrep-network
+    command: /livegrep/bin/codesearch -load_index /data/livegrep.idx -grpc 0.0.0.0:9999
 
-  livegrep-backend-linux:
-    image: "gently4005/livegrep-base:latest"
-    command:
-      - "/livegrep/bin/codesearch"
-      - "-load_index=/data/index.idx"
-      - "-threads=4"
-      # необходимые настройки для перезагрузки индекса и взаимодействия внутри сети
-      - "-grpc=0.0.0.0:9898"
-      - "-reload_rpc"
-    volumes:
-      - livegrep-data:/data
+  frontend:
+    image: ghcr.io/livegrep/livegrep/base
     networks:
-      - livegrep-network
-    logging:
-      driver: json-file
-      options:
-        max-file: 10
-        max-size: 10m
-    restart: unless-stopped
-    depends_on:
-      - livegrep-indexer
-
-  livegrep-frontend:
-    image: "gently4005/livegrep-base:latest"
-    command:
-      - "/livegrep/bin/livegrep"
-      - "-docroot"
-      - "/livegrep/web/"
-      - "-listen"
-      - "0.0.0.0:8910"
-      - "-connect"
-      - "livegrep-backend-linux:9898"
-      - "/data/configuration.json"
-    volumes:
-      - livegrep-data:/data
-    networks:
-      - livegrep-network
-    logging:
-      driver: json-file
-      options:
-        max-file: 10
-        max-size: 10m
-    restart: unless-stopped
-    depends_on:
-      - livegrep-backend-linux
+      - livegrep
+    ports:
+      - "8910:8910"
+    command: /livegrep/bin/livegrep -docroot /livegrep/web -listen=0.0.0.0:8910 --connect backend:9999
 
 volumes:
   livegrep-data:
-    external: true
 
 networks:
-  livegrep-network:
-    external: true
+  livegrep:
