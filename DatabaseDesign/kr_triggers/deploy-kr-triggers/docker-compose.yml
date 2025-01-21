@@ -1,17 +1,15 @@
 version: "3.9"
 services:
   postgres:
-    container_name: postgres_lab9
+    container_name: postgres_kr-triggers
     build: .
     image: postgres
     environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_USER: gently
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
       - ./pgdata:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "5432:5432"
     restart: unless-stopped
     deploy:
       resources:

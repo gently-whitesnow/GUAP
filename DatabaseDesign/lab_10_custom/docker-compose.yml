@@ -1,15 +1,17 @@
 version: "3.9"
 services:
   postgres:
-    container_name: postgres_lesson
+    container_name: postgres_lab10
     build: .
     image: postgres
     environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: gently
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
       - ./pgdata:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5434:5432"
     restart: unless-stopped
     deploy:
       resources:

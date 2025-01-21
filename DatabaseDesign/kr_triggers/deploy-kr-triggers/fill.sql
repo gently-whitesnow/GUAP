@@ -4,6 +4,7 @@ truncate table cabinets RESTART IDENTITY cascade;
 truncate table doctors RESTART IDENTITY cascade;
 truncate table patients RESTART IDENTITY cascade;
 truncate table procedures RESTART IDENTITY cascade;
+truncate table change_log RESTART IDENTITY cascade;
 
 
 INSERT INTO cabinets (room)
