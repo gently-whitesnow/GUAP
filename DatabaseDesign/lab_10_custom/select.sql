@@ -1,45 +1,48 @@
--- Выборка с условием к таблице-предку и потомку:
--- Получим все объекты парка с их типами и дополнительной информацией из потомков
-SELECT
-    po.object_id,
-    po.location,
-    CASE
-        WHEN st.statue_name IS NOT NULL THEN 'Statue'
-        WHEN ft.fountain_name IS NOT NULL THEN 'Fountain'
-        WHEN tr.species_id IS NOT NULL THEN 'Tree'
-        END AS object_type,
-    COALESCE(st.statue_name, ft.fountain_name, sp.species_name) AS object_details
-FROM park_object po
+-- 1. Аллеи, на которых встречаются разные виды кленов (клен в названии)
+
+SELECT a.name AS alley_name
+FROM alley a
+         JOIN alley_object ao ON a.alley_id = ao.alley_id
+         JOIN tree t ON ao.object_id = t.object_id
+         JOIN species s ON t.species_id = s.species_id
+WHERE s.species_name LIKE 'Клен%'
+GROUP BY a.name
+HAVING COUNT(DISTINCT s.species_id) > 1;
+
+-- 2. Аллеи, на которых есть и статуи, и фонтаны
+
+SELECT a.name AS alley_name
+FROM alley a
+         JOIN alley_object ao ON a.alley_id = ao.alley_id
+         JOIN park_object po ON ao.object_id = po.object_id
          LEFT JOIN statue st ON po.object_id = st.object_id
-         LEFT JOIN fountain ft ON po.object_id = ft.object_id
-         LEFT JOIN tree tr ON po.object_id = tr.object_id
-         LEFT JOIN species sp ON tr.species_id = sp.species_id;
+         LEFT JOIN fountain f ON po.object_id = f.object_id
+GROUP BY a.name
+HAVING COUNT(DISTINCT st.object_id) > 0 AND COUNT(DISTINCT f.object_id) > 0;
 
--- Выборка только из потомков:
--- Получить все деревья с информацией о породе
+-- 3. Дерево, которое было посажено позже всех
 
-SELECT
-    t.object_id,
-    t.location,
-    s.species_name,
-    t.planting_date,
-    t.trimming_date
+SELECT t.object_id, t.location, s.species_name, t.planting_date
 FROM tree t
-         JOIN species s ON t.species_id = s.species_id;
+         JOIN species s ON t.species_id = s.species_id
+ORDER BY t.planting_date DESC
+LIMIT 1;
 
--- Выборка только из предка:
--- Получить координаты всех объектов парка:
+-- 4. Порода деревьев, которой больше всего
 
-INSERT INTO park_object (location) VALUES ('(55.123456,37.123456)'::coords);
-SELECT
-    object_id,
-    location
-FROM ONLY park_object;
+SELECT s.species_name, COUNT(t.object_id) AS tree_count
+FROM tree t
+         JOIN species s ON t.species_id = s.species_id
+GROUP BY s.species_name
+ORDER BY tree_count DESC
+LIMIT 1;
 
+-- 5. Аллея, на которой нет фонтанов
 
-
--- использование оператора only
-SELECT
-    object_id,
-    location
-FROM ONLY park_object;
+SELECT a.name AS alley_name
+FROM alley a
+         LEFT JOIN alley_object ao ON a.alley_id = ao.alley_id
+         LEFT JOIN park_object po ON ao.object_id = po.object_id
+         LEFT JOIN fountain f ON po.object_id = f.object_id
+GROUP BY a.name
+HAVING COUNT(f.object_id) = 0;

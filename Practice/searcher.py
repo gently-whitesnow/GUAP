@@ -102,15 +102,15 @@ if __name__ == "__main__":
     else:
         query = sys.argv[1]
         searcher = TrigramSearcher()
-        # searcher.run(query)
+        searcher.run(query)
 
-        while True:
-            q = input("Введите запрос: ")
+        # while True:
+        #     q = input("Введите запрос: ")
 
-            # Замер времени
-            start_time = time.time()
-            searcher.run(q)
-            end_time = time.time()
+        #     # Замер времени
+        #     start_time = time.time()
+        #     searcher.run(q)
+        #     end_time = time.time()
 
-            # Вывод времени выполнения
-            print(f"Время выполнения: {end_time - start_time:.6f} секунд\n")
+        #     # Вывод времени выполнения
+        #     print(f"Время выполнения: {end_time - start_time:.6f} секунд\n")

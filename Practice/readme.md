@@ -1,38 +1,33 @@
-## проект
+# производсвтенная практика
 
-https://github.com/livegrep/livegrep
+Триграммный поиск текста
 
-Сбилдить не вышло, веротяно проблема в OS
+Этот проект реализует инструмент для быстрого поиска текстовой информации в больших наборах данных с использованием триграммного индекса. Основная цель — продемонстрировать, как триграммный индекс может улучшить производительность поиска, сужая область поиска перед использованием grep, а также сравнить эффективность данного подхода с утилитой grep на примере репозитория ядра Linux.
 
-Я когда-то делал форк и настроил его на свой docker-hub репозиторий, поэтому билд происходит на CI и мы можем заюзать контейнер
+Основные возможности 1. Создание триграммного индекса:
+• Индексирует текстовые файлы в заданной директории.
+• Сохраняет индекс в формате JSON и бинарном формате для ускорения загрузки. 2. Поиск текста:
+• Использует триграммы для предварительного отбора релевантных файлов.
+• Поддерживает ограничение на количество результатов. 3. Оптимизация данных:
+• Использует компактный индекс путей для уменьшения размера данных.
+• Исключает нерелевантные файлы и папки с помощью настроек игнорирования. 4. Сравнение с grep:
+• Скрипт позволяет замерить производительность поиска по сравнению с утилитой grep.
 
-compose для:
-docker network create livegrep-network
-docker volume create livegrep-data
+Как это работает 1. Индексирование:
+• Все текстовые файлы обрабатываются для генерации триграмм.
+• Триграммы добавляются в общий индекс, который связывает их с файлами. 2. Поиск:
+• Для каждого поискового запроса генерируются триграммы.
+• Система фильтрует файлы, не содержащие соответствующих триграмм, что значительно сокращает объём работы. 3. Сравнение с grep:
+• После инициализации программы выполняются тесты для сравнения скорости поиска с grep.
 
-- индексирования
-- бэкенде
-- фронтенда
+Структура проекта
+• indexer.py: Создаёт триграммный индекс из текстовых файлов.
+• searcher.py: Реализует поиск по триграммному индексу.
+• test_1.sh: Скрипт для замера производительности программы и сравнения с grep.
 
-баш скрипт для замера времени
+## Использование
 
-#
-
-docker run -v livegrep-data:/data ghcr.io/livegrep/livegrep/indexer /livegrep/bin/livegrep-github-reindex -repo livegrep/livegrep -repo dotnet/runtime -repo dotnet/aspnetcore -http -dir /data
-
-docker run -v livegrep-data:/data ghcr.io/livegrep/livegrep/indexer /livegrep/bin/livegrep-github-reindex -repo livegrep/livegrep -http -dir /data
-
-#
-
-docker run -d --rm -v livegrep-data:/data --network livegrep --name livegrep-backend ghcr.io/livegrep/livegrep/base /livegrep/bin/codesearch -load_index /data/livegrep.idx -grpc 0.0.0.0:9999
-
-docker run -d --rm --network livegrep --publish 8910:8910 ghcr.io/livegrep/livegrep/base /livegrep/bin/livegrep -docroot /livegrep/web -listen=0.0.0.0:8910 --connect livegrep-backend:9999
-
-python3 -m venv default  
-source default/bin/activate  
-deactivate
-
-# 100mb индекс
+### 100mb индекс
 
 python3 indexer.py /Users/gently/Projects/livegrep
 python3 searcher.py get
@@ -40,14 +35,14 @@ python3 searcher.py get
 bash test_1.sh /Users/gently/Projects/livegrep get
 bash test_100.sh /Users/gently/Projects/livegrep get
 
-# 10mb индекс
+### 10mb индекс
 
 python3 indexer.py /Users/gently/Projects/GUAP/Practice
 python3 searcher.py get
 
 bash test_1.sh /Users/gently/Projects/GUAP/Practice фронт
 
-# 0.5gb индекс
+### 0.5gb индекс
 
 python3 indexer.py /Users/gently/Projects/aspnetcore
 python3 searcher.py get
@@ -55,7 +50,7 @@ python3 searcher.py get
 bash test_1.sh /Users/gently/Projects/aspnetcore get
 bash test_100.sh /Users/gently/Projects/aspnetcore get
 
-# 2gb repo linux
+### 2gb repo linux
 
 python3 indexer.py /Users/gently/Projects/linux-master
 python3 searcher.py get

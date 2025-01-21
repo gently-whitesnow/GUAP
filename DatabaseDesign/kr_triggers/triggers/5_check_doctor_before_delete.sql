@@ -4,7 +4,7 @@ RETURNS TRIGGER AS $$
 DECLARE
 v_count INTEGER;
 BEGIN
-SELECT COUNT(*) INTO v_count FROM visits WHERE doctor_id = OLD.id;
+SELECT COUNT(*) INTO v_count FROM visits as v WHERE doctor_id = OLD.id and v.visit_date_time < now();
 IF v_count > 0 THEN
         RAISE EXCEPTION 'Cannot delete doctor with existing visits';
 END IF;
