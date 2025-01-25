@@ -1,0 +1,4 @@
+lab2
+test/runTests
+test/gtest/gtest-all.o
+test/gtest/libgtest.a
