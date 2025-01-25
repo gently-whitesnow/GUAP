@@ -1,0 +1,38 @@
+version: "3.9"
+services:
+  postgres:
+    container_name: postgres_web
+    image: postgres
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: gently
+      POSTGRES_DB: antivirus_db
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "5440:5432"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+
+  apache-php:
+    container_name: apache_php
+    image: php:8.2-apache
+    ports:
+      - "8080:80"
+    volumes:
+      - ./website:/var/www/html
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    environment:
+      APACHE_DOCUMENT_ROOT: /var/www/html
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
