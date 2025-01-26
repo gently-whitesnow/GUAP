@@ -111,6 +111,24 @@ tbody td:hover {
   border-color: #ffdd57; /* Цвет границы при наведении */
 }
 
+td[data-tooltip] {
+  position: relative;
+}
+
+td[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: -1.5em;
+  left: 0;
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  font-size: 0.9em;
+  white-space: nowrap;
+  border-radius: 5px;
+  z-index: 10;
+}
+
 /* Стили для основного списка */
 .custom-list {
   counter-reset: list-counter; /* Сбрасываем счетчик */
