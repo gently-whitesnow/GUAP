@@ -1,6 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 
 $conn = pg_connect("host=postgres port=5432 dbname=antivirus_db user=gently");
 

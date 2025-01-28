@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Экзамен</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        user-select: none;
+        overflow: hidden;
+      }
+      #greeting {
+        cursor: pointer;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+      }
+      table {
+        font-size: 24px;
+      }
+      td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <table
+        id="greeting"
+        onclick="this.style.color = '#' + Math.floor(Math.random() * 16777215).toString(16);"
+      >
+        <tr>
+          <td>\|/</td>
+          <td rowspan="2">v</td>
+          <td>\|/</td>
+        </tr>
+        <tr>
+          <td><></td>
+          <td><></td>
+        </tr>
+        <tfoot>
+          <td colspan="3">[________]</td>
+        </tfoot>
+      </table>
+    </div>
+    <script>
+      const spacing = document.getElementById("greeting");
+
+      let fontSize = 24; // Размер шрифта в пикселях
+
+      document.addEventListener("keydown", (event) => {
+        if (event.code === "Space") {
+          event.preventDefault();
+          fontSize += 2;
+          spacing.style.fontSize = `${fontSize}px`;
+        }
+      });
+    </script>
+    <script src="move.js"></script>
+  </body>
+</html>

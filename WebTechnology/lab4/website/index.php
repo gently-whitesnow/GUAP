@@ -31,7 +31,7 @@
     <div id="menu">
       <ul>
         <li>
-          <li><a href="index.html">Главная</a></li>
+          <li><a href="/">Главная</a></li>
           <li><a href="html5.html">HTML5 версия</a></li>
           <li><a href="sources.html">Использованные источники</a></li>
         </li>
