@@ -8,7 +8,9 @@
 
 #### компиляция и запуск
 
-sbcl --script geeks.lisp
+sbcl --script solution.lisp
+
+sbcl --sysinit solution.lisp
 
 #### интерактивный режим
 

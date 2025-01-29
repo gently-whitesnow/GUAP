@@ -10,7 +10,7 @@ swipl --help
 
 ## запуск с предзагруженным файлом
 
-swipl -f hello.pl
+swipl -f solve.pl
 
 ```pl
 solve(YanoshName, YanoshRank, YanoshBranch,                                                                                                                FerencName, FerencRank, FerencBranch,                                                                                                                BelaName, BelaRank, BelaBranch,                                                                                                                      LaioshName, LaioshRank, LaioshBranch,                                                                                                                AndrashName, AndrashRank, AndrashBranch).
