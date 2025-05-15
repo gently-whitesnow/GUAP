@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Добавить запись</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        form { max-width: 500px; }
+        label { display: block; margin: 10px 0; }
+        input { width: 100%; padding: 8px; margin: 5px 0; }
+        button { padding: 10px 20px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Добавить запись в список литературы</h1>
+    <form action="add" method="post">
+        <label>Авторы: <input type="text" name="authors" required></label>
+        <label>Название: <input type="text" name="title" required></label>
+        <label>Издательство: <input type="text" name="publisher" required></label>
+        <label>Год издания: <input type="number" name="year" required></label>
+        <label>Количество страниц: <input type="number" name="pages" required></label>
+        <label>ISBN: <input type="text" name="isbn" required></label>
+        <button type="submit">Добавить</button>
+    </form>
+    <p><a href="list">Вернуться к списку</a></p>
+</body>
+</html> 
