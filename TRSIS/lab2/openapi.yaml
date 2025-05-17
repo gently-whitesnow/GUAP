@@ -1,0 +1,77 @@
+openapi: 3.0.3
+info:
+  title: Bibliographic API
+  version: 1.0.0
+paths:
+  /api/books:
+    get:
+      summary: Get all entries
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BibliographicEntry'
+    post:
+      summary: Create new entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BibliographicEntry'
+      responses:
+        '201':
+          description: Created
+  /api/books/{id}:
+    get:
+      summary: Get entry by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BibliographicEntry'
+        '404':
+          description: Not found
+    delete:
+      summary: Delete entry
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+components:
+  schemas:
+    BibliographicEntry:
+      type: object
+      required: [authors, title, publisher, year]
+      properties:
+        id:
+          type: integer
+        authors:
+          type: string
+        title:
+          type: string
+        publisher:
+          type: string
+        year:
+          type: integer
+        pages:
+          type: integer
+        isbn:
+          type: string
