@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html ng-app="bibliographyApp">
+<head>
+    <title>Список литературы</title>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        form { max-width: 500px; }
+        label { display: block; margin: 10px 0; }
+        input { width: 100%; padding: 8px; margin: 5px 0; }
+        button { padding: 10px 20px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        .delete-btn { background: none; border: none; color: blue; text-decoration: underline; cursor: pointer; padding: 0; }
+    </style>
+</head>
+<body ng-controller="BibliographyController">
+    <h1>Список литературы</h1>
+    <a href="#" ng-click="showAddForm = !showAddForm">{{showAddForm ? 'Вернуться к списку' : 'Добавить запись'}}</a><br><br>
+
+    <!-- Форма добавления -->
+    <form ng-submit="addEntry()" name="addForm" ng-show="showAddForm">
+        <h2>Добавить запись в список литературы</h2>
+        <label>Авторы: <input type="text" ng-model="newEntry.authors" required></label>
+        <label>Название: <input type="text" ng-model="newEntry.title" required></label>
+        <label>Издательство: <input type="text" ng-model="newEntry.publisher" required></label>
+        <label>Год издания: <input type="number" ng-model="newEntry.year" required></label>
+        <label>Количество страниц: <input type="number" ng-model="newEntry.pages" required></label>
+        <label>ISBN: <input type="text" ng-model="newEntry.isbn" required></label>
+        <button type="submit">Добавить</button>
+    </form>
+
+    <!-- Таблица записей -->
+    <table ng-hide="showAddForm">
+        <tr>
+            <th>Авторы</th>
+            <th>Название</th>
+            <th>Издательство</th>
+            <th>Год</th>
+            <th>Страниц</th>
+            <th>ISBN</th>
+            <th>Действия</th>
+        </tr>
+        <tr ng-repeat="entry in entries">
+            <td>{{entry.authors}}</td>
+            <td>{{entry.title}}</td>
+            <td>{{entry.publisher}}</td>
+            <td>{{entry.year}}</td>
+            <td>{{entry.pages}}</td>
+            <td>{{entry.isbn}}</td>
+            <td>
+                <button class="delete-btn" ng-click="deleteEntry(entry.id)">Удалить</button>
+            </td>
+        </tr>
+    </table>
+
+    <script>
+        angular.module('bibliographyApp', [])
+            .controller('BibliographyController', function($scope, $http) {
+                $scope.showAddForm = false;
+
+                // Загрузка списка
+                $scope.loadEntries = function() {
+                    $http.get('/api/books').then(function(response) {
+                        $scope.entries = response.data;
+                    });
+                };
+
+                // Добавление записи
+                $scope.addEntry = function() {
+                    $http.post('/api/books', $scope.newEntry)
+                        .then(function() {
+                            $scope.loadEntries();
+                            $scope.newEntry = {};
+                            $scope.showAddForm = false;
+                        });
+                };
+
+                // Удаление записи
+                $scope.deleteEntry = function(id) {
+                    if (confirm('Вы уверены, что хотите удалить эту запись?')) {
+                        $http.delete('/api/books/' + id)
+                            .then(function() {
+                                $scope.loadEntries();
+                            });
+                    }
+                };
+
+                // Инициализация
+                $scope.loadEntries();
+            });
+    </script>
+</body>
+</html> 
