@@ -24,10 +24,4 @@ public class BibliographicEntry {
     public void setPages(int pages) { this.pages = pages; }
     public String getIsbn() { return isbn; }
     public void setIsbn(String isbn) { this.isbn = isbn; }
-
-    @Override
-    public String toString() {
-        return String.format("%s. %s. — %s, %d. — %d с. — ISBN %s",
-            authors, title, publisher, year, pages, isbn);
-    }
 } 
