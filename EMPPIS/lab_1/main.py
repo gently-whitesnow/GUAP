@@ -26,7 +26,7 @@ def f(x: float) -> float:
 # 15 бит это от 0 до 32767
 # что при 1 до 10 дает точность 0.0003
 BITS = 15
-MAX_INT = (1 << BITS) - 1
+MAX_INT = (1 << BITS) - 1 # 32767
 X_MIN, X_MAX = 1.0, 10.0
 
 # нормализация 0-10 в 0-32767
@@ -73,7 +73,7 @@ def mutate(chrom: int, pm: float) -> int:
 
 def crossover(p1: int, p2: int, Pc: float) -> tuple[int, int]:
     """Выполняет операцию кроссовера между двумя родителями.
-    
+    однобитовый одноточечный кроссовер 
     Args:
         p1: Первый родитель (хромосома)
         p2: Второй родитель (хромосома)
@@ -124,16 +124,18 @@ def genetic_algorithm(pop_size=50, Pc=0.8, Pm=0.01, max_gen=50, return_history=F
         # добавляем в историю
         history.append((gen, xs[best_i], fs[best_i]))
 
-        # нормализация fitness
+        # нормализация fitness, чтобы не было отрицательных значений
         f_min = min(fs)
         fitness = [val - f_min + 1e-12 for val in fs]
+
         # выбираем родителей
         probs = [val / sum(fitness) for val in fitness]
+        # родители отобранные пропорционально fitness
         mating_pool = random.choices(pop, probs, k=pop_size)
         # кроссовер
         next_pop = []
         for i in range(0, pop_size, 2):
-            p1, p2 = mating_pool[i], mating_pool[(i + 1) % pop_size]
+            p1, p2 = mating_pool[i], mating_pool[(i + 1) % pop_size] # % pop_size - чтобы не выйти за границы
             c1, c2 = crossover(p1, p2, Pc)
             next_pop.extend([c1, c2])
         next_pop = next_pop[:pop_size]

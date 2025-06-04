@@ -21,7 +21,7 @@ COORDS = np.array([
 
 N = len(COORDS)
 
-# Евклидова метрика между всеми парами городов
+# строим матрицу расстояний между всеми парами городов
 DIST = np.linalg.norm(COORDS[:, None] - COORDS[None, :], axis=2)
 DIST = np.rint(DIST).astype(int)  # округление — как в TSPLIB, чтобы длина совпадала с эталоном
 
@@ -41,12 +41,11 @@ P_MUTATION = 0.3
 CROSSOVER_TYPE = "hc"  # "ae" — alternating-edges, "hc" — heuristic crossover
 SEED = 42
 
-# --- Представления маршрута ---
+# --- Представления маршрута --- индекс - из города, значение в город
 def perm_to_neighbour(perm):
-    # Преобразует маршрут-перестановку в представление соседей: succ[i] = следующий город после i
-    succ = np.empty_like(perm)
-    succ[perm[:-1]] = perm[1:]
-    succ[perm[-1]] = perm[0]
+    succ = np.empty_like(perm)                     # создаём пустой массив такого же размера
+    succ[perm[:-1]] = perm[1:]                     # каждому городу ставим следующего по маршруту
+    succ[perm[-1]] = perm[0]                       # замыкаем цикл: последний идёт к первому
     return succ
 
 def neighbour_to_perm(succ, start=0):
@@ -63,6 +62,7 @@ def tour_length(succ):
 # --- Локальная оптимизация: 2-opt ---
 def improve_local_2opt(succ, max_swaps=50):
     # Находит и применяет до max_swaps улучшений с помощью 2-opt (инверсия сегмента)
+
     swaps = 0
     improved = True
     while improved and swaps < max_swaps:
@@ -73,6 +73,7 @@ def improve_local_2opt(succ, max_swaps=50):
                 if j - i == 1:
                     continue
                 a, b, c, d = perm[i - 1], perm[i], perm[j], perm[(j + 1) % N]
+                # если перестановка улучшает маршрут, то применяем ее
                 if DIST[a, b] + DIST[c, d] > DIST[a, c] + DIST[b, d]:
                     perm[i:j+1] = perm[i:j+1][::-1]
                     succ[:] = perm_to_neighbour(perm)
@@ -81,14 +82,16 @@ def improve_local_2opt(succ, max_swaps=50):
                     if swaps >= max_swaps:
                         return
 
-# --- Кроссоверы ---
+# Alternating Edges Crossover
+# поочередно берем ребра из p1 и p2, если ребенок уже посетил город, то берем случайный город
 def crossover_alternating(p1, p2):
-    # Alternating Edges Crossover: чередует ребра из p1 и p2
+    # берем случайный город как стартовый
     start = random.randrange(N)
+    # создаем пустой массив для ребенка
     child = -np.ones(N, dtype=int)
-    visited = {start}
-    curr = start
-    use_p1 = True
+    visited = {start} # посещенные города
+    curr = start # текущий город
+    use_p1 = True # используем ли p1
     while len(visited) < N:
         nxt = (p1 if use_p1 else p2)[curr]
         use_p1 = not use_p1
@@ -98,11 +101,13 @@ def crossover_alternating(p1, p2):
         visited.add(nxt)
         curr = nxt
     child[curr] = start
+    # по итогу получаем маршрут в виде соседей
     return child
 
+# Heuristic Crossover
+# из двух возможных следующих городов выбирает тот, что ближе
 def crossover_heuristic(p1, p2):
-    # Heuristic Crossover: из двух возможных следующих городов выбирает тот, что ближе
-    start = random.randrange(N)
+    start = random.randrange(N) # берем случайный город как стартовый
     child = -np.ones(N, dtype=int)
     visited = {start}
     curr = start
@@ -119,6 +124,7 @@ def crossover_heuristic(p1, p2):
         visited.add(nxt)
         curr = nxt
     child[curr] = start
+    # по итогу получаем маршрут в виде соседей
     return child
 
 # --- Генетический алгоритм ---
@@ -127,18 +133,22 @@ def genetic_algorithm():
     np.random.seed(SEED)
     cross = crossover_alternating if CROSSOVER_TYPE == "ae" else crossover_heuristic
 
-    # Инициализация случайной популяции (в виде succ)
+    # Инициализация случайной популяции (случайных маршрутов)
+    # превращаем случайный маршруты в представление соседей
     population = [perm_to_neighbour(np.random.permutation(N)) for _ in range(POP_SIZE)]
+    # fitness - оцениваем длину случайных маршрутов
     fitness = np.array([tour_length(ind) for ind in population])
+    # best_curve - длина лучшего маршрута для каждой генерации
     best_curve = []
 
     for gen in range(GENERATIONS):
         # Элитизм — копируем лучшего в новое поколение
         best_idx = fitness.argmin()
+        # копируем лучшего в новое поколение
         new_pop = [population[best_idx].copy()]
 
         while len(new_pop) < POP_SIZE:
-            # Турнирная селекция: выбираем лучших из пары
+            # Турнирная селекция размером 2 и выбором лучшего из пары
             a, b = random.sample(range(POP_SIZE), 2)
             p1 = population[a] if fitness[a] < fitness[b] else population[b]
             a, b = random.sample(range(POP_SIZE), 2)

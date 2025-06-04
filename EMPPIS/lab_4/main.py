@@ -3,7 +3,7 @@
 ────────────────────────────────────────────
 • Эволюционный алгоритм: генетическое программирование (GP)
 • Кодирование решения: деревья арифм. выражений
-• Целевая функция (fitness): RMS-ошибка
+• Целевая функция (fitness): RMS-ошибка (среднеквадратичная ошибка)
 • Операторы:   – кроссовер поддеревьев
                – мутация «растущая/усекающая» + гаусс-сдвиг констант
                – ранговая селекция + 1 элитная особь
@@ -27,15 +27,14 @@ projects = [
 ]
 train, test = projects[:13], projects[13:]
 
-# ────────────────────────── “безопасная арифметика” ──────────────────────────
-MAX_ABS = 1e6        # любое промежуточное |значение| режем этим потолком
+MAX_ABS = 1e6        
 
 def safe_val(v: float) -> float:
-    """На всякий случай убираем nan/inf и слишком большие числа."""
+    # убираем nan/inf и слишком большие числа, чтобы не было ошибок
     return v if np.isfinite(v) and abs(v) < MAX_ABS else MAX_ABS
 
 def safe_pow(a: float, b: float) -> float:
-    """Безопасное возведение в степень (не уходим в комплекс или overflow)."""
+    # не уходим в комплекс или overflow
     if a < 0 and not float(b).is_integer():                # (-5)**1.3 = complex
         return 1.0
     if abs(a) > 1e3 or abs(b) > 10:                       # слишком крутые числа
@@ -45,31 +44,28 @@ def safe_pow(a: float, b: float) -> float:
     except Exception:
         return 1.0
 
-# ─────────────────────── генерация / вычисление деревьев ──────────────────────
-OPS = ['*', '+']             # разрешённые бинарные операции в “верхушке”
+OPS = ['*', '+']             # разрешённые бинарные операции в верхушке
 
 def rnd_const(lo: float = 0.1, hi: float = 10.0) -> float:
-    """Случайная вещественная константа ~ U(lo, hi)."""
+    # случайная вещественная константа ~ U(lo, hi)
     return round(random.uniform(lo, hi), 4)
 
 def make_cocomo_node(a=None, b=None):
-    """
-    Узел-ядро:  a * x ** b
-    (если a, b не заданы, берутся случайные).
-    """
+    # узел-ядро:  a * x ** b
+    # если a, b не заданы, берутся случайные
     return ['*',
             a if a is not None else rnd_const(),
             ['**', 'x', b if b is not None else rnd_const(0, 3)]]
 
 def random_expr(depth: int = 4):
-    """Случайное дерево (depth≈4 достаточно для варианта)."""
+    # случайное дерево (depth≈4 достаточно для варианта)
     if depth == 0 or random.random() < 0.3:
         return make_cocomo_node()
     op = random.choice(OPS)                     # '+' или '*'
     return [op, random_expr(depth - 1), random_expr(depth - 1)]
 
 def evaluate(expr, x: float) -> float:
-    """Вычисляем значение дерева для L = x."""
+    # вычисляем значение дерева для L = x
     try:
         # 1. листья
         if isinstance(expr, (int, float)):
@@ -97,17 +93,14 @@ def evaluate(expr, x: float) -> float:
 
 # ────────────────────────────── фитнесс ─────────────────────────────
 def fitness_rms(expr, data) -> float:
-    """Среднеквадратичная ошибка (RMS) на data."""
+    # среднеквадратичная ошибка (RMS) на data
     return math.sqrt(
         sum((evaluate(expr, L) - Ef) ** 2 for L, Ef in data) / len(data)
     )
 
 # ────────────────────────────── GP-операторы ─────────────────────────────
 def cx_subtree(p1, p2):
-    """
-    Кроссовер поддеревьев:
-    выбираем случайный узел и меняем поддеревья между двумя родителями.
-    """
+    # кроссовер поддеревьев: выбираем случайный узел и меняем поддеревья между двумя родителями
     if not isinstance(p1, list) or not isinstance(p2, list):
         return deepcopy(p2), deepcopy(p1)       # один из родителей – лист
     if random.random() < 0.3:                   # точка среза
@@ -118,7 +111,7 @@ def cx_subtree(p1, p2):
            [op2, cx_subtree(l2, l1)[1], cx_subtree(r2, r1)[1]]
 
 def mut_grow_shrink(expr, depth=2):
-    """Растим/усекаем случайное поддерево."""
+    # растим/усекаем случайное поддерево
     if isinstance(expr, list) and random.random() < 0.3:
         return random_expr(depth)
     if isinstance(expr, list):
@@ -128,7 +121,7 @@ def mut_grow_shrink(expr, depth=2):
     return expr
 
 def mut_consts(expr, sigma=0.8):
-    """Гаусс-мутация числовых констант (× случайный коэффициент)."""
+    # гаусс-мутация числовых констант (× случайный коэффициент)
     if isinstance(expr, (int, float)):
         return round(expr + random.gauss(0, sigma), 4)
     if isinstance(expr, list):
@@ -136,35 +129,36 @@ def mut_consts(expr, sigma=0.8):
     return expr
 
 def rank_selection(pop, scores, k):
-    """Берём k лучших по возрастанию фитнеса (ранговый отбор)."""
+    # берём k лучших по возрастанию фитнеса (ранговый отбор)
     ranked = [ind for _, ind in sorted(zip(scores, pop), key=lambda t: t[0])]
     return ranked[:k]
 
-# ──────────────────────── стартовая популяция ────────────────────────
-# Сделаем «умный» seed: найдём a0, b0 через лог-регрессию.
+# найдём a0, b0 через лог-регрессию
 logs = [(math.log(L), math.log(Ef)) for L, Ef in train]
 b0 = sum(y*x for x, y in logs) / sum(x*x for x, _ in logs)
 a0 = math.exp(sum(y - b0*x for x, y in logs) / len(logs))
 
 def seeded_cocomo():
-    """Мутированный клон формулы a0*L**b0 (даёт адекватную отправную точку)."""
+    # мутированный клон формулы a0*L**b0 (даёт адекватную отправную точку)
     return ['*',
             round(max(0.1, random.gauss(a0, 3)), 4),
             ['**', 'x', round(random.gauss(b0, 1), 4)]]
 
 def init_population(pop_size):
-    """60 % — seed-формы, 40 % — случайные деревья."""
+    # 60 % — seed-формы, 40 % — случайные деревья
     return [seeded_cocomo() if i < 0.6 * pop_size else random_expr()
             for i in range(pop_size)]
 
 # ─────────────────────────── GP-цикл ────────────────────────────
 def gp_run(pop_size=300, generations=150, cx_pb=0.8, mut_pb=0.75):
     population = init_population(pop_size)
+
     best_hist, best_ind = [], None
 
     for g in range(generations):
         # 1) оценка популяции
         scores = [fitness_rms(ind, train) for ind in population]
+
         elite_idx = int(np.argmin(scores))
         best_hist.append(scores[elite_idx])     # лог для графика
         best_ind = population[elite_idx]
@@ -178,12 +172,14 @@ def gp_run(pop_size=300, generations=150, cx_pb=0.8, mut_pb=0.75):
             p1, p2 = random.sample(selected, 2)
             c1, c2 = deepcopy(p1), deepcopy(p2)
 
+            # кроссовер
             if random.random() < cx_pb:
                 c1, c2 = cx_subtree(p1, p2)
 
+            # мутация
             if random.random() < mut_pb:
                 c1 = mut_grow_shrink(c1)
-                if random.random() < 0.7:       # шанс “покрутить” числа
+                if random.random() < 0.7:       # шанс покрутить числа
                     c1 = mut_consts(c1)
 
             new_pop.extend([c1, c2])
@@ -196,7 +192,7 @@ def gp_run(pop_size=300, generations=150, cx_pb=0.8, mut_pb=0.75):
 best_expr, hist = gp_run()
 
 def predict(expr, data):
-    """Считаем прогнозы для набора точек."""
+    #Считаем прогнозы для набора точек
     return [evaluate(expr, x) for x, _ in data]
 
 train_pred, test_pred = predict(best_expr, train), predict(best_expr, test)
